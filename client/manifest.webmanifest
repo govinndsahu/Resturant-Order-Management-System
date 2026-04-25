@@ -1,0 +1,59 @@
+{
+  "name": "Cafeteria",
+  "short_name": "cafeteria",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#222",
+  "description": "Lets make your order journey smooth and fast.",
+  "icons": [
+    {
+      "src": "/logo.png",
+      "sizes": "248x299",
+      "type": "image/png"
+    },
+    {
+      "src": "/logo.png",
+      "sizes": "248x299",
+      "type": "image/png"
+    },
+    {
+      "src": "/logo.png",
+      "sizes": "248x299",
+      "type": "image/png"
+    },
+    {
+      "src": "/logo.png",
+      "sizes": "248x299",
+      "type": "image/png"
+    },
+    {
+      "src": "/logo.png",
+      "sizes": "248x299",
+      "type": "image/png"
+    },
+    {
+      "src": "/logo.png",
+      "sizes": "248x299",
+      "type": "image/png"
+    },
+    {
+      "src": "/squarelogo.png",
+      "sizes": "248x248",
+      "type": "image/png"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/mobiless.jpg",
+      "sizes": "1080x2400",
+      "type": "image/png",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "/windowss.png",
+      "sizes": "1920x1080",
+      "type": "image/png",
+      "form_factor": "wide"
+    }
+  ]
+}
