@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
+import { getCart } from "../hooks/useIndexedDB";
 
 export const CartContext = createContext();
 
@@ -6,10 +7,13 @@ const CartProvider = ({ children }) => {
   const [cart, setCart] = useState([]);
 
   useEffect(() => {
-    const existingCart = localStorage.getItem("cart");
-    if (existingCart) {
-      setCart(JSON.parse(existingCart));
-    }
+    const fetchCart = async () => {
+      const existingCart = await getCart();
+      if (existingCart) {
+        setCart(existingCart);
+      }
+    };
+    fetchCart();
   }, []);
 
   return (

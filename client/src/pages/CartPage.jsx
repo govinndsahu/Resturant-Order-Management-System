@@ -4,18 +4,19 @@ import { useCart } from "../contexts/Cart";
 import { Link } from "react-router-dom";
 import ProceedContainer from "../components/ProceedContainer";
 import OrderForm from "../components/OrderForm";
+import { saveAllCartItems } from "../hooks/useIndexedDB";
 
 const CartPage = () => {
   const [cart, setCart] = useCart();
   const [displayForm, setDisplayForm] = useState(false);
 
-  const handleRemoveCart = (p) => {
+  const handleRemoveCart = async (p) => {
     try {
       let newCart = [...cart];
       const index = newCart.findIndex((item) => item._id === p._id);
       newCart.splice(index, 1);
+      await saveAllCartItems(newCart);
       setCart(newCart);
-      localStorage.setItem("cart", JSON.stringify(newCart));
     } catch (error) {
       console.log(error);
     }
@@ -51,7 +52,12 @@ const CartPage = () => {
                     <p>{p.category?.name}</p>
                   </div>
                   <div className="remove-btn">
-                    <button onClick={(e) => handleRemoveCart(p)}>Remove</button>
+                    <button
+                      onClick={async (e) => {
+                        await handleRemoveCart(p);
+                      }}>
+                      Remove
+                    </button>
                   </div>
                 </div>
               </div>

@@ -4,6 +4,12 @@ import axios from "axios";
 import { useCart } from "../contexts/Cart";
 import toast from "react-hot-toast";
 
+import {
+  saveAllProducts,
+  getAllProducts,
+  addToCart,
+} from "../hooks/useIndexedDB";
+
 const ProductsContainer = ({
   showDetails,
   showAddButtons,
@@ -14,16 +20,25 @@ const ProductsContainer = ({
   showMenipulateBtn,
   category,
 }) => {
-  const [products, setProducts] = useLocalStorage("products", []);
+  const [products, setProducts] = useState([]);
   const [cart, setCart] = useCart();
 
   const fetchProducts = async () => {
     try {
+      // Try IndexedDB first
+      const cached = await getAllProducts();
+
+      if (cached?.length > 0) {
+        setProducts(cached);
+        return;
+      }
+
       const { data } = await axios.get(
         `${import.meta.env.VITE_API_URI}/products`,
       );
       if (data?.success) {
         setProducts(data?.products);
+        await saveAllProducts(data?.products);
       } else {
         console.log("Server Problem");
       }
@@ -36,7 +51,7 @@ const ProductsContainer = ({
     fetchProducts();
   }, []);
 
-  const handleAddCart = (p, e) => {
+  const handleAddCart = async (p, e) => {
     let product = {
       _id: p._id,
       name: p.name,
@@ -56,8 +71,8 @@ const ProductsContainer = ({
         half_price: p.half_price,
       };
     }
+    await addToCart(product);
     setCart((prevCart) => [...prevCart, product]);
-    localStorage.setItem("cart", JSON.stringify([...cart, product]));
   };
 
   return products?.length === 0 ? (

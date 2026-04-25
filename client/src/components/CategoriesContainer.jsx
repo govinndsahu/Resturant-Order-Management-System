@@ -1,18 +1,27 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useLocalStorage } from "../hooks/useLocalStorage";
+import { getAllCategories, saveAllCategories } from "../hooks/useIndexedDB";
 
 const CategoriesContainer = ({ setCategory }) => {
-  const [categories, setCategories] = useLocalStorage("categories", []);
+  const [categories, setCategories] = useState([]);
   const categoriesRef = React.useRef(null);
 
   const fetchCategories = async () => {
     try {
+      const cached = await getAllCategories();
+
+      if (cached?.length > 0) {
+        setCategories(cached);
+        return;
+      }
+
       const { data } = await axios.get(
         `${import.meta.env.VITE_API_URI}/categories`,
       );
       if (data?.success) {
         setCategories(data?.categories);
+        await saveAllCategories(data?.categories);
       } else {
         console.log("Server Problem");
       }
