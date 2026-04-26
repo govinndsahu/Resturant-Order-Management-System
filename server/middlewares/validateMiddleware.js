@@ -36,7 +36,6 @@ export const isAdmin = async (req, res, next) => {
 
 export const isStaff = async (req, res, next) => {
   const sessionId = req.signedCookies.sid;
-  console.log(sessionId);
   if (!sessionId) {
     return res.status(401).json({
       success: false,
