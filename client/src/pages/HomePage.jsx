@@ -4,7 +4,6 @@ import CategoriesContainer from "../components/CategoriesContainer";
 import ProductsContainer from "../components/ProductsContainer";
 import ProceedContainer from "../components/ProceedContainer";
 import OrderForm from "../components/OrderForm";
-import AppLayer from "../components/AppLayer";
 import { Toaster } from "react-hot-toast";
 
 const HomePage = () => {
