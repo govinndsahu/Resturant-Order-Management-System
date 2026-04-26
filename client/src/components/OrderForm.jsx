@@ -4,11 +4,16 @@ import axios from "axios";
 import { useCart } from "../contexts/Cart";
 import { useNavigate } from "react-router-dom";
 import { parse } from "postcss";
+import { clearCart, saveAllCategories } from "../hooks/useIndexedDB";
+import toast from "react-hot-toast";
+import UpdateApp from "./UpdateApp";
 
 const OrderForm = ({ dispalyForm, setDisplayForm }) => {
   const [name, setName] = useState("");
   const [tableNumber, setTableNumber] = useState("");
   const [showTableValidate, setShowTableValidate] = useState(false);
+
+  const [isUpdated, setIsUpdated] = useState(true);
 
   const [loader, setLoader] = useState(false);
 
@@ -37,6 +42,7 @@ const OrderForm = ({ dispalyForm, setDisplayForm }) => {
     tableNumber: parseInt(tableNumber),
     buyer: name,
     total: getTotalPrice(),
+    appVersion: JSON.parse(localStorage.getItem("appVersion")).version,
   };
 
   const handleDisplayForm = (e) => {
@@ -59,12 +65,45 @@ const OrderForm = ({ dispalyForm, setDisplayForm }) => {
       const { data } = await axios.post(
         `${import.meta.env.VITE_API_URI}/orders/create`,
         orderData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
       );
+
+      // handling data cache if needed
+      if (data.message === "Database is updated.") {
+        const {
+          data: { products },
+        } = await axios.get(`${import.meta.env.VITE_API_URI}/products`);
+
+        await saveAllCategories(products);
+
+        const {
+          data: { categories },
+        } = await axios.get(`${import.meta.env.VITE_API_URI}/categories`);
+
+        await saveAllCategories(categories);
+
+        localStorage.setItem("appVersion", JSON.stringify(data.version));
+
+        setIsUpdated(false);
+
+        setLoader(false);
+        setDisplayForm(false);
+        setCart([]);
+        await clearCart();
+        navigate("/");
+      }
+
+      // handling order
       if (data.success) {
         setLoader(false);
         setDisplayForm(false);
         setCart([]);
-        localStorage.setItem("cart", JSON.stringify([]));
+        await clearCart();
+        toast.success("Ordered successfully.");
         navigate("/");
       }
     } catch (error) {
@@ -73,67 +112,70 @@ const OrderForm = ({ dispalyForm, setDisplayForm }) => {
   };
 
   return (
-    <div
-      className={`z-3 order-form h-full w-full ${
-        dispalyForm ? "flex" : "hidden"
-      }`}
-      onClick={(e) => handleDisplayForm(e)}>
+    <>
       <div
-        id="form"
-        className="w-[90%] md:w-[70%] lg:w-[60%] xl:w-[50%] 2xl:w-[50%]">
-        <h2>Done Your Order</h2>
-        <form action="">
-          <div>
-            <label htmlFor="#name">Name: (Optional)</label>
-            <br /> <br />
-            <input
-              type="text"
-              id="name"
-              placeholder="Enter your Name (Optional)"
-              value={name}
-              onChange={(e) => {
-                if (e.target.value === "authpage") {
-                  navigate("/loginpage");
-                }
-                setName(e.target.value);
-              }}
-            />
-          </div>
-          <div className="relative">
-            <label htmlFor="#table-number">Table No:</label> <br />
-            <span
-              className="table-no-validate"
-              style={{ display: `${showTableValidate ? "unset" : "none"}` }}>
-              Table No. is Required
-            </span>
-            <br />
-            <input
-              max={2}
-              type="number"
-              id="table-number"
-              placeholder="Enter your Table No."
-              value={tableNumber}
-              onChange={(e) => {
-                setTableNumber(e.target.value);
-                setShowTableValidate(false);
-              }}
-            />
-          </div>
-          <div>
-            {loader ? (
-              <span className="loader"></span>
-            ) : (
+        className={`z-3 order-form h-full w-full ${
+          dispalyForm ? "flex" : "hidden"
+        }`}
+        onClick={(e) => handleDisplayForm(e)}>
+        <div
+          id="form"
+          className="w-[90%] md:w-[70%] lg:w-[60%] xl:w-[50%] 2xl:w-[50%]">
+          <h2>Done Your Order</h2>
+          <form action="">
+            <div>
+              <label htmlFor="#name">Name: (Optional)</label>
+              <br /> <br />
               <input
-                type="button"
-                id="confirm-btn"
-                value={"Order"}
-                onClick={(e) => handleSubmit(e)}
+                type="text"
+                id="name"
+                placeholder="Enter your Name (Optional)"
+                value={name}
+                onChange={(e) => {
+                  if (e.target.value === "authpage") {
+                    navigate("/loginpage");
+                  }
+                  setName(e.target.value);
+                }}
               />
-            )}
-          </div>
-        </form>
+            </div>
+            <div className="relative">
+              <label htmlFor="#table-number">Table No:</label> <br />
+              <span
+                className="table-no-validate"
+                style={{ display: `${showTableValidate ? "unset" : "none"}` }}>
+                Table No. is Required
+              </span>
+              <br />
+              <input
+                max={2}
+                type="number"
+                id="table-number"
+                placeholder="Enter your Table No."
+                value={tableNumber}
+                onChange={(e) => {
+                  setTableNumber(e.target.value);
+                  setShowTableValidate(false);
+                }}
+              />
+            </div>
+            <div>
+              {loader ? (
+                <span className="loader"></span>
+              ) : (
+                <input
+                  type="button"
+                  id="confirm-btn"
+                  value={"Order"}
+                  onClick={(e) => handleSubmit(e)}
+                />
+              )}
+            </div>
+          </form>
+        </div>
       </div>
-    </div>
+      {!isUpdated ? <UpdateApp /> : null}
+    </>
   );
 };
 

@@ -11,6 +11,8 @@ import productRoutes from "./routes/productRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
 import historyRoutes from "./routes/historyRoutes.js";
 import pushsubscriptionRoutes from "./routes/pushsubscriptionRoutes.js";
+import appversionRoutes from "./routes/appversionRoutes.js";
+
 import { pushNotificationSetup } from "./config/webpush.js";
 
 const app = express();
@@ -59,6 +61,8 @@ app.use("/orders", orderRoutes);
 app.use("/histories", historyRoutes);
 
 app.use("/push-subscriptions", pushsubscriptionRoutes);
+
+app.use("/versions", appversionRoutes);
 
 app.use((err, req, res, next) => {
   console.log(err);

@@ -48,7 +48,11 @@ export async function saveAllProducts(products) {
     const tx = db.transaction(PRODUCTS_STORE, "readwrite");
     const store = tx.objectStore(PRODUCTS_STORE);
 
-    products.forEach((product) => store.put(product));
+    const clearRequest = store.clear();
+    clearRequest.onsuccess = () => {
+      products.forEach((p) => store.put(p));
+    };
+    clearRequest.onerror = (e) => reject(e.target.error);
 
     tx.oncomplete = () => resolve("✅ All products saved");
     tx.onerror = (e) => reject(e.target.error);
@@ -75,7 +79,13 @@ export async function saveAllCategories(categories) {
   return new Promise((resolve, reject) => {
     const tx = db.transaction(CATEGORIES_STORE, "readwrite");
     const store = tx.objectStore(CATEGORIES_STORE);
-    categories.forEach((c) => store.put(c));
+
+    const clearRequest = store.clear();
+    clearRequest.onsuccess = () => {
+      categories.forEach((c) => store.put(c));
+    };
+    clearRequest.onerror = (e) => reject(e.target.error);
+
     tx.oncomplete = () => resolve("✅ Categories saved");
     tx.onerror = (e) => reject(e.target.error);
   });
