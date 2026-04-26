@@ -36,6 +36,7 @@ export const isAdmin = async (req, res, next) => {
 
 export const isStaff = async (req, res, next) => {
   const sessionId = req.signedCookies.sid;
+  console.log(sessionId);
   if (!sessionId) {
     return res.status(401).json({
       success: false,
@@ -43,6 +44,7 @@ export const isStaff = async (req, res, next) => {
     });
   } else {
     const user = await Session.findOne({ _id: sessionId }).populate("userId");
+    console.log(user);
     if (user.userId.role <= 0) {
       return res.status(403).json({
         success: false,
