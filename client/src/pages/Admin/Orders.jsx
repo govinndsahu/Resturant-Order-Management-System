@@ -83,7 +83,7 @@ const Orders = () => {
                 order.buyer.toLowerCase().includes(name.toLowerCase()) &&
                 (tableNumber === ""
                   ? String(order.tableNumber).includes(tableNumber)
-                  : String(order.tableNumber) === tableNumber),
+                  : String(order.tableNumber) === String(tableNumber)),
             )
             .map((order) => (
               <div className="order-card relative" key={order._id}>

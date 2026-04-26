@@ -1,9 +1,13 @@
 import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
+import { getAllCategories } from "../../hooks/useIndexedDB";
 
 const Products = () => {
-  const categories = JSON.parse(localStorage.getItem("categories") || "[]");
   const user = JSON.parse(localStorage.getItem("user") || "{}");
+
+  const [categories, setCategories] = useState([]);
+  const [products, setProducts] = useState([]);
+
   const [category, setCategory] = React.useState("");
   const [productName, setProductName] = React.useState("");
   const [productId, setProductId] = React.useState("");
@@ -31,10 +35,6 @@ const Products = () => {
 
   const [updateMode, setUpdateMode] = useState(false);
 
-  const [products, setProducts] = useState(
-    JSON.parse(localStorage.getItem("products") || "[]"),
-  );
-
   const fetchProducts = async () => {
     try {
       const { data } = await axios.get(
@@ -48,12 +48,22 @@ const Products = () => {
     }
   };
 
-  useEffect(() => {
-    fetchProducts();
-  }, []);
+  const fetchCategories = async () => {
+    try {
+      const { data } = await axios.get(
+        `${import.meta.env.VITE_API_URI}/categories`,
+      );
+      if (data?.success) {
+        setCategories(data.categories);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const handleImagePreview = (e) => {
     const file = e.target.files[0];
+
     if (file) {
       setImagePreview(URL.createObjectURL(file));
     }
@@ -126,14 +136,16 @@ const Products = () => {
   const handleUpdateProduct = async (p) => {
     setUpdateMode(true);
     setProductName(p.name);
-    setCategory(p.category);
+    setCategory(p.category?._id || p.category);
     setPriceType(p.price_type);
     setPrice(p.full_price);
     setHalfPrice(p.half_price);
     setFullPrice(p.full_price);
     setImage("");
     setProductId(p._id);
-    setImagePreview(`data:${p.mimeType};base64,${p.image}`);
+    setImagePreview(
+      p.image && p.mimeType ? `data:${p.mimeType};base64,${p.image}` : null,
+    );
   };
 
   const handleUpdateRequest = async (id) => {
@@ -161,7 +173,6 @@ const Products = () => {
         if (image) {
           await uploadImage(id, image);
         }
-
         setProductName("");
         setCategory("");
         setPriceType("single");
@@ -194,6 +205,11 @@ const Products = () => {
       console.log(error);
     }
   };
+
+  useEffect(() => {
+    fetchProducts();
+    fetchCategories();
+  }, []);
 
   return (
     <div id="products-page">
@@ -353,11 +369,11 @@ const Products = () => {
             </div>
             <div className="products-container admin-products-container">
               {products?.length ? (
-                products.map((p) => (
+                products?.map((p) => (
                   <div key={p._id} className="product">
                     <div className="product-image">
                       <img
-                        src={`data:${p.mimeType};base64,${p.image}`}
+                        src={`data:${p?.mimeType};base64,${p?.image}`}
                         alt="Product"
                       />
                     </div>

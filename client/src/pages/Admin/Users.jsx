@@ -21,10 +21,6 @@ const Users = () => {
     }
   };
 
-  useEffect(() => {
-    fetchUsers();
-  }, []);
-
   const handleMakeAdmin = async (userId) => {
     try {
       const { data } = await axios.post(
@@ -59,6 +55,10 @@ const Users = () => {
       console.error("Error deleting user:", error);
     }
   };
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
 
   return user?.role === 2 ? (
     <div id="users-page">

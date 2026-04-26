@@ -4,7 +4,11 @@ import axios from "axios";
 import { useCart } from "../contexts/Cart";
 import { useNavigate } from "react-router-dom";
 import { parse } from "postcss";
-import { clearCart, saveAllCategories } from "../hooks/useIndexedDB";
+import {
+  clearCart,
+  saveAllCategories,
+  saveAllProducts,
+} from "../hooks/useIndexedDB";
 import toast from "react-hot-toast";
 import UpdateApp from "./UpdateApp";
 
@@ -42,7 +46,7 @@ const OrderForm = ({ dispalyForm, setDisplayForm }) => {
     tableNumber: parseInt(tableNumber),
     buyer: name,
     total: getTotalPrice(),
-    appVersion: JSON.parse(localStorage.getItem("appVersion")).version,
+    appVersion: JSON.parse(localStorage.getItem("appVersion"))?.version,
   };
 
   const handleDisplayForm = (e) => {
@@ -78,7 +82,7 @@ const OrderForm = ({ dispalyForm, setDisplayForm }) => {
           data: { products },
         } = await axios.get(`${import.meta.env.VITE_API_URI}/products`);
 
-        await saveAllCategories(products);
+        await saveAllProducts(products);
 
         const {
           data: { categories },
@@ -86,7 +90,7 @@ const OrderForm = ({ dispalyForm, setDisplayForm }) => {
 
         await saveAllCategories(categories);
 
-        localStorage.setItem("appVersion", JSON.stringify(data.version));
+        localStorage.setItem("appVersion", JSON.stringify(data?.version));
 
         setIsUpdated(false);
 

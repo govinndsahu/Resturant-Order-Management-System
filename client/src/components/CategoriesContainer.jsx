@@ -4,7 +4,7 @@ import { useLocalStorage } from "../hooks/useLocalStorage";
 import { getAllCategories, saveAllCategories } from "../hooks/useIndexedDB";
 
 const CategoriesContainer = ({ setCategory }) => {
-  const [categories, setCategories] = useState([]);
+  const [categories, setCategories] = useState("");
   const categoriesRef = React.useRef(null);
 
   const fetchCategories = async () => {

@@ -28,7 +28,6 @@ const Register = () => {
           withCredentials: true,
         },
       );
-      console.log(data);
       if (data.success) {
         navigate("/");
         localStorage.setItem("user", JSON.stringify(data.user));
@@ -42,7 +41,7 @@ const Register = () => {
     <>
       <Navbar name={"Logo name"} />
       <main id="user-auth">
-        <div className="auth-container w-[90%] sm:w-[80%] md:w-[70%] lg:w-[60%] xl:w-[800px] ">
+        <div className="auth-container w-[90%] sm:w-[80%] md:w-[70%] lg:w-[60%] xl:w-[800px]">
           <h1 className="text-2xl">User Registration</h1>
           <form ref={formRef} id="registerForm" className="">
             <div>
@@ -50,7 +49,6 @@ const Register = () => {
                 Full Name
               </label>
               <input
-                // className="xl:text-3xl text-3xl"
                 value={name}
                 type="text"
                 id="name"
@@ -67,7 +65,6 @@ const Register = () => {
                 Phone Number
               </label>
               <input
-                // className="xl:text-3xl text-3xl"
                 value={phone}
                 type="tel"
                 id="phone"
@@ -84,7 +81,6 @@ const Register = () => {
                 Password
               </label>
               <input
-                // className="xl:text-3xl text-3xl"
                 value={password}
                 type="password"
                 id="password"

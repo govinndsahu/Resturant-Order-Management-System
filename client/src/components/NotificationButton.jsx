@@ -7,10 +7,13 @@ export default function NotificationButton() {
     if (sub) {
       alert("✅ Subscribed to notifications!");
     } else {
-      
       alert("❌ Could not subscribe.");
     }
   };
 
-  return <button onClick={handleSubscribe}>🔔 Enable Notifications</button>;
+  return (
+    <button className="notification-button" onClick={handleSubscribe}>
+      🔔 Enable Notifications
+    </button>
+  );
 }

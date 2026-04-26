@@ -1,3 +1,7 @@
+/* ---------------------------------------------- */
+/* Navigation and Categories */
+/* ---------------------------------------------- */
+
 #nav {
   background-color: #fffefe79;
   backdrop-filter: blur(10px);
@@ -30,6 +34,8 @@
 }
 
 /* ---------------------------------------------- */
+/* Product Grid and Cards */
+/* ---------------------------------------------- */
 
 .products-container {
   margin-top: 150px;
@@ -40,9 +46,9 @@
   background-color: #f4f4f461;
   backdrop-filter: blur(4px);
   padding: 12px;
+  padding-bottom: 80px;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
   border-radius: 10px;
-  padding-bottom: 80px;
 }
 
 .product {
@@ -112,9 +118,20 @@
 .proceed-container {
   background: #ffffe654;
   backdrop-filter: blur(4px);
+  padding-inline: 50px;
 }
 
-/* ----------------------------------------------------- */
+.proceed-btn {
+  background: rgb(255, 170, 0);
+  color: #000;
+  padding-block: 6px;
+  padding-inline: 14px;
+  border-radius: 20px;
+}
+
+/* ---------------------------------------------- */
+/* Cart and Checkout */
+/* ---------------------------------------------- */
 
 .cart-header {
   padding-inline: 50px;
@@ -123,18 +140,20 @@
   background-color: #333;
 }
 
-.remove-btn {
-  margin-top: 15px;
+.btn-box {
+  display: flex;
+  justify-content: space-between;
 }
 
-.remove-btn button {
+.remove-btn {
+  margin-top: 15px;
   background-color: rgb(255, 56, 56);
   padding-block: 4px;
   padding-inline: 12px;
   border-radius: 6px;
 }
 
-.remove-btn {
+.remove-btn button {
   background-color: rgb(255, 56, 56);
   padding-block: 4px;
   padding-inline: 12px;
@@ -148,24 +167,9 @@
   border-radius: 6px;
 }
 
-.btn-box {
-  display: flex;
-  justify-content: space-between;
-}
-
-/* --------------------------------------------------- */
-
-.proceed-container {
-  padding-inline: 50px;
-}
-
-.proceed-btn {
-  background: rgb(255, 170, 0);
-  color: #000;
-  padding-block: 6px;
-  padding-inline: 14px;
-  border-radius: 20px;
-}
+/* ---------------------------------------------- */
+/* Order Form */
+/* ---------------------------------------------- */
 
 .order-form {
   position: fixed;
@@ -225,12 +229,15 @@
   top: 35%;
 }
 
-/* ----------------------------------------- */
+/* ---------------------------------------------- */
+/* Loader */
+/* ---------------------------------------------- */
 
 .loader {
   display: inline-block;
   transform: translateZ(1px);
 }
+
 .loader:after {
   content: "";
   display: inline-block;
@@ -241,6 +248,7 @@
   background: #fff;
   animation: coin-flip 2.4s cubic-bezier(0, 0.2, 0.8, 1) infinite;
 }
+
 @keyframes coin-flip {
   0%,
   100% {
@@ -258,7 +266,9 @@
   }
 }
 
-/* ------------------------------------------- */
+/* ---------------------------------------------- */
+/* Auth Container */
+/* ---------------------------------------------- */
 
 .auth-container {
   position: absolute;
@@ -276,9 +286,8 @@
 
 .auth-container h1 {
   text-align: center;
-  margin-bottom: 20px;
-  color: #fff;
   margin-bottom: 50px;
+  color: #fff;
 }
 
 .auth-container label {
@@ -327,6 +336,8 @@
 }
 
 /* ---------------------------------------------- */
+/* Side Menu and Logout */
+/* ---------------------------------------------- */
 
 #logout-btn {
   color: #000;
@@ -359,7 +370,9 @@
   padding: 2px 6px;
 }
 
-/* -------------------------------------------------- */
+/* ---------------------------------------------- */
+/* Dashboard */
+/* ---------------------------------------------- */
 
 #dashboard-page {
   margin: 100px 50px;
@@ -410,7 +423,9 @@
   margin-bottom: 50px;
 }
 
-/* ------------------------------------------------------- */
+/* ---------------------------------------------- */
+/* Admin Categories */
+/* ---------------------------------------------- */
 
 #admin-categories-page {
   margin: 100px 50px;
@@ -453,6 +468,7 @@ form button:hover {
 }
 
 /* Table Styles */
+
 table {
   width: 100%;
   border-collapse: collapse;
@@ -502,7 +518,9 @@ tbody td {
   opacity: 0.8;
 }
 
-/* -------------------------------------- */
+/* ---------------------------------------------- */
+/* Admin Orders */
+/* ---------------------------------------------- */
 
 #admin-orders-page {
   margin: 100px 50px;
@@ -564,7 +582,9 @@ tbody td {
   cursor: pointer;
 }
 
-/* --------------------------------------------------- */
+/* ---------------------------------------------- */
+/* Histories */
+/* ---------------------------------------------- */
 
 #histories-page {
   margin: 100px 50px;
@@ -576,7 +596,9 @@ tbody td {
   border-radius: 8px;
 }
 
-/* --------------------------------------------- */
+/* ---------------------------------------------- */
+/* Products Page */
+/* ---------------------------------------------- */
 
 #products-page {
   margin: 100px 50px;
@@ -629,6 +651,8 @@ tbody td {
 }
 
 /* ---------------------------------------------- */
+/* Users Page */
+/* ---------------------------------------------- */
 
 #users-page {
   margin: 100px 50px;
@@ -662,6 +686,10 @@ tbody td {
   border-radius: 6px;
   margin-left: 10px;
 }
+
+/* ---------------------------------------------- */
+/* Responsive Layout */
+/* ---------------------------------------------- */
 
 @media (max-width: 768px) {
   .products-container {
@@ -718,6 +746,8 @@ tbody td {
 }
 
 /* ---------------------------------------------- */
+/* Receipt and Filters */
+/* ---------------------------------------------- */
 
 .filtered-orders input {
   padding: 5px 8px;
@@ -735,7 +765,9 @@ tbody td {
   left: 0;
 }
 
-/*-------------------------------------------------- */
+/* ---------------------------------------------- */
+/* User Auth Pages */
+/* ---------------------------------------------- */
 
 #user-auth > div {
   background-color: #fdf8f05a;
@@ -764,7 +796,9 @@ tbody td {
   color: #000;
 }
 
-/* ========================== */
+/* ---------------------------------------------- */
+/* Update Popup */
+/* ---------------------------------------------- */
 
 #update-popup {
   position: fixed;
@@ -792,7 +826,6 @@ tbody td {
     rgba(0, 0, 0, 0.12) 0px 4px 6px,
     rgba(0, 0, 0, 0.17) 0px 12px 13px,
     rgba(0, 0, 0, 0.09) 0px -3px 5px;
-
   display: flex;
   flex-direction: column;
   gap: 30px;
@@ -815,4 +848,15 @@ tbody td {
   padding: 5px 10px;
   font-size: 25px;
   border-radius: 10px;
+}
+
+/* ===============  */
+
+.notification-button {
+  background-color: rgb(2, 255, 2);
+  color: white;
+  font-size: 20px;
+  font-weight: 600;
+  padding: 10px 20px;
+  border-radius: 20px;
 }

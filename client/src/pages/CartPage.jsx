@@ -24,7 +24,6 @@ const CartPage = () => {
 
   return (
     <>
-      <Navbar name={"Your Logo"} />
       <div id="cart-page" className="products-container">
         {cart?.length ? (
           cart
