@@ -13,6 +13,7 @@ import toast from "react-hot-toast";
 import UpdateApp from "./UpdateApp";
 import { getCategoriesApi } from "../apis/categoryApis";
 import { getProductsApi } from "../apis/productsApi";
+import { createOrderApi } from "../apis/orderApis";
 
 const OrderForm = ({ dispalyForm, setDisplayForm }) => {
   const [name, setName] = useState("");
@@ -68,15 +69,8 @@ const OrderForm = ({ dispalyForm, setDisplayForm }) => {
 
     try {
       setLoader(true);
-      const { data } = await axios.post(
-        `${import.meta.env.VITE_API_URI}/orders/create`,
-        orderData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        },
-      );
+
+      const { data } = await createOrderApi();
 
       // handling data cache if needed
       if (data.message === "Database is updated.") {

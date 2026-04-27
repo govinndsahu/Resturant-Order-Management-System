@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import FiltereInput from "../../components/FiltereInput";
+import { deleteOrderApi, getOrdersApi } from "../../apis/orderApis";
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
@@ -12,12 +13,8 @@ const Orders = () => {
 
   const fetchOrders = async () => {
     try {
-      const { data } = await axios.get(
-        `${import.meta.env.VITE_API_URI}/orders`,
-        {
-          withCredentials: true,
-        },
-      );
+      const { data } = await getOrdersApi();
+
       if (data?.success) {
         setOrders(data.orders);
       }
@@ -50,12 +47,9 @@ const Orders = () => {
   const handleDelete = async (id) => {
     try {
       setLoader(true);
-      const { data } = await axios.delete(
-        `${import.meta.env.VITE_API_URI}/orders/delete/${id}`,
-        {
-          withCredentials: true,
-        },
-      );
+
+      const { data } = await deleteOrderApi(id);
+
       if (data?.success) {
         setLoader(false);
         setOrders((prevOrders) =>
