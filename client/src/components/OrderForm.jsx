@@ -11,6 +11,8 @@ import {
 } from "../hooks/useIndexedDB";
 import toast from "react-hot-toast";
 import UpdateApp from "./UpdateApp";
+import { getCategoriesApi } from "../apis/categoryApis";
+import { getProductsApi } from "../apis/productsApi";
 
 const OrderForm = ({ dispalyForm, setDisplayForm }) => {
   const [name, setName] = useState("");
@@ -80,13 +82,13 @@ const OrderForm = ({ dispalyForm, setDisplayForm }) => {
       if (data.message === "Database is updated.") {
         const {
           data: { products },
-        } = await axios.get(`${import.meta.env.VITE_API_URI}/products`);
+        } = await getProductsApi();
 
         await saveAllProducts(products);
 
         const {
           data: { categories },
-        } = await axios.get(`${import.meta.env.VITE_API_URI}/categories`);
+        } = await getCategoriesApi();
 
         await saveAllCategories(categories);
 

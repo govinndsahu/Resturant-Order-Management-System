@@ -1,6 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { getAllCategories } from "../../hooks/useIndexedDB";
+import {
+  createCategoryApi,
+  deleteCategoryApi,
+  getCategoriesApi,
+  updateCategoryApi,
+} from "../../apis/categoryApis";
 
 const Categories = () => {
   const createForm = useRef();
@@ -19,9 +25,8 @@ const Categories = () => {
 
   const fetchCategories = async () => {
     try {
-      const { data } = await axios.get(
-        `${import.meta.env.VITE_API_URI}/categories`,
-      );
+      const { data } = await getCategoriesApi();
+
       if (data?.success) {
         setCategories(data.categories);
       }
@@ -37,13 +42,9 @@ const Categories = () => {
   const createCategory = async () => {
     try {
       setLoading(false);
-      const { data } = await axios.post(
-        `${import.meta.env.VITE_API_URI}/categories/create`,
-        { name: createName },
-        {
-          withCredentials: true,
-        },
-      );
+
+      const { data } = await createCategoryApi(createName);
+
       if (data?.success) {
         setCreateName("");
         fetchCategories();
@@ -57,12 +58,9 @@ const Categories = () => {
   const deleteCategory = async (id) => {
     try {
       setLoading(false);
-      const { data } = await axios.delete(
-        `${import.meta.env.VITE_API_URI}/categories/delete/${id}`,
-        {
-          withCredentials: true,
-        },
-      );
+
+      const { data } = await deleteCategoryApi(id);
+
       if (data?.success) {
         setLoading(true);
         fetchCategories();
@@ -75,13 +73,9 @@ const Categories = () => {
   const handleUpdate = async (id) => {
     try {
       setLoading(false);
-      const { data } = await axios.put(
-        `${import.meta.env.VITE_API_URI}/categories/update/${id}`,
-        { name: updateName },
-        {
-          withCredentials: true,
-        },
-      );
+
+      const { data } = await updateCategoryApi(id, updateName);
+
       if (data?.success) {
         setLoading(true);
         setUpdateName("");

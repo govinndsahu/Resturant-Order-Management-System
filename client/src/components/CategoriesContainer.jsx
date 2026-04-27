@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 import { getAllCategories, saveAllCategories } from "../hooks/useIndexedDB";
+import { getCategoriesApi } from "../apis/categoryApis";
 
 const CategoriesContainer = ({ setCategory }) => {
   const [categories, setCategories] = useState("");
@@ -16,9 +17,8 @@ const CategoriesContainer = ({ setCategory }) => {
         return;
       }
 
-      const { data } = await axios.get(
-        `${import.meta.env.VITE_API_URI}/categories`,
-      );
+      const { data } = await getCategoriesApi();
+
       if (data?.success) {
         setCategories(data?.categories);
         await saveAllCategories(data?.categories);

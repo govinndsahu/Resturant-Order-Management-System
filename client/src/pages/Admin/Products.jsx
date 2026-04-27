@@ -1,6 +1,14 @@
 import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
 import { getAllCategories } from "../../hooks/useIndexedDB";
+import {
+  createProductApi,
+  deleteProductApi,
+  getProductsApi,
+  updateProductApi,
+  uploadImageApi,
+} from "../../apis/productsApi";
+import { getCategoriesApi } from "../../apis/categoryApis";
 
 const Products = () => {
   const user = JSON.parse(localStorage.getItem("user") || "{}");
@@ -37,9 +45,8 @@ const Products = () => {
 
   const fetchProducts = async () => {
     try {
-      const { data } = await axios.get(
-        `${import.meta.env.VITE_API_URI}/products`,
-      );
+      const { data } = await getProductsApi();
+
       if (data?.success) {
         setProducts(data.products);
       }
@@ -50,9 +57,8 @@ const Products = () => {
 
   const fetchCategories = async () => {
     try {
-      const { data } = await axios.get(
-        `${import.meta.env.VITE_API_URI}/categories`,
-      );
+      const { data } = await getCategoriesApi();
+
       if (data?.success) {
         setCategories(data.categories);
       }
@@ -80,16 +86,7 @@ const Products = () => {
       return;
     }
     try {
-      const { data } = await axios.post(
-        `${import.meta.env.VITE_API_URI}/products/create`,
-        productData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          withCredentials: true,
-        },
-      );
+      const { data } = await createProductApi(productData);
 
       if (data?.success) {
         uploadImage(data.id, image);
@@ -105,16 +102,7 @@ const Products = () => {
     formData.append("image", file);
 
     try {
-      const { data } = await axios.post(
-        `${import.meta.env.VITE_API_URI}/products/upload-image/${id}`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-          withCredentials: true,
-        },
-      );
+      const { data } = await uploadImageApi(id, formData);
 
       if (data?.success) {
         setProductName("");
@@ -125,8 +113,8 @@ const Products = () => {
         setFullPrice("");
         setImage("");
         setImagePreview(null);
-        formRef.current.reset();
         fetchProducts();
+        formRef.current.reset();
       }
     } catch (error) {
       console.log(error);
@@ -159,20 +147,13 @@ const Products = () => {
     }
 
     try {
-      const { data } = await axios.put(
-        `${import.meta.env.VITE_API_URI}/products/update/${id}`,
-        productData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          withCredentials: true,
-        },
-      );
+      const { data } = await updateProductApi(id, productData);
+
       if (data?.success) {
         if (image) {
           await uploadImage(id, image);
         }
+
         setProductName("");
         setCategory("");
         setPriceType("single");
@@ -181,9 +162,9 @@ const Products = () => {
         setFullPrice("");
         setImage("");
         setImagePreview(null);
-        formRef.current.reset();
         fetchProducts();
         setUpdateMode(false);
+        formRef.current.reset();
       }
     } catch (error) {
       console.log(error);
@@ -192,12 +173,8 @@ const Products = () => {
 
   const handleDeleteProduct = async (id) => {
     try {
-      const { data } = await axios.delete(
-        `${import.meta.env.VITE_API_URI}/products/delete/${id}`,
-        {
-          withCredentials: true,
-        },
-      );
+      const { data } = await deleteProductApi(id);
+
       if (data?.success) {
         fetchProducts();
       }

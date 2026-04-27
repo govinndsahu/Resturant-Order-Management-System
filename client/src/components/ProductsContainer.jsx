@@ -9,6 +9,7 @@ import {
   getAllProducts,
   addToCart,
 } from "../hooks/useIndexedDB";
+import { getProductsApi } from "../apis/productsApi";
 
 const ProductsContainer = ({
   showDetails,
@@ -33,9 +34,8 @@ const ProductsContainer = ({
         return;
       }
 
-      const { data } = await axios.get(
-        `${import.meta.env.VITE_API_URI}/products`,
-      );
+      const { data } = await getProductsApi();
+
       if (data?.success) {
         setProducts(data?.products);
         await saveAllProducts(data?.products);
