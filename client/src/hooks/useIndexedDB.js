@@ -176,11 +176,3 @@ export async function saveAllCartItems(items) {
     tx.onerror = (e) => reject(e.target.error);
   });
 }
-
-// Get cart total price
-export async function getCartTotal() {
-  const items = await getCart();
-  return items.reduce((total, item) => {
-    return total + item.full_price * item.quantity;
-  }, 0);
-}
