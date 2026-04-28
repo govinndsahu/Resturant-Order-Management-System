@@ -12,13 +12,11 @@ import historyRoutes from "./routes/historyRoutes.js";
 import pushsubscriptionRoutes from "./routes/pushsubscriptionRoutes.js";
 
 import { pushNotificationSetup } from "./config/webpush.js";
-import { globalError, handleCors } from "./utils/utils.js";
+import { globalError, handleAppListen, handleCors } from "./utils/utils.js";
 
 const app = express();
 
 const port = process.env.PORT;
-
-const whitelist = [process.env.CLIENT_URL, "http://192.168.1.2:5173"];
 
 pushNotificationSetup();
 
@@ -46,13 +44,10 @@ app.use("/histories", historyRoutes);
 
 app.use("/push-subscriptions", pushsubscriptionRoutes);
 
-app.use(globalError());
+app.use(globalError);
 
 if (!process.env.AWS_LAMBDA_FUNCTION_VERSION) {
-  await connectDB();
-  app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
-  });
+  await handleAppListen(app, port, connectDB);
 }
 
 export default app;

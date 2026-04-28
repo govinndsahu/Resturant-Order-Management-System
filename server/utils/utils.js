@@ -1,5 +1,7 @@
 import cors from "cors";
 
+const whitelist = [process.env.CLIENT_URL, "http://192.168.1.2:5173"];
+
 export const handleCors = () => {
   return cors({
     origin: function (origin, callback) {
@@ -17,5 +19,12 @@ export const globalError = (err, req, res, next) => {
   console.log(err);
   return res.status(err.status || 500).json({
     error: "Something went wrong",
+  });
+};
+
+export const handleAppListen = async (app, port, connectDB) => {
+  await connectDB();
+  app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
   });
 };
