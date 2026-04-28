@@ -1,10 +1,11 @@
 import React, { useState } from "react";
+import { Toaster } from "react-hot-toast";
+
 import Navbar from "../components/Navbar";
 import CategoriesContainer from "../components/CategoriesContainer";
 import ProductsContainer from "../components/ProductsContainer";
 import ProceedContainer from "../components/ProceedContainer";
 import OrderForm from "../components/OrderForm";
-import { Toaster } from "react-hot-toast";
 
 const HomePage = () => {
   const [displayForm, setDisplayForm] = useState(false);

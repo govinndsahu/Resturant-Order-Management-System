@@ -1,7 +1,8 @@
 import React, { useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import Navbar from "../../components/Navbar";
 import axios from "axios";
+
+import Navbar from "../../components/Navbar";
 import { userRegisterApi } from "../../apis/userApis";
 
 const Register = () => {

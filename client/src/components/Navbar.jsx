@@ -1,7 +1,8 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
-import { CartContext } from "../contexts/Cart";
 import gsap from "gsap";
+
+import { CartContext } from "../contexts/Cart";
 import { userLogoutApi } from "../apis/userApis";
 
 const Navbar = ({ name }) => {

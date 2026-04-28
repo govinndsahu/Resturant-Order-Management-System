@@ -1,6 +1,7 @@
 import React from "react";
-import { dashboardPages } from "../../constants";
 import { Link } from "react-router-dom";
+
+import { dashboardPages } from "../../constants";
 import NotificationButton from "../../components/NotificationButton";
 
 const Dashboard = () => {

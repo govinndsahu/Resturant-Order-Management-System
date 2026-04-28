@@ -1,20 +1,23 @@
 import React, { useRef, useState } from "react";
-import { useLocalStorage } from "../hooks/useLocalStorage";
+
 import axios from "axios";
-import { useCart } from "../contexts/Cart";
+import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import { parse } from "postcss";
+
+import { useLocalStorage } from "../hooks/useLocalStorage";
+import { useCart } from "../contexts/Cart";
+import { getCategoriesApi } from "../apis/categoryApis";
+import { getProductsApi } from "../apis/productsApi";
+import { createOrderApi } from "../apis/orderApis";
+import { sendNotificationApi } from "../apis/pushSubscriptionApis";
+
 import {
   clearCart,
   saveAllCategories,
   saveAllProducts,
 } from "../hooks/useIndexedDB";
-import toast from "react-hot-toast";
+
 import UpdateApp from "./UpdateApp";
-import { getCategoriesApi } from "../apis/categoryApis";
-import { getProductsApi } from "../apis/productsApi";
-import { createOrderApi } from "../apis/orderApis";
-import { sendNotificationApi } from "../apis/pushSubscriptionApis";
 
 const OrderForm = ({ dispalyForm, setDisplayForm }) => {
   const [name, setName] = useState("");

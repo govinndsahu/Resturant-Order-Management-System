@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
+
 import { getCart } from "../hooks/useIndexedDB";
 
 export const CartContext = createContext();

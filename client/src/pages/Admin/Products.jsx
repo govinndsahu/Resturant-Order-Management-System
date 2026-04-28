@@ -1,6 +1,9 @@
-import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
+import axios from "axios";
+
 import { getAllCategories } from "../../hooks/useIndexedDB";
+
+import { getCategoriesApi } from "../../apis/categoryApis";
 import {
   createProductApi,
   deleteProductApi,
@@ -8,7 +11,6 @@ import {
   updateProductApi,
   uploadImageApi,
 } from "../../apis/productsApi";
-import { getCategoriesApi } from "../../apis/categoryApis";
 
 const Products = () => {
   const user = JSON.parse(localStorage.getItem("user") || "{}");
@@ -26,6 +28,8 @@ const Products = () => {
   const [image, setImage] = useState("");
   const [imagePreview, setImagePreview] = useState(null);
 
+  const [updateMode, setUpdateMode] = useState(false);
+
   const imageRef = useRef();
   const refImage = useRef();
   const formRef = useRef();
@@ -40,8 +44,6 @@ const Products = () => {
     image,
     id: productId,
   };
-
-  const [updateMode, setUpdateMode] = useState(false);
 
   const fetchProducts = async () => {
     try {

@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { useLocalStorage } from "../hooks/useLocalStorage";
 import axios from "axios";
-import { useCart } from "../contexts/Cart";
 import toast from "react-hot-toast";
+
+import { useCart } from "../contexts/Cart";
+import { useLocalStorage } from "../hooks/useLocalStorage";
+
+import { getProductsApi } from "../apis/productsApi";
 
 import {
   saveAllProducts,
   getAllProducts,
   addToCart,
 } from "../hooks/useIndexedDB";
-import { getProductsApi } from "../apis/productsApi";
 
 const ProductsContainer = ({
   showDetails,

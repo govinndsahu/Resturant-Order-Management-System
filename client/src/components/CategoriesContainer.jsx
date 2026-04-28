@@ -1,5 +1,6 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
+import axios from "axios";
+
 import { useLocalStorage } from "../hooks/useLocalStorage";
 import { getAllCategories, saveAllCategories } from "../hooks/useIndexedDB";
 import { getCategoriesApi } from "../apis/categoryApis";

@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
+
 import { getAllCategories } from "../../hooks/useIndexedDB";
+
 import {
   createCategoryApi,
   deleteCategoryApi,
@@ -15,13 +17,13 @@ const Categories = () => {
 
   const user = JSON.parse(localStorage.getItem("user"));
 
+  const [categories, setCategories] = useState([]);
+
   const [switchForm, setSwitchForm] = useState(true);
   const [createName, setCreateName] = useState("");
   const [updateName, setUpdateName] = useState("");
   const [categoryId, setCategoryId] = useState("");
   const [loading, setLoading] = useState(true);
-
-  const [categories, setCategories] = useState([]);
 
   const fetchCategories = async () => {
     try {

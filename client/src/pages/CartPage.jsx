@@ -1,9 +1,12 @@
 import React, { useState } from "react";
-import Navbar from "../components/Navbar";
-import { useCart } from "../contexts/Cart";
 import { Link } from "react-router-dom";
+
+import Navbar from "../components/Navbar";
 import ProceedContainer from "../components/ProceedContainer";
 import OrderForm from "../components/OrderForm";
+
+import { useCart } from "../contexts/Cart";
+
 import { saveAllCartItems } from "../hooks/useIndexedDB";
 
 const CartPage = () => {
