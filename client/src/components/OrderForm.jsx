@@ -14,6 +14,7 @@ import UpdateApp from "./UpdateApp";
 import { getCategoriesApi } from "../apis/categoryApis";
 import { getProductsApi } from "../apis/productsApi";
 import { createOrderApi } from "../apis/orderApis";
+import { sendNotificationApi } from "../apis/pushSubscriptionApis";
 
 const OrderForm = ({ dispalyForm, setDisplayForm }) => {
   const [name, setName] = useState("");
@@ -70,7 +71,7 @@ const OrderForm = ({ dispalyForm, setDisplayForm }) => {
     try {
       setLoader(true);
 
-      const { data } = await createOrderApi();
+      const { data } = await createOrderApi(orderData);
 
       // handling data cache if needed
       if (data.message === "Database is updated.") {
@@ -105,6 +106,8 @@ const OrderForm = ({ dispalyForm, setDisplayForm }) => {
         await clearCart();
         toast.success("Ordered successfully.");
         navigate("/");
+
+        await sendNotificationApi();
       }
     } catch (error) {
       console.log(error);

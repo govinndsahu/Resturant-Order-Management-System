@@ -1,3 +1,5 @@
+import { saveSubscriberApi } from "../apis/pushSubscriptionApis";
+
 const PUBLIC_VAPID_KEY = import.meta.env.VITE_PUBLIC_VAPID_KEY;
 
 // Convert VAPID key to Uint8Array (required format)
@@ -53,15 +55,7 @@ export async function subscribeToPush() {
     });
 
     // Step 5: Send subscription to your backend
-    await fetch(
-      `${import.meta.env.VITE_API_URI}/push-subscriptions/subscribe`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(subscription),
-        credentials: "include", // Include cookies if needed
-      },
-    );
+    await saveSubscriberApi(subscription);
 
     return subscription;
   } catch (err) {
