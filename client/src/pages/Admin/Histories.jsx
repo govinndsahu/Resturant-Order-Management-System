@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import FiltereInput from "../../components/FiltereInput";
+import { deleteHistoriesApi, getHistoriesApi } from "../../apis/historyApis";
 
 const Histories = () => {
   const [histories, setHistories] = useState([]);
@@ -20,12 +21,8 @@ const Histories = () => {
 
   const fetchHistories = async () => {
     try {
-      const { data } = await axios.get(
-        `${import.meta.env.VITE_API_URI}/histories`,
-        {
-          withCredentials: true,
-        },
-      );
+      const { data } = await getHistoriesApi();
+
       if (data?.success) {
         setHistories(data?.histories);
       }
@@ -41,12 +38,9 @@ const Histories = () => {
   const handleDelete = async (id) => {
     try {
       setLoader(true);
-      const { data } = await axios.delete(
-        `${import.meta.env.VITE_API_URI}/histories/delete/${id}`,
-        {
-          withCredentials: true,
-        },
-      );
+
+      const { data } = await deleteHistoriesApi(id);
+
       if (data?.success) {
         setLoader(false);
         setHistories((prevHistories) =>

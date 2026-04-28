@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import FiltereInput from "../../components/FiltereInput";
 import { deleteOrderApi, getOrdersApi } from "../../apis/orderApis";
+import { createHistoriesApi } from "../../apis/historyApis";
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
@@ -29,13 +30,8 @@ const Orders = () => {
 
   const handleSendHistory = async (order) => {
     try {
-      const { data } = await axios.post(
-        `${import.meta.env.VITE_API_URI}/histories/create`,
-        { order },
-        {
-          withCredentials: true,
-        },
-      );
+      const { data } = await createHistoriesApi(order);
+
       if (data?.success) {
         handleDelete(order._id);
       }
