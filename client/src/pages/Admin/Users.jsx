@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { deleteUserApi, getUsersApi, updateUserApi } from "../../apis/userApis";
 
 const Users = () => {
   const user = JSON.parse(localStorage.getItem("user"));
@@ -7,10 +8,8 @@ const Users = () => {
 
   const fetchUsers = async () => {
     try {
-      const { data } = await axios.get(
-        `${import.meta.env.VITE_API_URI}/users`,
-        { withCredentials: true },
-      );
+      const { data } = await getUsersApi();
+
       if (data?.success) {
         setUsers(data.users);
       } else {
@@ -23,13 +22,8 @@ const Users = () => {
 
   const handleMakeAdmin = async (userId) => {
     try {
-      const { data } = await axios.post(
-        `${import.meta.env.VITE_API_URI}/users/update/${userId}`,
-        {},
-        {
-          withCredentials: true,
-        },
-      );
+      const { data } = await updateUserApi(userId);
+
       if (data?.success) {
         fetchUsers(); // Refresh the user list after making an admin
       } else {
@@ -42,10 +36,8 @@ const Users = () => {
 
   const handleDeleteUser = async (userId) => {
     try {
-      const { data } = await axios.delete(
-        `${import.meta.env.VITE_API_URI}/users/delete/${userId}`,
-        { withCredentials: true },
-      );
+      const { data } = await deleteUserApi(userId);
+
       if (data?.success) {
         fetchUsers(); // Refresh the user list after deleting a user
       } else {

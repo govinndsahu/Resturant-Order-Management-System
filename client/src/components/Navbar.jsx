@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { CartContext } from "../contexts/Cart";
 import gsap from "gsap";
-import axios from "axios";
+import { userLogoutApi } from "../apis/userApis";
 
 const Navbar = ({ name }) => {
   const [cart] = useContext(CartContext);
@@ -28,12 +28,7 @@ const Navbar = ({ name }) => {
 
   const handleLogout = async () => {
     try {
-      const { data } = await axios.post(
-        `${import.meta.env.VITE_API_URI}/users/logout`,
-        {},
-        { withCredentials: true },
-      );
-
+      const { data } = await userLogoutApi();
       if (data?.success) {
         navigate("/loginpage");
         localStorage.removeItem("user");
@@ -73,14 +68,14 @@ const Navbar = ({ name }) => {
                         Cart ({cart?.length})
                       </NavLink>
                     </div>
-                    <div
+                    <button
                       id="logout-btn"
                       className="text-[21px]"
                       onClick={(e) => {
                         handleLogout();
                       }}>
                       <span>Logout</span>
-                    </div>
+                    </button>
                   </div>
                 ) : (
                   <NavLink
@@ -134,7 +129,6 @@ const Navbar = ({ name }) => {
           id="menu-logout-btn"
           onClick={(e) => {
             hideMenu();
-            handleLogout();
           }}
           className="text-[20px] bg-[yellow] text-black rounded-2xl">
           <button onClick={() => handleLogout()}>Logout</button>

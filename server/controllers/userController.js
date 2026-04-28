@@ -128,8 +128,11 @@ export const logoutUser = async (req, res, next) => {
   try {
     const sessionId = req.signedCookies.sid;
     await Session.findByIdAndDelete(sessionId);
-
-    return res.clearCookie("sid");
+    res.clearCookie("sid");
+    return res.status(200).json({
+      success: true,
+      message: "User logged out successfully",
+    });
   } catch (error) {
     next(error);
     console.error("Error logging out user:", error);

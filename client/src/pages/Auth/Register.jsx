@@ -2,6 +2,7 @@ import React, { useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Navbar from "../../components/Navbar";
 import axios from "axios";
+import { userRegisterApi } from "../../apis/userApis";
 
 const Register = () => {
   const [name, setName] = useState("");
@@ -18,16 +19,8 @@ const Register = () => {
 
   const handleRegisterUser = async () => {
     try {
-      const { data } = await axios.post(
-        `${import.meta.env.VITE_API_URI}/users/register`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          withCredentials: true,
-        },
-      );
+      const { data } = await userRegisterApi(formData);
+
       if (data.success) {
         navigate("/");
         localStorage.setItem("user", JSON.stringify(data.user));

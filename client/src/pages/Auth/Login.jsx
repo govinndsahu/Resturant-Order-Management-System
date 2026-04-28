@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { userLoginApi } from "../../apis/userApis";
 
 const Login = () => {
   const [phone, setPhone] = useState("");
@@ -14,16 +15,8 @@ const Login = () => {
 
   const handleLoginUser = async () => {
     try {
-      const { data } = await axios.post(
-        `${import.meta.env.VITE_API_URI}/users/login`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          withCredentials: true,
-        },
-      );
+      const { data } = await userLoginApi(formData);
+
       if (data?.success) {
         localStorage.setItem("user", JSON.stringify(data.user));
         navigate("/");
