@@ -28,3 +28,12 @@ export const handleAppListen = async (app, port, connectDB) => {
     console.log(`Server is running on port ${port}`);
   });
 };
+
+export const setCookie = (res, session) =>
+  res.cookie("sid", session._id.toString(), {
+    httpOnly: true,
+    secure: true,
+    signed: true,
+    sameSite: "lax",
+    maxAge: 60 * 1000 * 60 * 24 * 365, // 365 days
+  });

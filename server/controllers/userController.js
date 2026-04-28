@@ -3,6 +3,7 @@ import Session from "../models/sessionModel.js";
 import User from "../models/userModel.js";
 import { loginSchema, registerSchema } from "../validator/userSchema.js";
 import bcrypt from "bcrypt";
+import { setCookie } from "../utils/utils.js";
 
 export const registerUser = async (req, res, next) => {
   const { data, error, success } = registerSchema.safeParse(req.body);
@@ -46,13 +47,7 @@ export const registerUser = async (req, res, next) => {
 
     await session.save();
 
-    res.cookie("sid", session._id.toString(), {
-      httpOnly: true,
-      secure: true,
-      signed: true,
-      sameSite: "lax",
-      maxAge: 60 * 1000 * 60 * 24 * 365, // 365 days
-    });
+    setCookie(res, session);
 
     return res.status(201).json({
       success: true,
@@ -102,13 +97,7 @@ export const loginUser = async (req, res, next) => {
 
     await session.save();
 
-    res.cookie("sid", session._id.toString(), {
-      httpOnly: true,
-      secure: true,
-      signed: true,
-      sameSite: "lax",
-      maxAge: 60 * 1000 * 60 * 24 * 365, // 365 days
-    });
+    setCookie(res, session);
 
     return res.status(200).json({
       success: true,
@@ -127,8 +116,11 @@ export const loginUser = async (req, res, next) => {
 export const logoutUser = async (req, res, next) => {
   try {
     const sessionId = req.signedCookies.sid;
+
     await Session.findByIdAndDelete(sessionId);
+
     res.clearCookie("sid");
+
     return res.status(200).json({
       success: true,
       message: "User logged out successfully",
@@ -145,7 +137,9 @@ export const logoutUser = async (req, res, next) => {
 export const getAllUsers = async (req, res, next) => {
   try {
     const users = await User.find({});
+
     return res.status(200).json({ success: true, users });
+    
   } catch (error) {
     next(error);
     console.error("Error fetching all users:", error);
