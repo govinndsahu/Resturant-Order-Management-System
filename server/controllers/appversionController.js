@@ -14,7 +14,7 @@ export const updateAppVersion = async (req, res, next) => {
       await version.save();
     }
 
-    return res.end("ok");
+    next();
   } catch (error) {
     next(error);
   }
