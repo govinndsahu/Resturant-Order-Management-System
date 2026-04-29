@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import "./HomePage.css";
 import { Toaster } from "react-hot-toast";
 
 import Navbar from "../components/Navbar";

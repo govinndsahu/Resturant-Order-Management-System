@@ -7,32 +7,6 @@
   backdrop-filter: blur(10px);
 }
 
-.categories-container {
-  overflow-x: scroll;
-  background-color: #fffefe79;
-  backdrop-filter: blur(8px);
-  padding-inline: 20px;
-}
-
-.categories-container span {
-  margin-top: 10px;
-}
-
-.categories-container::-webkit-scrollbar {
-  width: 0;
-}
-
-.active {
-  text-decoration: underline;
-}
-
-.active-category {
-  background-color: #fbff22;
-  color: #000;
-  padding: 2px 8px;
-  border-radius: 5px;
-}
-
 /* ---------------------------------------------- */
 /* Product Grid and Cards */
 /* ---------------------------------------------- */
@@ -78,57 +52,6 @@
   margin-block: 10px;
 }
 
-.add-to-cart-btn {
-  background-color: #fbff22;
-  color: #000;
-  padding: 2px 8px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-top: 4px;
-}
-
-.half-price-content,
-.full-price-content {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 20px;
-  margin-block: 18px;
-}
-
-.full-price-content span,
-.half-price-content span {
-  background-color: brown;
-  padding: 3px 4px;
-  border-radius: 6px;
-  margin-right: 4px;
-}
-
-.half-price-content button,
-.full-price-content button {
-  padding: 4px 6px;
-  border-radius: 12px;
-  background-color: rgb(255, 225, 0);
-  cursor: pointer;
-  outline: none;
-  border: none;
-}
-
-.proceed-container {
-  background: #ffffe654;
-  backdrop-filter: blur(4px);
-  padding-inline: 50px;
-}
-
-.proceed-btn {
-  background: rgb(255, 170, 0);
-  color: #000;
-  padding-block: 6px;
-  padding-inline: 14px;
-  border-radius: 20px;
-}
-
 /* ---------------------------------------------- */
 /* Cart and Checkout */
 /* ---------------------------------------------- */
@@ -171,63 +94,13 @@
 /* Order Form */
 /* ---------------------------------------------- */
 
-.order-form {
-  position: fixed;
-  top: 0;
-  left: 0;
-  background-color: #efefef7f;
-  backdrop-filter: blur(10px);
-  /* display: none; */
-  align-items: center;
-  justify-content: center;
-}
 
-.order-form #form {
-  background-color: #fffde7b8;
-  /* height: 60%; */
-  border-radius: 10px;
-}
 
-.order-form form {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  padding: 50px;
-}
 
-.order-form label {
-  font-size: 20px;
-}
 
-.order-form input {
-  background-color: #fffae26e;
-  font-size: 20px;
-  padding-block: 2px;
-  padding-inline: 10px;
-  width: 100%;
-  border-radius: 10px;
-}
 
-.order-form h2 {
-  font-size: 28px;
-  margin-top: 30px;
-  margin-inline: 50px;
-  font-weight: bold;
-}
 
-#confirm-btn {
-  width: 100px;
-  padding-block: 5px;
-  border-radius: 10px;
-  background-color: rgb(47, 119, 252);
-}
 
-.table-no-validate {
-  color: red;
-  font-size: 15px;
-  position: absolute;
-  top: 35%;
-}
 
 /* ---------------------------------------------- */
 /* Loader */
@@ -719,12 +592,6 @@ tbody td {
   }
   .nav-wrapper {
     padding-inline: 20px;
-  }
-  .order-form input {
-    width: 100%;
-  }
-  .order-form form {
-    padding: 15px;
   }
   #dashboard-page {
     margin-inline: 20px;

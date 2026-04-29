@@ -1,16 +1,18 @@
+import { Suspense, lazy } from "react";
 import HomePage from "./pages/HomePage.jsx";
 import CartPage from "./pages/CartPage.jsx";
-import Register from "./pages/Auth/Register.jsx";
-import Login from "./pages/Auth/Login.jsx";
-import Dashboard from "./pages/Admin/Dashboard.jsx";
 import Navbar from "./components/Navbar.jsx";
-import Categories from "./pages/Admin/Categories.jsx";
-import Orders from "./pages/Admin/Orders.jsx";
-import Histories from "./pages/Admin/Histories.jsx";
-import Products from "./pages/Admin/Products.jsx";
-import Users from "./pages/Admin/Users.jsx";
-
+import Loader from "./components/Loader.jsx";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+
+const Register = lazy(() => import("./pages/Auth/Register.jsx"));
+const Login = lazy(() => import("./pages/Auth/Login.jsx"));
+const Dashboard = lazy(() => import("./pages/Admin/Dashboard.jsx"));
+const Categories = lazy(() => import("./pages/Admin/Categories.jsx"));
+const Orders = lazy(() => import("./pages/Admin/Orders.jsx"));
+const Histories = lazy(() => import("./pages/Admin/Histories.jsx"));
+const Products = lazy(() => import("./pages/Admin/Products.jsx"));
+const Users = lazy(() => import("./pages/Admin/Users.jsx"));
 
 const App = () => {
   if ("serviceWorker" in navigator) {
@@ -24,18 +26,20 @@ const App = () => {
   return (
     <BrowserRouter>
       <Navbar name={"Cafeteria"} />
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/cartpage" element={<CartPage />} />
-        <Route path="/registerpage" element={<Register />} />
-        <Route path="/loginpage" element={<Login />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/dashboard/categories" element={<Categories />} />
-        <Route path="/dashboard/products" element={<Products />} />
-        <Route path="/dashboard/orders" element={<Orders />} />
-        <Route path="/dashboard/orders-histories" element={<Histories />} />
-        <Route path="/dashboard/users" element={<Users />} />
-      </Routes>
+      <Suspense fallback={<Loader />}>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/cartpage" element={<CartPage />} />
+          <Route path="/registerpage" element={<Register />} />
+          <Route path="/loginpage" element={<Login />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard/categories" element={<Categories />} />
+          <Route path="/dashboard/products" element={<Products />} />
+          <Route path="/dashboard/orders" element={<Orders />} />
+          <Route path="/dashboard/orders-histories" element={<Histories />} />
+          <Route path="/dashboard/users" element={<Users />} />
+        </Routes>
+      </Suspense>
     </BrowserRouter>
   );
 };
