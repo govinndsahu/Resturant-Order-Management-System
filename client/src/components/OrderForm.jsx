@@ -18,6 +18,9 @@ import {
 } from "../hooks/useIndexedDB";
 
 import UpdateApp from "./UpdateApp";
+import LocationError from "./LocationError";
+import Tutorial from "./Tutorial";
+import LocationErrorMessage from "./LocationErrorMessage";
 
 const OrderForm = ({ dispalyForm, setDisplayForm }) => {
   const [name, setName] = useState("");
@@ -25,6 +28,8 @@ const OrderForm = ({ dispalyForm, setDisplayForm }) => {
   const [showTableValidate, setShowTableValidate] = useState(false);
 
   const [isUpdated, setIsUpdated] = useState(true);
+
+  const [locationError, setLocationError] = useState(false);
 
   const [loader, setLoader] = useState(false);
 
@@ -62,19 +67,53 @@ const OrderForm = ({ dispalyForm, setDisplayForm }) => {
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (tableNumber === "") {
-      setShowTableValidate(true);
-      return;
-    } else {
-      setShowTableValidate(false);
-    }
+  const getUserLocation = () => {
+    return new Promise((resolve, reject) => {
+      if (!navigator.geolocation) {
+        const err = new Error("Geolocation is not supported by this browser.");
+        reject(err);
+        setLoader(false);
+        return;
+      }
 
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          resolve(position);
+        },
+        (err) => {
+          console.error("Error getting location:", err.message);
+          reject(err);
+          setLoader(false);
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 60000,
+          maximumAge: 1000 * 60 * 10,
+        },
+      );
+    });
+  };
+
+  const handleSubmit = async (e) => {
     try {
+      e.preventDefault();
+
+      if (tableNumber === "") {
+        setShowTableValidate(true);
+        return;
+      } else {
+        setShowTableValidate(false);
+      }
+
       setLoader(true);
 
-      const { data } = await createOrderApi(orderData);
+      const position = await getUserLocation();
+
+      const { data } = await createOrderApi({
+        ...orderData,
+        lat: position?.coords.latitude,
+        lng: position?.coords.longitude,
+      });
 
       // handling data cache if needed
       if (data.message === "Database is updated.") {
@@ -113,7 +152,10 @@ const OrderForm = ({ dispalyForm, setDisplayForm }) => {
         await sendNotificationApi();
       }
     } catch (error) {
-      console.log(error);
+      setLoader(false);
+      if (error.status === 403) {
+        setLocationError(true);
+      }
     }
   };
 
@@ -181,6 +223,9 @@ const OrderForm = ({ dispalyForm, setDisplayForm }) => {
         </div>
       </div>
       {!isUpdated ? <UpdateApp /> : null}
+      {locationError ? (
+        <LocationErrorMessage setLocationError={setLocationError} />
+      ) : null}
     </>
   );
 };

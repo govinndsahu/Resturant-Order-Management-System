@@ -9,10 +9,16 @@ import {
   isNewAppVersion,
   isStaff,
 } from "../middlewares/validateMiddleware.js";
+import { validateRestaurantLocation } from "../middlewares/validateLocationMiddleware.js";
 
 const router = express.Router();
 
-router.post("/create", isNewAppVersion, createOrder);
+router.post(
+  "/create",
+  validateRestaurantLocation,
+  isNewAppVersion,
+  createOrder,
+);
 
 router.get("/", isLogedIn, isStaff, getOrders);
 
