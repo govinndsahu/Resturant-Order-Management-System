@@ -20,6 +20,7 @@ This application is designed to showcase a complete modern web product with:
 - **Admin dashboard** for managing categories, products, orders, histories, and users
 - **Protected API routes** using middleware for authentication and staff access
 - **Web Push Notifications** integration via VAPID key setup
+- **Client-side performance optimization** with route-based lazy loading so admin/auth code and homepage-specific CSS load only when needed
 - **CORS-safe server** with allowed origin handling and global error handling
 - **Modern frontend architecture** with React Context for cart state
 - **Service worker registration** for offline-friendly experience
