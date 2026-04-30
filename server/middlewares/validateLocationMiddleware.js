@@ -4,9 +4,7 @@ const RESTAURANT = {
   name: process.env.RESTAURANT_NAME,
   lat: parseInt(process.env.RESTAURANT_LATITUDE),
   lng: parseInt(process.env.RESTAURANT_LONGITUDE),
-  radiusMeters: parseInt(
-    process.env.parseInt(process.env.RESTAURANT_LONGITUDE),
-  ),
+  radiusMeters: parseInt(process.env.RESTAURANT_ALLOWED_AREA_IN_RADIUS),
 };
 
 export const validateRestaurantLocation = (req, res, next) => {

@@ -1,0 +1,37 @@
+# "org" ensures this Service is used with the correct Serverless Framework Access Key.
+org: govinndsahu
+# "app" enables Serverless Framework Dashboard features and sharing them with other Services.
+app: cafebackend
+# "service" is the name of this project. This will also be added to your AWS resource names.
+service: cafebackend
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: ap-south-1
+  # Uncomment to easily set up a custom domain. Read the docs for more details:
+  # https://www.serverless.com/framework/docs/providers/aws/guide/domains
+  # domain: api.example.com
+  environment:
+    PORT: ${env:PORT}
+    CLIENT_URL: ${env:CLIENT_URL}
+    COOKIE_PARSER_SESSION_KEY: ${env:COOKIE_PARSER_SESSION_KEY}
+    MONGODB_CONNECTION_URL: ${env:MONGODB_CONNECTION_URL}
+    WEB_PUSH_PUBLIC_KEY: ${env:WEB_PUSH_PUBLIC_KEY}
+    WEB_PUSH_PRIVATE_KEY: ${env:WEB_PUSH_PRIVATE_KEY}
+    RESTAURANT_NAME: ${env:RESTAURANT_NAME}
+    RESTAURANT_LATITUDE: ${env:RESTAURANT_LATITUDE}
+    RESTAURANT_LONGITUDE: ${env:RESTAURANT_LONGITUDE}
+    RESTAURANT_ALLOWED_AREA_IN_RADIUS: ${env:RESTAURANT_ALLOWED_AREA_IN_RADIUS}
+
+functions:
+  api:
+    handler: handler.handler
+    events:
+      - httpApi: "*"
+
+package:
+  patterns:
+    - "!.env"
+    - "!.git/**"
+    - "!README.md"
