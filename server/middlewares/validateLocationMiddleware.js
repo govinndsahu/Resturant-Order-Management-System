@@ -1,10 +1,12 @@
 import { getDistanceInMeters } from "../utils/utils.js";
 
 const RESTAURANT = {
-  name: "My Restaurant",
-  lat: 22.00293751611305, // ← Replace with your restaurant's latitude
-  lng: 82.10443740281173, // ← Replace with your restaurant's longitude
-  radiusMeters: 50, // ← Allowed radius (50 meters recommended)
+  name: process.env.RESTAURANT_NAME,
+  lat: parseInt(process.env.RESTAURANT_LATITUDE),
+  lng: parseInt(process.env.RESTAURANT_LONGITUDE),
+  radiusMeters: parseInt(
+    process.env.parseInt(process.env.RESTAURANT_LONGITUDE),
+  ),
 };
 
 export const validateRestaurantLocation = (req, res, next) => {
