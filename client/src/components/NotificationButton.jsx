@@ -2,6 +2,8 @@ import { subscribeToPush } from "../webpush/usePushNotification.js";
 
 export default function NotificationButton() {
   const handleSubscribe = async () => {
+    console.log("is working....?");
+
     const sub = await subscribeToPush();
 
     console.log(sub);
