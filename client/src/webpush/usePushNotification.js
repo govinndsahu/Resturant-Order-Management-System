@@ -10,6 +10,32 @@ function urlBase64ToUint8Array(base64String) {
   return Uint8Array.from([...rawData].map((c) => c.charCodeAt(0)));
 }
 
+function waitForServiceWorker(registration) {
+  return new Promise((resolve, reject) => {
+    if (registration.active) return resolve();
+
+    const timeout = setTimeout(() => {
+      reject(new Error("Service worker activation timed out"));
+    }, 10_000);
+
+    const sw = registration.installing ?? registration.waiting;
+    if (!sw) {
+      clearTimeout(timeout);
+      return reject(new Error("No service worker installing or waiting"));
+    }
+
+    sw.addEventListener("statechange", (e) => {
+      if (e.target.state === "activated") {
+        clearTimeout(timeout);
+        resolve();
+      } else if (e.target.state === "redundant") {
+        clearTimeout(timeout);
+        reject(new Error("Service worker became redundant"));
+      }
+    });
+  });
+}
+
 export async function subscribeToPush() {
   try {
     console.log("yes working...");
