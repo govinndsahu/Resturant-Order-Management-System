@@ -14,6 +14,8 @@ const ProceedContainer = ({ setDisplayForm }) => {
 
   const [showTutorial, setShowTutorial] = useState(false);
 
+  const [loader, setLoader] = useState(false);
+
   const getUserLocation = () => {
     return new Promise((resolve, reject) => {
       if (!navigator.geolocation) {
@@ -37,7 +39,7 @@ const ProceedContainer = ({ setDisplayForm }) => {
         {
           enableHighAccuracy: true,
           timeout: 60000,
-          maximumAge: 1000 * 60 * 10,
+          maximumAge: 0,
         },
       );
     });
@@ -64,7 +66,11 @@ const ProceedContainer = ({ setDisplayForm }) => {
       return;
     }
 
+    setLoader(true);
+
     await getUserLocation();
+
+    setLoader(false);
 
     setDisplayForm(true);
   };
@@ -73,11 +79,18 @@ const ProceedContainer = ({ setDisplayForm }) => {
     <>
       <div className="proceed-container w-full h-15 lg:h-20 flex justify-between items-center fixed left-0 bottom-0 ">
         <b className="text-[20px] lg:text-4xl">Total Rs.{getTotalPrice()}</b>
-        <span
-          className="proceed-btn lg:text-2xl"
-          onClick={(e) => handleDisplayForm(e)}>
-          Proceed
-        </span>
+
+        {loader ? (
+          <div>
+            <span className="proceed-loader"></span>
+          </div>
+        ) : (
+          <span
+            className="proceed-btn lg:text-2xl"
+            onClick={(e) => handleDisplayForm(e)}>
+            Proceed
+          </span>
+        )}
       </div>
       {locationError ? (
         <LocationError
@@ -87,9 +100,7 @@ const ProceedContainer = ({ setDisplayForm }) => {
       ) : null}
       {showTutorial ? <Tutorial setShowTutorial={setShowTutorial} /> : null}
     </>
-  ) : (
-    <span></span>
-  );
+  ) : null;
 };
 
 export default ProceedContainer;
