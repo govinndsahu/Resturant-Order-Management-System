@@ -1,6 +1,6 @@
 import cors from "cors";
 
-const whitelist = [process.env.CLIENT_URL, "http://192.168.1.2:5173"];
+const whitelist = [process.env.CLIENT_URL];
 
 export const handleCors = () => {
   return cors({
@@ -34,7 +34,7 @@ export const setCookie = (res, session) =>
     httpOnly: true,
     secure: true,
     signed: true,
-    sameSite: "lax",
+    sameSite: "none",
     maxAge: 60 * 1000 * 60 * 24 * 365, // 365 days
   });
 
