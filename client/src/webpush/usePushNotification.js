@@ -13,53 +13,39 @@ function urlBase64ToUint8Array(base64String) {
 export async function subscribeToPush() {
   try {
     console.log("yes working...");
+
+    if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
+      console.warn("Push not supported");
+      return null;
+    }
+
     // Step 1: Get the active service worker
     const registration = await navigator.serviceWorker.ready;
 
-    console.log("working...");
-
-    console.log(registration);
-
-    // Step 2: Check browser support
-    if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
-      console.warn("Push not supported");
-
-      const subscription = await registration.pushManager.getSubscription();
-
-      if (!subscription) {
-        console.warn("No subscription found");
-        return null;
-      }
-
-      await subscription.unsubscribe();
-
-      return null;
+    if (!registration) {
+      console.log("No SW found, registering...");
+      registration = await navigator.serviceWorker.register("/sw.js"); // 👈 adjust path
     }
 
-    // Step 3: Request notification permission
+    await waitForServiceWorker(registration);
+
+    console.log("working...");
+
     const permission = await Notification.requestPermission();
     if (permission !== "granted") {
       console.warn("Permission denied");
-
       const subscription = await registration.pushManager.getSubscription();
-
-      if (!subscription) {
-        console.warn("No subscription found");
-        return null;
-      }
-
-      await subscription.unsubscribe();
-
+      if (subscription) await subscription.unsubscribe();
       return null;
     }
 
-    // Step 4: Subscribe to push
+    // Step 5: Subscribe to push
     const subscription = await registration.pushManager.subscribe({
-      userVisibleOnly: true, // Must be true
+      userVisibleOnly: true,
       applicationServerKey: urlBase64ToUint8Array(PUBLIC_VAPID_KEY),
     });
 
-    // Step 5: Send subscription to your backend
+    // Step 6: Send subscription to your backend
     await saveSubscriberApi(subscription);
 
     return subscription;
