@@ -3,8 +3,8 @@ import HomePage from "./pages/HomePage.jsx";
 import CartPage from "./pages/CartPage.jsx";
 import Navbar from "./components/Navbar.jsx";
 import Loader from "./components/Loader.jsx";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { AdminStylesLoader } from "./components/AdminStylesLoader.jsx";
+
+import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 
 const Register = lazy(() => import("./pages/Auth/Register.jsx"));
 const Login = lazy(() => import("./pages/Auth/Login.jsx"));
@@ -24,6 +24,39 @@ const App = () => {
         .catch((err) => {});
     });
   }
+
+  const AdminStylesLoader = () => {
+    const location = useLocation();
+
+    useEffect(() => {
+      const user = JSON.parse(localStorage?.getItem("user") || "null");
+      const isAdminRoute = location.pathname.startsWith("/dashboard");
+      const isAdminUser = user?.role === 1 || user?.role === 2;
+      const existingLink = document.head.querySelector(
+        'link[data-admin-css="true"]',
+      );
+
+      if (isAdminRoute && isAdminUser && !existingLink) {
+        const link = document.createElement("link");
+        link.rel = "stylesheet";
+        link.href = new URL("./App.css", import.meta.url).href;
+        link.dataset.adminCss = "true";
+        document.head.appendChild(link);
+        return () => {
+          link.remove();
+        };
+      }
+
+      if ((!isAdminRoute || !isAdminUser) && existingLink) {
+        existingLink.remove();
+      }
+
+      return undefined;
+    }, [location.pathname]);
+
+    return null;
+  };
+
   return (
     <BrowserRouter>
       <AdminStylesLoader />
