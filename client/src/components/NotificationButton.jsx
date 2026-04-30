@@ -4,6 +4,8 @@ export default function NotificationButton() {
   const handleSubscribe = async () => {
     const sub = await subscribeToPush();
 
+    console.log(sub);
+
     if (sub) {
       alert("✅ Subscribed to notifications!");
     } else {

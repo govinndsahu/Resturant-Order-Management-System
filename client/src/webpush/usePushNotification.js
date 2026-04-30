@@ -15,6 +15,8 @@ export async function subscribeToPush() {
     // Step 1: Get the active service worker
     const registration = await navigator.serviceWorker.ready;
 
+    console.log(registration);
+
     // Step 2: Check browser support
     if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
       console.warn("Push not supported");
