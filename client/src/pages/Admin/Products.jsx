@@ -1,7 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 
-import { getAllCategories } from "../../hooks/useIndexedDB";
+import {
+  getAllCategories,
+  getAllProducts,
+  saveAllProducts,
+} from "../../hooks/useIndexedDB";
 
 import { getCategoriesApi } from "../../apis/categoryApis";
 import {
@@ -11,6 +15,7 @@ import {
   updateProductApi,
   uploadImageApi,
 } from "../../apis/productsApi";
+import Loader from "../../components/Loader";
 
 const Products = () => {
   const user = JSON.parse(localStorage.getItem("user") || "{}");
@@ -30,6 +35,8 @@ const Products = () => {
 
   const [updateMode, setUpdateMode] = useState(false);
 
+  const [loader, setLoader] = useState(false);
+
   const imageRef = useRef();
   const refImage = useRef();
   const formRef = useRef();
@@ -47,6 +54,13 @@ const Products = () => {
 
   const fetchProducts = async () => {
     try {
+      const cached = await getAllProducts();
+
+      if (cached?.length > 0) {
+        setProducts(cached);
+        return;
+      }
+
       const { data } = await getProductsApi();
 
       if (data?.success) {
@@ -59,6 +73,13 @@ const Products = () => {
 
   const fetchCategories = async () => {
     try {
+      const cached = await getAllCategories();
+
+      if (cached?.length > 0) {
+        setCategories(cached);
+        return;
+      }
+
       const { data } = await getCategoriesApi();
 
       if (data?.success) {
@@ -78,23 +99,36 @@ const Products = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!category) {
-      window.scrollTo({
-        top: 0,
-        behavior: "smooth",
-      });
-      validateCategoryRef.current.style.display = "block";
-      return;
-    }
     try {
+      e.preventDefault();
+
+      if (!category) {
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth",
+        });
+        validateCategoryRef.current.style.display = "block";
+        return;
+      }
+
+      setLoader(true);
+
       const { data } = await createProductApi(productData);
 
       if (data?.success) {
         uploadImage(data.id, image);
+
+        const {
+          data: { products },
+        } = await getProductsApi();
+
+        await saveAllProducts(products);
+
+        setLoader(false);
       }
     } catch (error) {
       console.error(error);
+      setLoader(false);
     }
   };
 
@@ -107,6 +141,12 @@ const Products = () => {
       const { data } = await uploadImageApi(id, formData);
 
       if (data?.success) {
+        const {
+          data: { products },
+        } = await getProductsApi();
+
+        await saveAllProducts(products);
+
         setProductName("");
         setCategory("");
         setPriceType("single");
@@ -139,22 +179,30 @@ const Products = () => {
   };
 
   const handleUpdateRequest = async (id) => {
-    if (!category) {
-      window.scrollTo({
-        top: 0,
-        behavior: "smooth",
-      });
-      validateCategoryRef.current.style.display = "block";
-      return;
-    }
-
     try {
+      if (!category) {
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth",
+        });
+        validateCategoryRef.current.style.display = "block";
+        return;
+      }
+
+      setLoader(true);
+
       const { data } = await updateProductApi(id, productData);
 
       if (data?.success) {
         if (image) {
           await uploadImage(id, image);
         }
+
+        const {
+          data: { products },
+        } = await getProductsApi();
+
+        await saveAllProducts(products);
 
         setProductName("");
         setCategory("");
@@ -167,21 +215,34 @@ const Products = () => {
         fetchProducts();
         setUpdateMode(false);
         formRef.current.reset();
+        setLoader(false);
       }
     } catch (error) {
       console.log(error);
+      setLoader(false);
     }
   };
 
   const handleDeleteProduct = async (id) => {
     try {
+      setLoader(true);
+
       const { data } = await deleteProductApi(id);
 
       if (data?.success) {
+        const {
+          data: { products },
+        } = await getProductsApi();
+
+        await saveAllProducts(products);
+
         fetchProducts();
+
+        setLoader(false);
       }
     } catch (error) {
       console.log(error);
+      setLoader(false);
     }
   };
 
@@ -334,16 +395,20 @@ const Products = () => {
                     }}
                   />
                 </div>
-                <button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    updateMode
-                      ? handleUpdateRequest(productId)
-                      : handleSubmit(e);
-                  }}
-                  className="w-[50%] lg:w-[20%] ">
-                  {updateMode ? "Update" : "Add"} Product
-                </button>
+                {loader ? (
+                  <Loader />
+                ) : (
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      updateMode
+                        ? handleUpdateRequest(productId)
+                        : handleSubmit(e);
+                    }}
+                    className="w-[50%] lg:w-[20%] ">
+                    {updateMode ? "Update" : "Add"} Product
+                  </button>
+                )}
               </form>
             </div>
             <div className="products-container admin-products-container">
@@ -372,25 +437,29 @@ const Products = () => {
                         )}
                       </p>
                     </div>
-                    <div className="product-actions flex gap-5 justify-center items-center">
-                      <button
-                        className="bg-red-500 text-white px-4 py-2 rounded"
-                        onClick={() => handleDeleteProduct(p._id)}>
-                        Delete
-                      </button>
-                      <button
-                        className="bg-blue-500 text-white px-4 py-2 rounded"
-                        onClick={(e) => {
-                          handleUpdateProduct(p);
+                    {loader ? (
+                      <Loader />
+                    ) : (
+                      <div className="product-actions flex gap-5 justify-center items-center">
+                        <button
+                          className="bg-red-500 text-white px-4 py-2 rounded"
+                          onClick={() => handleDeleteProduct(p._id)}>
+                          Delete
+                        </button>
+                        <button
+                          className="bg-blue-500 text-white px-4 py-2 rounded"
+                          onClick={(e) => {
+                            handleUpdateProduct(p);
 
-                          window.scrollTo({
-                            top: 0,
-                            behavior: "smooth",
-                          });
-                        }}>
-                        Update
-                      </button>
-                    </div>
+                            window.scrollTo({
+                              top: 0,
+                              behavior: "smooth",
+                            });
+                          }}>
+                          Update
+                        </button>
+                      </div>
+                    )}
                   </div>
                 ))
               ) : (

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 
-import { getAllCategories } from "../../hooks/useIndexedDB";
+import { getAllCategories, saveAllCategories } from "../../hooks/useIndexedDB";
 
 import {
   createCategoryApi,
@@ -27,6 +27,13 @@ const Categories = () => {
 
   const fetchCategories = async () => {
     try {
+      const cached = await getAllCategories();
+
+      if (cached?.length > 0) {
+        setCategories(cached);
+        return;
+      }
+
       const { data } = await getCategoriesApi();
 
       if (data?.success) {
@@ -48,6 +55,12 @@ const Categories = () => {
       const { data } = await createCategoryApi(createName);
 
       if (data?.success) {
+        const {
+          data: { categories },
+        } = await getCategoriesApi();
+
+        await saveAllCategories(categories);
+
         setCreateName("");
         fetchCategories();
         setLoading(true);
@@ -64,6 +77,12 @@ const Categories = () => {
       const { data } = await deleteCategoryApi(id);
 
       if (data?.success) {
+        const {
+          data: { categories },
+        } = await getCategoriesApi();
+
+        await saveAllCategories(categories);
+
         setLoading(true);
         fetchCategories();
       }
@@ -79,6 +98,12 @@ const Categories = () => {
       const { data } = await updateCategoryApi(id, updateName);
 
       if (data?.success) {
+        const {
+          data: { categories },
+        } = await getCategoriesApi();
+
+        await saveAllCategories(categories);
+
         setLoading(true);
         setUpdateName("");
         setCategoryId("");
