@@ -17,6 +17,7 @@ This application is designed to showcase a complete modern web product with:
 
 - **Customer-facing storefront** with product categories, selection, and cart flow
 - **Order creation** with table number, buyer details, product totals, and form validation
+- **Location validation** validating user's location to prevent fake orders user should be inside the place.
 - **Admin dashboard** for managing categories, products, orders, histories, and users
 - **Protected API routes** using middleware for authentication and staff access
 - **Web Push Notifications** integration via VAPID key setup
@@ -51,7 +52,7 @@ This application is designed to showcase a complete modern web product with:
 
 ### Prerequisites
 
-- Node.js `>=18`
+- Node.js `>=20`
 - npm
 - MongoDB instance
 
