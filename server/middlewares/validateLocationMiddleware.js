@@ -2,7 +2,7 @@ import { getDistanceInMeters } from "../utils/utils.js";
 
 const RESTAURANT = {
   name: "My Restaurant",
-  lat: 21.00293751611305, // ← Replace with your restaurant's latitude
+  lat: 22.00293751611305, // ← Replace with your restaurant's latitude
   lng: 82.10443740281173, // ← Replace with your restaurant's longitude
   radiusMeters: 50, // ← Allowed radius (50 meters recommended)
 };

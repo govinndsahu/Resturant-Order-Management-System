@@ -3,7 +3,6 @@ import { createRoot } from "react-dom/client";
 import { CartProvider } from "./contexts/Cart.jsx";
 
 import "./index.css";
-import "./App.css";
 import "remixicon/fonts/remixicon.css";
 
 import App from "./App.jsx";

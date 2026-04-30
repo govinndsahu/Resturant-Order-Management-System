@@ -139,7 +139,7 @@ export const getAllUsers = async (req, res, next) => {
     const users = await User.find({});
 
     return res.status(200).json({ success: true, users });
-    
+
   } catch (error) {
     next(error);
     console.error("Error fetching all users:", error);

@@ -1,9 +1,10 @@
-import { Suspense, lazy } from "react";
+import { Suspense, lazy, useEffect } from "react";
 import HomePage from "./pages/HomePage.jsx";
 import CartPage from "./pages/CartPage.jsx";
 import Navbar from "./components/Navbar.jsx";
 import Loader from "./components/Loader.jsx";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { AdminStylesLoader } from "./components/AdminStylesLoader.jsx";
 
 const Register = lazy(() => import("./pages/Auth/Register.jsx"));
 const Login = lazy(() => import("./pages/Auth/Login.jsx"));
@@ -25,6 +26,7 @@ const App = () => {
   }
   return (
     <BrowserRouter>
+      <AdminStylesLoader />
       <Navbar name={"Cafeteria"} />
       <Suspense fallback={<Loader />}>
         <Routes>
