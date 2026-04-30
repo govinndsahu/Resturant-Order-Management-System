@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./HomePage.css";
 import { Toaster } from "react-hot-toast";
 
@@ -7,10 +7,21 @@ import CategoriesContainer from "../components/CategoriesContainer";
 import ProductsContainer from "../components/ProductsContainer";
 import ProceedContainer from "../components/ProceedContainer";
 import OrderForm from "../components/OrderForm";
+import { getAppVersionApi } from "../apis/appVersionApis";
 
 const HomePage = () => {
   const [displayForm, setDisplayForm] = useState(false);
   const [category, setCategory] = useState("");
+
+  const getAppVersion = async () => {
+    const { data } = await getAppVersionApi();
+    localStorage.setItem("appVersion", JSON.stringify(data?.version));
+  };
+
+  useEffect(() => {
+    if (!localStorage.getItem("appVersion")) getAppVersion();
+  }, []);
+
   return (
     <>
       <header>

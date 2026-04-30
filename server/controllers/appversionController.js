@@ -1,4 +1,5 @@
 import z from "zod/v4";
+import Version from "../models/versionModel.js";
 
 export const updateAppVersion = async (req, res, next) => {
   const { appVersion } = req.body;
@@ -15,6 +16,18 @@ export const updateAppVersion = async (req, res, next) => {
     }
 
     next();
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getVersion = async (req, res, next) => {
+  try {
+    const version = await Version.findOne();
+    return res.json({
+      success: true,
+      version,
+    });
   } catch (error) {
     next(error);
   }

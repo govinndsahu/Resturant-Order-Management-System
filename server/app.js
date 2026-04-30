@@ -10,6 +10,7 @@ import productRoutes from "./routes/productRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
 import historyRoutes from "./routes/historyRoutes.js";
 import pushsubscriptionRoutes from "./routes/pushsubscriptionRoutes.js";
+import appversionRoutes from "./routes/appversionRoutes.js";
 
 import { pushNotificationSetup } from "./config/webpush.js";
 import { globalError, handleAppListen, handleCors } from "./utils/utils.js";
@@ -43,6 +44,8 @@ app.use("/orders", orderRoutes);
 app.use("/histories", historyRoutes);
 
 app.use("/push-subscriptions", pushsubscriptionRoutes);
+
+app.use("/version", appversionRoutes);
 
 app.use(globalError);
 
