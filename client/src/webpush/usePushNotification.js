@@ -12,8 +12,11 @@ function urlBase64ToUint8Array(base64String) {
 
 export async function subscribeToPush() {
   try {
+    console.log("yes working...");
     // Step 1: Get the active service worker
     const registration = await navigator.serviceWorker.ready;
+
+    console.log("working...");
 
     console.log(registration);
 
