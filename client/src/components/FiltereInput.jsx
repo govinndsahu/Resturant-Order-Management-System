@@ -1,5 +1,3 @@
-import React from "react";
-
 const FiltereInput = ({ name, setName, tableNumber, setTableNumber }) => {
   return (
     <>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useCart } from "../contexts/Cart";
 import LocationError from "./LocationError";
 import Tutorial from "./Tutorial";

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 
 import { useLocalStorage } from "../hooks/useLocalStorage";
@@ -7,7 +7,7 @@ import { getCategoriesApi } from "../apis/categoryApis";
 
 const CategoriesContainer = ({ setCategory }) => {
   const [categories, setCategories] = useState("");
-  const categoriesRef = React.useRef(null);
+  const categoriesRef = useRef(null);
 
   const fetchCategories = async () => {
     try {
