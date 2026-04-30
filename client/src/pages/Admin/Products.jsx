@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 
 import {
@@ -23,10 +23,10 @@ const Products = () => {
   const [categories, setCategories] = useState([]);
   const [products, setProducts] = useState([]);
 
-  const [category, setCategory] = React.useState("");
-  const [productName, setProductName] = React.useState("");
-  const [productId, setProductId] = React.useState("");
-  const [priceType, setPriceType] = React.useState("single");
+  const [category, setCategory] = useState("");
+  const [productName, setProductName] = useState("");
+  const [productId, setProductId] = useState("");
+  const [priceType, setPriceType] = useState("single");
   const [price, setPrice] = useState("");
   const [halfPrice, setHalfPrice] = useState("");
   const [fullPrice, setFullPrice] = useState("");

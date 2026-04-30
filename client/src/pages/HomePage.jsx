@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import "./HomePage.css";
 import { Toaster } from "react-hot-toast";
 
