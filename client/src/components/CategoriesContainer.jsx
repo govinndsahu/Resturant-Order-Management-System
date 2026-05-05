@@ -49,16 +49,16 @@ const CategoriesContainer = ({ setCategory }) => {
     <div
       ref={categoriesRef}
       className="categories-container w-full flex items-center gap-[50px] fixed top-16 h-15 lg:h-20 left-0 z-1 ">
-      <button
+      <span
         className="active-category category"
         onClick={(e) => {
           setCategory("");
           activeCategory(e);
         }}>
         All
-      </button>
+      </span>
       {categories?.map((c) => (
-        <button
+        <span
           key={c._id}
           className="category text-nowrap"
           onClick={(e) => {
@@ -66,7 +66,7 @@ const CategoriesContainer = ({ setCategory }) => {
             activeCategory(e);
           }}>
           {c.name}
-        </button>
+        </span>
       ))}
     </div>
   );
