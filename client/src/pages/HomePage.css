@@ -344,17 +344,6 @@
   border-radius: 10px;
 }
 
-/* ===============  */
-
-.notification-button {
-  background-color: rgb(2, 255, 2);
-  color: white;
-  font-size: 20px;
-  font-weight: 600;
-  padding: 10px 20px;
-  border-radius: 20px;
-}
-
 /* =================================== */
 
 #location-error {

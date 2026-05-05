@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 
 import { dashboardPages } from "../../constants";
 import NotificationButton from "../../components/NotificationButton";
+import InstallButton from "../../components/InstallButton";
 
 const Dashboard = () => {
   const user = JSON.parse(localStorage.getItem("user"));
@@ -31,6 +32,9 @@ const Dashboard = () => {
       </div>
       <br />
       <NotificationButton />
+      <br />
+      <br />
+      <InstallButton />
     </div>
   );
 };

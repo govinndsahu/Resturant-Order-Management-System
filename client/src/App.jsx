@@ -15,45 +15,22 @@ const Histories = lazy(() => import("./pages/Admin/Histories.jsx"));
 const Products = lazy(() => import("./pages/Admin/Products.jsx"));
 const Users = lazy(() => import("./pages/Admin/Users.jsx"));
 
+import {
+  adminStylesLoaderFunction,
+  openInstallPrompt,
+  registerServiceWorker,
+} from "./utils/util.js";
+
 const App = () => {
-  if ("serviceWorker" in navigator) {
-    window.addEventListener("load", () => {
-      navigator.serviceWorker
-        .register("/sw.js")
-        .then((r) => null)
-        .catch((err) => {});
-    });
-  }
+  registerServiceWorker();
+
+  useEffect(() => {
+    return openInstallPrompt();
+  }, []);
 
   const AdminStylesLoader = () => {
     const location = useLocation();
-
-    useEffect(() => {
-      const user = JSON.parse(localStorage?.getItem("user") || "null");
-      const isAdminRoute = location.pathname.startsWith("/dashboard");
-      const isAdminUser = user?.role === 1 || user?.role === 2;
-      const existingLink = document.head.querySelector(
-        'link[data-admin-css="true"]',
-      );
-
-      if (isAdminRoute && isAdminUser && !existingLink) {
-        const link = document.createElement("link");
-        link.rel = "stylesheet";
-        link.href = new URL("./App.css", import.meta.url).href;
-        link.dataset.adminCss = "true";
-        document.head.appendChild(link);
-        return () => {
-          link.remove();
-        };
-      }
-
-      if ((!isAdminRoute || !isAdminUser) && existingLink) {
-        existingLink.remove();
-      }
-
-      return undefined;
-    }, [location.pathname]);
-
+    useEffect(() => adminStylesLoaderFunction(location), [location.pathname]);
     return null;
   };
 

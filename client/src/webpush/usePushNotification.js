@@ -38,8 +38,6 @@ function waitForServiceWorker(registration) {
 
 export async function subscribeToPush() {
   try {
-    console.log("yes working...");
-
     if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
       console.warn("Push not supported");
       return null;
@@ -55,9 +53,8 @@ export async function subscribeToPush() {
 
     await waitForServiceWorker(registration);
 
-    console.log("working...");
-
     const permission = await Notification.requestPermission();
+
     if (permission !== "granted") {
       console.warn("Permission denied");
       const subscription = await registration.pushManager.getSubscription();
@@ -65,13 +62,13 @@ export async function subscribeToPush() {
       return null;
     }
 
-    // Step 5: Subscribe to push
+    // Step 2: Subscribe to push
     const subscription = await registration.pushManager.subscribe({
       userVisibleOnly: true,
       applicationServerKey: urlBase64ToUint8Array(PUBLIC_VAPID_KEY),
     });
 
-    // Step 6: Send subscription to your backend
+    // Step 3: Send subscription to your backend
     await saveSubscriberApi(subscription);
 
     return subscription;

@@ -1,23 +1,53 @@
+import { useEffect, useRef, useState } from "react";
 import { subscribeToPush } from "../webpush/usePushNotification.js";
+import Loader from "./Loader.jsx";
 
 export default function NotificationButton() {
+  const [loader, setLoader] = useState(false);
+
+  const notificationRef = useRef(null);
+
   const handleSubscribe = async () => {
-    console.log("is working....?");
+    setLoader(true);
 
     const sub = await subscribeToPush();
-
-    console.log(sub);
 
     if (sub) {
       alert("✅ Subscribed to notifications!");
     } else {
       alert("❌ Could not subscribe.");
     }
+
+    setLoader(false);
   };
 
+  useEffect(() => {
+    (async function () {
+      const registration = await navigator.serviceWorker.ready;
+      const subscription = await registration.pushManager.getSubscription();
+
+      if (subscription) {
+        notificationRef.current.style.display = "none";
+      }
+
+      const isStandAlone = window.matchMedia(
+        "(display-mode: standalone)",
+      ).matches;
+    })();
+  }, []);
+
   return (
-    <button className="notification-button" onClick={handleSubscribe}>
-      🔔 Enable Notifications
-    </button>
+    <>
+      {loader ? (
+        <Loader />
+      ) : (
+        <button
+          ref={notificationRef}
+          className="notification-button"
+          onClick={handleSubscribe}>
+          🔔 Enable Notifications
+        </button>
+      )}
+    </>
   );
 }
