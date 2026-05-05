@@ -82,11 +82,7 @@ const ProductsContainer = ({
   ) : (
     <div className="products-container">
       {products
-        ?.filter((p) =>
-          category === ""
-            ? p.category?.name.includes(category)
-            : p.category?.name === category,
-        )
+        ?.filter((p) => p.category?.name.includes(category))
         .map((p) => (
           <div key={p._id} className="product">
             <div className="product-image">
