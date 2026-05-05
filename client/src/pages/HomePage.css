@@ -627,3 +627,34 @@
       200px 0 rgba(255, 255, 255, 0);
   }
 }
+
+/* ---------------------------------------------- */
+/* User Auth Pages */
+/* ---------------------------------------------- */
+
+#user-auth > div {
+  background-color: #fdf8f05a;
+  backdrop-filter: blur(10px);
+  color: #000;
+}
+
+#user-auth h1 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #000;
+}
+
+#user-auth label {
+  display: block;
+  margin-bottom: 8px;
+  color: #000;
+}
+
+#user-auth input {
+  color: #000;
+  background-color: #fdf8f0b3;
+}
+
+#user-auth a {
+  color: #000;
+}
