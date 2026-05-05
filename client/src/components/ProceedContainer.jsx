@@ -85,11 +85,11 @@ const ProceedContainer = ({ setDisplayForm }) => {
             <span className="proceed-loader"></span>
           </div>
         ) : (
-          <button
+          <span
             className="proceed-btn lg:text-2xl"
             onClick={(e) => handleDisplayForm(e)}>
             Proceed
-          </button>
+          </span>
         )}
       </div>
       {locationError ? (
