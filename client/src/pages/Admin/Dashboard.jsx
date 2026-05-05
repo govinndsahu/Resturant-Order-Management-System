@@ -34,7 +34,9 @@ const Dashboard = () => {
       <NotificationButton />
       <br />
       <br />
-      <InstallButton />
+      {window.matchMedia("(display-mode: standalone)").matches ? null : (
+        <InstallButton />
+      )}
     </div>
   );
 };

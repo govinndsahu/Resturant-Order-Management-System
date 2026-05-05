@@ -29,10 +29,6 @@ export default function NotificationButton() {
       if (subscription) {
         notificationRef.current.style.display = "none";
       }
-
-      const isStandAlone = window.matchMedia(
-        "(display-mode: standalone)",
-      ).matches;
     })();
   }, []);
 
