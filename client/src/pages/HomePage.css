@@ -16,7 +16,7 @@
   padding-inline: 20px;
 }
 
-.categories-container span {
+.categories-container button {
   margin-top: 10px;
 }
 
@@ -99,6 +99,7 @@
 .order-form #form {
   background-color: #fffde7b8;
   border-radius: 10px;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
 
 .order-form form {
@@ -113,7 +114,7 @@
 }
 
 .order-form input {
-  background-color: #fffae26e;
+  background-color: #c9c4b36e;
   font-size: 20px;
   padding-block: 2px;
   padding-inline: 10px;
