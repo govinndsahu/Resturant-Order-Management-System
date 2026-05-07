@@ -10,9 +10,3 @@ export const connectDB = async () => {
     process.exit(1);
   }
 };
-
-process.on("SIGINT", async () => {
-  await mongoose.disconnect();
-  console.log("DB client disconnected!!");
-  process.exit(0);
-});

@@ -1,73 +1,24 @@
 import "dotenv/config";
+import mongoose from "mongoose";
+import { stopPrinterServer } from "node-thermal-printer-js";
 import { connectDB } from "./config/db.js";
-import Order from "./models/orderModel.js";
-import { printData } from "node-thermal-printer-js";
+import {
+  connectPrinter,
+  initializeCursor,
+  pollForNewOrders,
+} from "./utils/utils.js";
 
 await connectDB();
 
-const pollIntervalMs = 1000 * 2;
-let lastPrintedOrderId = null;
-let isPolling = false;
-
-const formatItem = (item) =>
-  `${item?.half_price ? "Half" : "Full"} ${item?.name ?? "Item"}`;
-
-const initializeCursor = async () => {
-  const latestOrder = await Order.findOne().sort({ _id: -1 });
-
-  if (latestOrder) {
-    lastPrintedOrderId = String(latestOrder._id);
-  }
-};
-
-const getPendingOrders = async () => {
-  const query = lastPrintedOrderId ? { _id: { $gt: lastPrintedOrderId } } : {};
-
-  return Order.find(query).sort({ _id: 1 });
-};
-
-const pollForNewOrders = async () => {
-  if (isPolling) {
-    return;
-  }
-
-  isPolling = true;
-
-  try {
-    const pendingOrders = await getPendingOrders();
-
-    if (!pendingOrders.length) {
-      return;
-    }
-
-    for (const order of pendingOrders) {
-      const items = Array.isArray(order.products)
-        ? order.products.map(formatItem)
-        : [];
-
-      const data = [
-        "New Order",
-        `Table No: ${order.tableNumber}`,
-        "",
-        ...items,
-      ].join("\n");
-
-      const result = await printData(data, {
-        transport: process.env.TRANSPORT,
-        bleName: process.env.BLE_NAME,
-        connectTimeout: 0,
-        scanTimeout: 0,
-      });
-
-      lastPrintedOrderId = String(order._id);
-    }
-  } catch (error) {
-    console.error("Failed to poll or print order:", error);
-  } finally {
-    isPolling = false;
-    setTimeout(pollForNewOrders, pollIntervalMs);
-  }
-};
+await connectPrinter();
 
 await initializeCursor();
+
 await pollForNewOrders();
+
+process.on("SIGINT", async () => {
+  await mongoose.disconnect();
+  await stopPrinterServer();
+  console.log("DB client disconnected!!");
+  process.exit(0);
+});
