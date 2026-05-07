@@ -53,10 +53,10 @@ const pollForNewOrders = async () => {
       ].join("\n");
 
       const result = await printData(data, {
-        transport: "ble",
-        bleName: "PSF588",
-        connectTimeout: 20,
-        scanTimeout: 20,
+        transport: process.env.TRANSPORT,
+        bleName: process.env.BLE_NAME,
+        connectTimeout: 0,
+        scanTimeout: 0,
       });
 
       lastPrintedOrderId = String(order._id);
