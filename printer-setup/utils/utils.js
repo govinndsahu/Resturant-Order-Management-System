@@ -2,9 +2,7 @@ import Order from "../models/orderModel.js";
 
 import { printData, startPrinterServer } from "node-thermal-printer-js";
 
-const pollIntervalMs = 1000 * 2;
-let lastPrintedOrderId = null;
-let isPolling = false;
+let orderStream = null;
 
 export const connectPrinter = async () => {
   try {
@@ -22,57 +20,60 @@ export const connectPrinter = async () => {
 export const formatItem = (item) =>
   `${item?.half_price ? "Half" : "Full"} ${item?.name ?? "Item"}`;
 
-export const getPendingOrders = async () => {
-  const query = lastPrintedOrderId ? { _id: { $gt: lastPrintedOrderId } } : {};
+export const printOrder = async (order) => {
+  const items = Array.isArray(order.products)
+    ? order.products.map(formatItem)
+    : [];
 
-  return Order.find(query).sort({ _id: 1 });
+  const data = [
+    "New Order",
+    `Table No: ${order.tableNumber}`,
+    "",
+    ...items,
+  ].join("\n");
+
+  await printData(data, {
+    autoStart: false,
+    transport: process.env.TRANSPORT,
+  });
 };
 
-export const pollForNewOrders = async () => {
-  if (isPolling) {
+export const startOrderStream = async () => {
+  if (orderStream) {
     return;
   }
 
-  isPolling = true;
+  orderStream = Order.watch([{ $match: { operationType: "insert" } }], {
+    fullDocument: "updateLookup",
+  });
 
-  try {
-    const pendingOrders = await getPendingOrders();
+  orderStream.on("change", async (change) => {
+    const order = change.fullDocument;
 
-    if (!pendingOrders.length) {
+    if (!order) {
       return;
     }
 
-    for (const order of pendingOrders) {
-      const items = Array.isArray(order.products)
-        ? order.products.map(formatItem)
-        : [];
-
-      const data = [
-        "New Order",
-        `Table No: ${order.tableNumber}`,
-        "",
-        ...items,
-      ].join("\n");
-
-      await printData(data, {
-        autoStart: false,
-        transport: process.env.TRANSPORT,
-      });
-
-      lastPrintedOrderId = String(order._id);
+    try {
+      await printOrder(order);
+      console.log(`Printed order: ${order._id}`);
+    } catch (error) {
+      console.error("Failed to print order from change stream:", error);
     }
-  } catch (error) {
-    console.error("Failed to poll or print order:", error);
-  } finally {
-    isPolling = false;
-    setTimeout(pollForNewOrders, pollIntervalMs);
-  }
+  });
+
+  orderStream.on("error", (error) => {
+    console.error("Change stream error:", error);
+  });
+
+  console.log("Listening for new order inserts via MongoDB change stream...");
 };
 
-export const initializeCursor = async () => {
-  const latestOrder = await Order.findOne().sort({ _id: -1 });
-
-  if (latestOrder) {
-    lastPrintedOrderId = String(latestOrder._id);
+export const stopOrderStream = async () => {
+  if (!orderStream) {
+    return;
   }
+
+  await orderStream.close();
+  orderStream = null;
 };
