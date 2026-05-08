@@ -104,6 +104,11 @@ export async function getAllCategories() {
 
 // ============= Cart Store =============
 
+// Generate unique cart item ID combining product ID and size
+function generateCartItemId(productId, size) {
+  return `${productId}_${size || "standard"}`;
+}
+
 // Add or update item in cart
 export async function addToCart(product) {
   const db = await openDB();
@@ -111,8 +116,11 @@ export async function addToCart(product) {
     const tx = db.transaction("cart", "readwrite");
     const store = tx.objectStore("cart");
 
+    // Create unique ID that includes product ID and size
+    const cartItemId = generateCartItemId(product._id, product.size);
+
     // Check if already in cart
-    const getRequest = store.get(product._id);
+    const getRequest = store.get(cartItemId);
 
     getRequest.onsuccess = () => {
       const existing = getRequest.result;
@@ -122,8 +130,8 @@ export async function addToCart(product) {
         existing.quantity += 1;
         store.put(existing);
       } else {
-        // ✅ New item — add with quantity 1
-        store.put({ ...product, quantity: 1 });
+        // ✅ New item — add with quantity 1 and the generated ID
+        store.put({ ...product, _id: cartItemId, quantity: 1 });
       }
 
       resolve("✅ Added to cart");
@@ -174,5 +182,49 @@ export async function saveAllCartItems(items) {
       resolve("✅ Cart updated");
     };
     tx.onerror = (e) => reject(e.target.error);
+  });
+}
+
+// Update quantity of a specific item in cart
+export async function updateCartQuantity(productId, quantity) {
+  const db = await openDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction("cart", "readwrite");
+    const store = tx.objectStore("cart");
+
+    const getRequest = store.get(productId);
+
+    getRequest.onsuccess = () => {
+      const item = getRequest.result;
+
+      if (item) {
+        if (quantity <= 0) {
+          // Remove item if quantity is 0 or less
+          store.delete(productId);
+        } else {
+          // Update quantity
+          item.quantity = quantity;
+          store.put(item);
+        }
+        resolve("✅ Quantity updated");
+      } else {
+        reject(new Error("Item not found in cart"));
+      }
+    };
+
+    getRequest.onerror = (e) => reject(e.target.error);
+  });
+}
+
+// Remove item from cart
+export async function removeFromCart(productId) {
+  const db = await openDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction("cart", "readwrite");
+    const store = tx.objectStore("cart");
+
+    const request = store.delete(productId);
+    request.onsuccess = () => resolve("✅ Item removed from cart");
+    request.onerror = (e) => reject(e.target.error);
   });
 }

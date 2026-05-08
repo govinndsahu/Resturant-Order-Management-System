@@ -11,6 +11,7 @@ import {
   saveAllProducts,
   getAllProducts,
   addToCart,
+  getCart,
 } from "../hooks/useIndexedDB";
 
 const ProductsContainer = ({
@@ -51,6 +52,12 @@ const ProductsContainer = ({
 
   useEffect(() => {
     fetchProducts();
+    // Load cart from IndexedDB on mount
+    const loadCart = async () => {
+      const savedCart = await getCart();
+      setCart(savedCart);
+    };
+    loadCart();
   }, []);
 
   const handleAddCart = async (p, e) => {
@@ -62,19 +69,31 @@ const ProductsContainer = ({
       price_type: p.price_type,
     };
 
-    if (e.target.parentNode.classList.contains("full-price-content")) {
+    const isFullPrice =
+      e.target.parentNode.classList.contains("full-price-content");
+
+    if (isFullPrice) {
       product = {
         ...product,
         full_price: p.full_price,
+        size: "full",
       };
     } else {
       product = {
         ...product,
         half_price: p.half_price,
+        size: "half",
       };
     }
+
+    // Add product to IndexedDB (handles quantity automatically)
     await addToCart(product);
-    setCart((prevCart) => [...prevCart, product]);
+
+    // Fetch updated cart from IndexedDB
+    const updatedCart = await getCart();
+    setCart(updatedCart);
+
+    console.log(cart);
   };
 
   return products?.length === 0 ? (
