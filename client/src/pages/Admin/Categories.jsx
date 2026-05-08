@@ -222,7 +222,7 @@ const Categories = () => {
               <tbody ref={tableBody}>
                 {categories?.map((category, i) => (
                   <tr key={category._id}>
-                    <td>{i + 1}.</td>
+                    <td>{category.sn}.</td>
                     <td>{category.name}</td>
                     <td className="actions">
                       <button

@@ -214,6 +214,7 @@ const Products = () => {
         setHalfPrice("");
         setFullPrice("");
         setImage("");
+        setSerialNumber("");
         setImagePreview(null);
         fetchProducts();
         setUpdateMode(false);
@@ -435,6 +436,7 @@ const Products = () => {
                         alt="Product"
                       />
                     </div>
+                    <span id="product-sn">{p.sn}</span>
                     <div className="product-info">
                       <h2 className="text-[20px] font-bold">{p.name}</h2>
                       <p className="text-[18px] font-bold">
