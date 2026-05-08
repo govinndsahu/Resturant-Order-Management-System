@@ -20,9 +20,12 @@ const Categories = () => {
   const [categories, setCategories] = useState([]);
 
   const [switchForm, setSwitchForm] = useState(true);
+
   const [createName, setCreateName] = useState("");
+  const [serialNumber, setSerialNumber] = useState("");
   const [updateName, setUpdateName] = useState("");
   const [categoryId, setCategoryId] = useState("");
+
   const [loading, setLoading] = useState(true);
 
   const fetchCategories = async () => {
@@ -52,7 +55,7 @@ const Categories = () => {
     try {
       setLoading(false);
 
-      const { data } = await createCategoryApi(createName);
+      const { data } = await createCategoryApi(createName, serialNumber || 1);
 
       if (data?.success) {
         const {
@@ -62,6 +65,7 @@ const Categories = () => {
         await saveAllCategories(categories);
 
         setCreateName("");
+        setSerialNumber("");
         fetchCategories();
         setLoading(true);
       }
@@ -95,7 +99,11 @@ const Categories = () => {
     try {
       setLoading(false);
 
-      const { data } = await updateCategoryApi(id, updateName);
+      const { data } = await updateCategoryApi(
+        id,
+        updateName,
+        serialNumber || 1,
+      );
 
       if (data?.success) {
         const {
@@ -106,6 +114,7 @@ const Categories = () => {
 
         setLoading(true);
         setUpdateName("");
+        setSerialNumber("");
         setCategoryId("");
         setSwitchForm(true);
         fetchCategories();
@@ -139,6 +148,17 @@ const Categories = () => {
                     setCreateName(e.target.value);
                   }}
                 />
+                <input
+                  type="number"
+                  id="create-serial"
+                  name="sn"
+                  placeholder="Serial Number"
+                  required
+                  value={serialNumber}
+                  onChange={(e) => {
+                    setSerialNumber(e.target.value);
+                  }}
+                />
                 {loading ? (
                   <button
                     type="submit"
@@ -163,6 +183,17 @@ const Categories = () => {
                   value={updateName}
                   onChange={(e) => {
                     setUpdateName(e.target.value);
+                  }}
+                />
+                <input
+                  type="number"
+                  id="create-serial"
+                  name="sn"
+                  placeholder="Serial Number"
+                  required
+                  value={serialNumber}
+                  onChange={(e) => {
+                    setSerialNumber(e.target.value);
                   }}
                 />
                 {loading ? (
@@ -200,6 +231,7 @@ const Categories = () => {
                           setSwitchForm(false);
                           setUpdateName(category.name);
                           setCategoryId(category._id);
+                          setSerialNumber(category.sn);
                         }}>
                         Update
                       </button>

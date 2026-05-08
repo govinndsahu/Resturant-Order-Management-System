@@ -7,6 +7,7 @@ const categorySchema = new mongoose.Schema({
   },
   sn: {
     type: Number,
+    default: 1,
   },
 });
 

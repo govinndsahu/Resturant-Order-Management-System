@@ -7,6 +7,8 @@ const router = express.Router();
 export const createCategory = async (req, res, next) => {
   const { name, sn } = req.body;
 
+  console.log(req.body);
+
   try {
     const category = await Category.findOne({ name });
 
@@ -76,7 +78,7 @@ export const deleteCategory = async (req, res, next) => {
 
 export const getCategories = async (req, res, next) => {
   try {
-    const categories = await Category.find();
+    const categories = await Category.find().sort({ sn: 1 });
     return res.status(200).json({ success: true, categories });
   } catch (error) {
     next(error);

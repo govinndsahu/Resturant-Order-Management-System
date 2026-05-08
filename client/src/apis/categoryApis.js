@@ -7,10 +7,10 @@ export const getCategoriesApi = async () => {
   return { data };
 };
 
-export const createCategoryApi = async (categoryName) => {
+export const createCategoryApi = async (categoryName, serialNumber) => {
   const { data } = await axios.post(
     `${import.meta.env.VITE_API_URI}/categories/create`,
-    { name: categoryName },
+    { name: categoryName, sn: serialNumber },
     {
       withCredentials: true,
     },
@@ -18,10 +18,10 @@ export const createCategoryApi = async (categoryName) => {
   return { data };
 };
 
-export const updateCategoryApi = async (id, categoryName) => {
+export const updateCategoryApi = async (id, categoryName, serialNumber) => {
   const { data } = await axios.put(
     `${import.meta.env.VITE_API_URI}/categories/update/${id}`,
-    { name: categoryName },
+    { name: categoryName, sn: serialNumber },
     {
       withCredentials: true,
     },

@@ -31,7 +31,7 @@ const productSchema = new mongoose.Schema({
   },
   sn: {
     type: Number,
-    default: 0,
+    default: 1,
   },
 });
 

@@ -31,6 +31,7 @@ const Products = () => {
   const [halfPrice, setHalfPrice] = useState("");
   const [fullPrice, setFullPrice] = useState("");
   const [image, setImage] = useState("");
+  const [serialNumber, setSerialNumber] = useState("");
   const [imagePreview, setImagePreview] = useState(null);
 
   const [updateMode, setUpdateMode] = useState(false);
@@ -43,13 +44,14 @@ const Products = () => {
   const validateCategoryRef = useRef();
 
   const productData = {
+    id: productId,
     name: productName,
     category,
     price_type: priceType,
     full_price: priceType === "single" ? price : fullPrice,
     half_price: priceType === "both" ? halfPrice : null,
     image,
-    id: productId,
+    sn: serialNumber,
   };
 
   const fetchProducts = async () => {
@@ -172,6 +174,7 @@ const Products = () => {
     setHalfPrice(p.half_price);
     setFullPrice(p.full_price);
     setImage("");
+    setSerialNumber(p.sn || 1);
     setProductId(p._id);
     setImagePreview(
       p.image && p.mimeType ? `data:${p.mimeType};base64,${p.image}` : null,
@@ -355,6 +358,17 @@ const Products = () => {
                       />
                     </>
                   )}
+                </div>
+                <div className="input-container flex flex-col gap-2">
+                  <label htmlFor="product-name">Serial Number</label>
+                  <input
+                    required
+                    value={serialNumber}
+                    type="text"
+                    name="sn"
+                    placeholder="Serial Number (used for sorting, optional)"
+                    onChange={(e) => setSerialNumber(e.target.value)}
+                  />
                 </div>
                 <div className="input-container flex flex-col gap-2">
                   <div

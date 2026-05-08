@@ -3,6 +3,14 @@ const DB_VERSION = 1;
 const PRODUCTS_STORE = "products";
 const CATEGORIES_STORE = "categories";
 
+function sortBySn(items = []) {
+  return [...items].sort((a, b) => {
+    const aSn = Number(a?.sn ?? Number.MAX_SAFE_INTEGER);
+    const bSn = Number(b?.sn ?? Number.MAX_SAFE_INTEGER);
+    return aSn - bSn;
+  });
+}
+
 // ✅ Open / Initialize DB
 function openDB() {
   return new Promise((resolve, reject) => {
@@ -67,7 +75,7 @@ export async function getAllProducts() {
     const store = tx.objectStore(PRODUCTS_STORE);
     const request = store.getAll();
 
-    request.onsuccess = () => resolve(request.result);
+    request.onsuccess = () => resolve(sortBySn(request.result));
     request.onerror = (e) => reject(e.target.error);
   });
 }
@@ -97,7 +105,7 @@ export async function getAllCategories() {
     const tx = db.transaction(CATEGORIES_STORE, "readonly");
     const store = tx.objectStore(CATEGORIES_STORE);
     const request = store.getAll();
-    request.onsuccess = () => resolve(request.result);
+    request.onsuccess = () => resolve(sortBySn(request.result));
     request.onerror = (e) => reject(e.target.error);
   });
 }

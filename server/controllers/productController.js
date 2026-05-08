@@ -157,9 +157,10 @@ export const deleteProduct = async (req, res, next) => {
 };
 
 export const getProducts = async (req, res, next) => {
-  // Implementation for getting products
   try {
-    const products = await Product.find().populate("category", "name");
+    const products = await Product.find()
+      .populate("category", "name")
+      .sort({ sn: 1 });
     return res.status(200).json({ success: true, products });
   } catch (error) {
     next(error);
