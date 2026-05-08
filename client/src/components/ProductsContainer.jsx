@@ -92,8 +92,6 @@ const ProductsContainer = ({
     // Fetch updated cart from IndexedDB
     const updatedCart = await getCart();
     setCart(updatedCart);
-
-    console.log(cart);
   };
 
   return products?.length === 0 ? (

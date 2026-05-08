@@ -53,6 +53,7 @@ const OrderForm = ({ dispalyForm, setDisplayForm }) => {
         price_type: item.price_type,
         half_price: item.half_price ? item.half_price : "",
         full_price: item.full_price,
+        quantity: item.quantity,
       };
     }),
     tableNumber: parseInt(tableNumber),

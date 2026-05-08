@@ -98,7 +98,7 @@ const Histories = () => {
                           : item.half_price
                             ? "Half"
                             : "Full"}{" "}
-                        {item.name}
+                        {`${item.name} ⨯ ${item.quantity || 1}`}
                       </p>
                       <p>
                         Item price: Rs.
