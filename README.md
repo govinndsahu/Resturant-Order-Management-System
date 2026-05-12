@@ -1,6 +1,8 @@
 # Cafeteria Menu Ordering App
 
-A polished full-stack cafeteria menu ordering application built with React, Express, MongoDB, and real-time push notification support. This project delivers a clean customer ordering experience plus a secure admin dashboard for product management, order tracking, history, and user administration.
+A polished full-stack cafeteria menu ordering application built with React, Express, MongoDB, and real-time push notification support. This setup is designed for real-time order printing, where each incoming order is printed through a Bluetooth thermal printer for fast kitchen and counter handling.
+
+Repository: https://github.com/govinndsahu/Order-Printer-Setup
 
 ## 🚀 Project Overview
 

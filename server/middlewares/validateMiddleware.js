@@ -43,7 +43,6 @@ export const isStaff = async (req, res, next) => {
     });
   } else {
     const user = await Session.findOne({ _id: sessionId }).populate("userId");
-    console.log(user);
     if (user.userId.role <= 0) {
       return res.status(403).json({
         success: false,
