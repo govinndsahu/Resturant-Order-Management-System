@@ -29,3 +29,17 @@ export const deleteOrderApi = async (id) => {
   );
   return { data };
 };
+
+export const deleteOrdersApi = async (ids) => {
+  const { data } = await axios.delete(
+    `${import.meta.env.VITE_API_URI}/orders/delete`,
+    {
+      withCredentials: true,
+      data: { ids },
+      headers: {
+        "Content-Type": "application/json",
+      },
+    },
+  );
+  return { data };
+};

@@ -158,6 +158,7 @@ tbody td {
   display: flex;
   flex-wrap: wrap;
   gap: 30px;
+  padding-bottom: 100px;
 }
 
 .order-card {
@@ -218,10 +219,24 @@ tbody td {
   margin: 100px 50px;
 }
 
+.histories-container {
+  padding-bottom: 100px;
+}
+
 .delete-btn {
   background-color: rgba(255, 0, 0, 0.512);
   padding: 2px 6px;
   border-radius: 8px;
+}
+
+#delete-orders {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: red;
+  padding: 10px 15px;
+  border-radius: 6px;
+  border: none;
 }
 
 /* ---------------------------------------------- */
@@ -400,4 +415,14 @@ tbody td {
   padding: 10px 20px;
   border-radius: 20px;
   display: inline-block;
+}
+
+/* =================================== */
+
+.rdrCalendarWrapper {
+  width: 100% !important;
+  max-width: 100vw;
+}
+.rdrMonth {
+  width: 100% !important;
 }

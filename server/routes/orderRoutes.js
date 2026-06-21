@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  clearOrders,
   createOrder,
   deleteOrder,
   getOrders,
@@ -15,7 +16,7 @@ const router = express.Router();
 
 router.post(
   "/create",
-  validateRestaurantLocation,
+  // validateRestaurantLocation,
   isNewAppVersion,
   createOrder,
 );
@@ -23,5 +24,7 @@ router.post(
 router.get("/", isLogedIn, isStaff, getOrders);
 
 router.delete("/delete/:id", isLogedIn, isStaff, deleteOrder);
+
+router.delete("/delete", isLogedIn, isStaff, clearOrders);
 
 export default router;

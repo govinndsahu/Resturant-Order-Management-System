@@ -21,11 +21,25 @@ export const createHistoriesApi = async (order) => {
   return { data };
 };
 
-export const deleteHistoriesApi = async (id) => {
+export const deleteHistoryApi = async (id) => {
   const { data } = await axios.delete(
     `${import.meta.env.VITE_API_URI}/histories/delete/${id}`,
     {
       withCredentials: true,
+    },
+  );
+  return { data };
+};
+
+export const deleteHistoriesApi = async (ids) => {
+  const { data } = await axios.delete(
+    `${import.meta.env.VITE_API_URI}/histories/delete`,
+    {
+      withCredentials: true,
+      data: { ids },
+      headers: {
+        "Content-Type": "application/json",
+      },
     },
   );
   return { data };

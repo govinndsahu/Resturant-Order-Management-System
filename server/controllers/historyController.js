@@ -1,8 +1,4 @@
-import express from "express";
-import { createOrderSchema } from "../validator/orderSchema.js";
 import History from "../models/historyModel.js";
-
-const router = express.Router();
 
 export const createHistory = async (req, res, next) => {
   try {
@@ -42,6 +38,34 @@ export const deleteHistory = async (req, res, next) => {
     return res.status(200).json({
       success: true,
       message: "History deleted successfully",
+    });
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+};
+
+export const clearHistory = async (req, res, next) => {
+  try {
+    const rawIds = req.body?.ids;
+
+    const ids = Array.isArray(rawIds)
+      ? rawIds
+      : typeof rawIds === "string"
+        ? JSON.parse(rawIds)
+        : [];
+
+    if (!Array.isArray(ids) || ids.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "ids must be a non-empty array",
+      });
+    }
+
+    await History.deleteMany({ _id: { $in: ids } });
+    return res.status(200).json({
+      success: true,
+      message: "History cleared successfully",
     });
   } catch (error) {
     console.log(error);

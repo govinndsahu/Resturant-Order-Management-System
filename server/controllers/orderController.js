@@ -51,3 +51,32 @@ export const deleteOrder = async (req, res, next) => {
     next(error);
   }
 };
+
+export const clearOrders = async (req, res, next) => {
+  try {
+    const rawIds = req.body?.ids;
+
+    const ids = Array.isArray(rawIds)
+      ? rawIds
+      : typeof rawIds === "string"
+        ? JSON.parse(rawIds)
+        : [];
+
+    if (!Array.isArray(ids) || ids.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "ids must be a non-empty array",
+      });
+    }
+
+    await Order.deleteMany({ _id: { $in: ids } });
+
+    return res.status(200).json({
+      success: true,
+      message: "Orders cleared successfully",
+    });
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+};
