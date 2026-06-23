@@ -20,9 +20,25 @@ export const openInstallPrompt = () => {
   };
 };
 
-export const adminStylesLoaderFunction = (location) => {
+export const getAppRoute = (appName, path = "") => {
+  const normalizedPath = path
+    ? path.startsWith("/")
+      ? path
+      : `/${path}`
+    : "";
+
+  if (!appName) {
+    return normalizedPath || "/";
+  }
+
+  return `${`/${appName}`}${normalizedPath}`;
+};
+
+export const adminStylesLoaderFunction = (location, appName) => {
   const user = JSON.parse(localStorage?.getItem("user") || "null");
-  const isAdminRoute = location.pathname.startsWith("/dashboard");
+  const isAdminRoute = location.pathname.startsWith(
+    getAppRoute(appName, "dashboard"),
+  );
   const isAdminUser = user?.role === 1 || user?.role === 2;
   const existingLink = document.head.querySelector(
     'link[data-admin-css="true"]',
@@ -52,7 +68,7 @@ export const registerServiceWorker = () => {
       navigator.serviceWorker
         .register("/sw.js")
         .then((r) => null)
-        .catch((err) => {});
+        .catch((err) => { });
     });
   }
 };

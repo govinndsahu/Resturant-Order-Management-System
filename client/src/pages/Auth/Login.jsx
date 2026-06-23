@@ -3,8 +3,9 @@ import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 
 import { userLoginApi } from "../../apis/userApis";
+import { getAppRoute } from "../../utils/util";
 
-const Login = () => {
+const Login = ({ appName }) => {
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
 
@@ -13,6 +14,7 @@ const Login = () => {
   const formData = new FormData(formRef.current);
 
   const navigate = useNavigate();
+  const route = (path = "") => getAppRoute(appName, path);
 
   const handleLoginUser = async () => {
     try {
@@ -20,7 +22,7 @@ const Login = () => {
 
       if (data?.success) {
         localStorage.setItem("user", JSON.stringify(data.user));
-        navigate("/");
+        navigate(route());
       }
     } catch (error) {
       console.log(error);
@@ -67,7 +69,7 @@ const Login = () => {
         </form>
         {localStorage.getItem("user") ? (
           JSON.parse(localStorage.getItem("user"))?.role === 2 ? (
-            <Link id="bottom-link" to="/registerpage" className="">
+            <Link id="bottom-link" to={route("registerpage")} className="">
               Don't have an account? <span>Register account.</span>
             </Link>
           ) : (

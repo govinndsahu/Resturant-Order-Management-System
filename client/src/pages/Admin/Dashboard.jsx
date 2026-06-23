@@ -3,9 +3,11 @@ import { Link } from "react-router-dom";
 import { dashboardPages } from "../../constants";
 import NotificationButton from "../../components/NotificationButton";
 import InstallButton from "../../components/InstallButton";
+import { getAppRoute } from "../../utils/util";
 
-const Dashboard = () => {
+const Dashboard = ({ appName }) => {
   const user = JSON.parse(localStorage.getItem("user"));
+  const route = (path = "") => getAppRoute(appName, path);
 
   return !user ? (
     <>
@@ -23,7 +25,7 @@ const Dashboard = () => {
           </h1>
           <ul className="dashboard-links">
             {dashboardPages?.map((page, i) => (
-              <Link key={i} to={page.path}>
+              <Link key={i} to={route(page.path)}>
                 {page.name}
               </Link>
             ))}

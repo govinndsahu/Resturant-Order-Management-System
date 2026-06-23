@@ -16,13 +16,14 @@ import {
   saveAllCategories,
   saveAllProducts,
 } from "../hooks/useIndexedDB";
+import { getAppRoute } from "../utils/util";
 
 import UpdateApp from "./UpdateApp";
 import LocationError from "./LocationError";
 import Tutorial from "./Tutorial";
 import LocationErrorMessage from "./LocationErrorMessage";
 
-const OrderForm = ({ dispalyForm, setDisplayForm }) => {
+const OrderForm = ({ dispalyForm, setDisplayForm, appName }) => {
   const [name, setName] = useState("");
   const [tableNumber, setTableNumber] = useState("");
   const [showTableValidate, setShowTableValidate] = useState(false);
@@ -36,6 +37,7 @@ const OrderForm = ({ dispalyForm, setDisplayForm }) => {
   const [cart, setCart] = useCart();
 
   const navigate = useNavigate();
+  const route = (path = "") => getAppRoute(appName, path);
 
   const getTotalPrice = () => {
     let total = 0;
@@ -138,7 +140,7 @@ const OrderForm = ({ dispalyForm, setDisplayForm }) => {
         setDisplayForm(false);
         setCart([]);
         await clearCart();
-        navigate("/");
+        navigate(route());
       }
 
       // handling order
@@ -148,7 +150,7 @@ const OrderForm = ({ dispalyForm, setDisplayForm }) => {
         setCart([]);
         await clearCart();
         toast.success("Ordered successfully.");
-        navigate("/");
+        navigate(route());
 
         await sendNotificationApi();
       }
@@ -182,7 +184,7 @@ const OrderForm = ({ dispalyForm, setDisplayForm }) => {
                 value={name}
                 onChange={(e) => {
                   if (e.target.value === "authpage") {
-                    navigate("/loginpage");
+                    navigate(route("loginpage"));
                   }
                   setName(e.target.value);
                 }}

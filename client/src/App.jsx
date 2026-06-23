@@ -4,7 +4,14 @@ import CartPage from "./pages/CartPage.jsx";
 import Navbar from "./components/Navbar.jsx";
 import Loader from "./components/Loader.jsx";
 
-import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
+import {
+  BrowserRouter,
+  Navigate,
+  Route,
+  Routes,
+  useLocation,
+  useNavigate,
+} from "react-router";
 
 const Register = lazy(() => import("./pages/Auth/Register.jsx"));
 const Login = lazy(() => import("./pages/Auth/Login.jsx"));
@@ -17,6 +24,7 @@ const Users = lazy(() => import("./pages/Admin/Users.jsx"));
 
 import {
   adminStylesLoaderFunction,
+  getAppRoute,
   openInstallPrompt,
   registerServiceWorker,
 } from "./utils/util.js";
@@ -24,32 +32,67 @@ import {
 const App = () => {
   registerServiceWorker();
 
+  const appName = window.location.pathname.split("/")[1];
+
   useEffect(() => {
     return openInstallPrompt();
   }, []);
 
   const AdminStylesLoader = () => {
     const location = useLocation();
-    useEffect(() => adminStylesLoaderFunction(location), [location.pathname]);
+    useEffect(
+      () => adminStylesLoaderFunction(location, appName),
+      [location.pathname],
+    );
     return null;
   };
 
   return (
     <BrowserRouter>
       <AdminStylesLoader />
-      <Navbar name={"Cafeteria"} />
+      <Navbar name={"Cafeteria"} appName={appName} />
       <Suspense fallback={<Loader />}>
         <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/cartpage" element={<CartPage />} />
-          <Route path="/registerpage" element={<Register />} />
-          <Route path="/loginpage" element={<Login />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/dashboard/categories" element={<Categories />} />
-          <Route path="/dashboard/products" element={<Products />} />
-          <Route path="/dashboard/orders" element={<Orders />} />
-          <Route path="/dashboard/orders-histories" element={<Histories />} />
-          <Route path="/dashboard/users" element={<Users />} />
+          <Route
+            path={getAppRoute(appName)}
+            element={<HomePage appName={appName} />}
+          />
+          <Route
+            path={getAppRoute(appName, "cartpage")}
+            element={<CartPage appName={appName} />}
+          />
+          <Route
+            path={getAppRoute(appName, "registerpage")}
+            element={<Register appName={appName} />}
+          />
+          <Route
+            path={getAppRoute(appName, "loginpage")}
+            element={<Login appName={appName} />}
+          />
+          <Route
+            path={getAppRoute(appName, "dashboard")}
+            element={<Dashboard appName={appName} />}
+          />
+          <Route
+            path={getAppRoute(appName, "dashboard/categories")}
+            element={<Categories />}
+          />
+          <Route
+            path={getAppRoute(appName, "dashboard/products")}
+            element={<Products />}
+          />
+          <Route
+            path={getAppRoute(appName, "dashboard/orders")}
+            element={<Orders />}
+          />
+          <Route
+            path={getAppRoute(appName, "dashboard/orders-histories")}
+            element={<Histories />}
+          />
+          <Route
+            path={getAppRoute(appName, "dashboard/users")}
+            element={<Users />}
+          />
         </Routes>
       </Suspense>
     </BrowserRouter>

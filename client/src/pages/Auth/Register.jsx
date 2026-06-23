@@ -4,8 +4,9 @@ import axios from "axios";
 
 import Navbar from "../../components/Navbar";
 import { userRegisterApi } from "../../apis/userApis";
+import { getAppRoute } from "../../utils/util";
 
-const Register = () => {
+const Register = ({ appName }) => {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
@@ -13,6 +14,7 @@ const Register = () => {
   const user = JSON.parse(localStorage.getItem("user"));
 
   const navigate = useNavigate();
+  const route = (path = "") => getAppRoute(appName, path);
 
   const formRef = useRef();
 
@@ -23,7 +25,7 @@ const Register = () => {
       const { data } = await userRegisterApi(formData);
 
       if (data.success) {
-        navigate("/");
+        navigate(route());
         localStorage.setItem("user", JSON.stringify(data.user));
       }
     } catch (error) {
@@ -33,7 +35,7 @@ const Register = () => {
 
   return (
     <>
-      <Navbar name={"Logo name"} />
+      <Navbar name={"Logo name"} appName={appName} />
       <main id="user-auth">
         <div className="auth-container w-[90%] sm:w-[80%] md:w-[70%] lg:w-[60%] xl:w-[800px]">
           <h1 className="text-2xl">User Registration</h1>
@@ -97,7 +99,7 @@ const Register = () => {
             </button>
           </form>{" "}
           <br />
-          <Link to="/loginpage" id="bottom-link" className="">
+          <Link to={route("loginpage")} id="bottom-link" className="">
             Already have an account? <span>Login account.</span>
           </Link>
         </div>

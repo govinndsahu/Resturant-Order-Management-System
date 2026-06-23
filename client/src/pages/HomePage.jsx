@@ -9,7 +9,7 @@ import ProceedContainer from "../components/ProceedContainer";
 import OrderForm from "../components/OrderForm";
 import { getAppVersionApi } from "../apis/appVersionApis";
 
-const HomePage = () => {
+const HomePage = ({ appName }) => {
   const [displayForm, setDisplayForm] = useState(false);
   const [category, setCategory] = useState("");
 
@@ -25,7 +25,7 @@ const HomePage = () => {
   return (
     <>
       <header>
-        <Navbar name={"Cafeteria"} />
+        <Navbar name={"Cafeteria"} appName={appName} />
         <CategoriesContainer setCategory={setCategory} />
       </header>
       <main>
@@ -40,7 +40,11 @@ const HomePage = () => {
       <footer>
         <ProceedContainer setDisplayForm={setDisplayForm} />
       </footer>
-      <OrderForm dispalyForm={displayForm} setDisplayForm={setDisplayForm} />
+      <OrderForm
+        dispalyForm={displayForm}
+        setDisplayForm={setDisplayForm}
+        appName={appName}
+      />
       <Toaster />
     </>
   );

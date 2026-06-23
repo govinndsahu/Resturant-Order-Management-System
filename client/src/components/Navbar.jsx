@@ -4,12 +4,14 @@ import gsap from "gsap";
 
 import { CartContext } from "../contexts/Cart";
 import { userLogoutApi } from "../apis/userApis";
+import { getAppRoute } from "../utils/util";
 
-const Navbar = ({ name }) => {
+const Navbar = ({ name, appName }) => {
   const [cart] = useContext(CartContext);
   const user = JSON.parse(localStorage?.getItem("user"));
 
   const navigate = useNavigate();
+  const route = (path = "") => getAppRoute(appName, path);
 
   const menuRef = useRef();
 
@@ -31,15 +33,15 @@ const Navbar = ({ name }) => {
     try {
       const { data } = await userLogoutApi();
       if (data?.success) {
-        navigate("/loginpage");
+        navigate(route("loginpage"));
         localStorage.removeItem("user");
       } else {
-        navigate("/loginpage");
+        navigate(route("loginpage"));
         localStorage.removeItem("user");
       }
     } catch (error) {
       console.log(error);
-      navigate("/loginpage");
+      navigate(route("loginpage"));
       localStorage.removeItem("user");
     }
   };
@@ -51,7 +53,7 @@ const Navbar = ({ name }) => {
           <div className="flex justify-between md:justify-around h-16 xl:h-20 w-full ">
             <div
               className="flex items-center cursor-pointer"
-              onClick={() => navigate("/")}>
+              onClick={() => navigate(route())}>
               <h2 className="text-[20px] md:text-3xl font-semibold">{name}</h2>
             </div>
             <div className="flex items-center space-x-8 text-[18px] md:text-3xl">
@@ -59,13 +61,13 @@ const Navbar = ({ name }) => {
                 user ? (
                   <div className="nav-right flex items-center gap-8">
                     <div className="nav-links text-[20px] flex gap-8 item-center">
-                      <NavLink className={"nav-link"} to={"/"}>
+                      <NavLink className={"nav-link"} to={route()}>
                         Home
                       </NavLink>
-                      <NavLink className={"link"} to={"/dashboard"}>
+                      <NavLink className={"link"} to={route("dashboard")}>
                         Dashboard
                       </NavLink>
-                      <NavLink className={"link"} to={"/cartpage"}>
+                      <NavLink className={"link"} to={route("cartpage")}>
                         Cart ({cart?.length})
                       </NavLink>
                     </div>
@@ -80,7 +82,7 @@ const Navbar = ({ name }) => {
                   </div>
                 ) : (
                   <NavLink
-                    to="/cartpage"
+                    to={route("cartpage")}
                     className="text-white hover:text-blue-600">
                     Cart <i className="ri-shopping-cart-line"></i> (
                     {cart?.length})
@@ -94,7 +96,7 @@ const Navbar = ({ name }) => {
                   }}></i>
               ) : (
                 <NavLink
-                  to="/cartpage"
+                  to={route("cartpage")}
                   className="text-black hover:text-blue-600">
                   Cart <i className="ri-shopping-cart-line"></i> ({cart?.length}
                   )
@@ -116,13 +118,13 @@ const Navbar = ({ name }) => {
           Back
         </button>
         <div className="menu-links flex flex-col gap-10 text-[18px]">
-          <NavLink onClick={() => hideMenu()} to={"/"}>
+          <NavLink onClick={() => hideMenu()} to={route()}>
             Home
           </NavLink>
-          <NavLink onClick={() => hideMenu()} to={"/dashboard"}>
+          <NavLink onClick={() => hideMenu()} to={route("dashboard")}>
             Dashboard
           </NavLink>
-          <NavLink onClick={() => hideMenu()} to={"/cartpage"}>
+          <NavLink onClick={() => hideMenu()} to={route("cartpage")}>
             Cart
           </NavLink>
         </div>

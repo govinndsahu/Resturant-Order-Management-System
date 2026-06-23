@@ -15,7 +15,7 @@ import {
   getCart,
 } from "../hooks/useIndexedDB";
 
-const CartPage = () => {
+const CartPage = ({ appName }) => {
   const [cart, setCart] = useCart();
   const [displayForm, setDisplayForm] = useState(false);
 
@@ -132,7 +132,11 @@ const CartPage = () => {
       <footer>
         <ProceedContainer setDisplayForm={setDisplayForm} />
       </footer>
-      <OrderForm dispalyForm={displayForm} setDisplayForm={setDisplayForm} />
+      <OrderForm
+        dispalyForm={displayForm}
+        setDisplayForm={setDisplayForm}
+        appName={appName}
+      />
     </>
   );
 };
