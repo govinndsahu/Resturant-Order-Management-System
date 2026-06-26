@@ -14,10 +14,10 @@ export const registerUser = async (req, res, next) => {
       .json({ message: "Invalid input data", errors: error.errors });
   }
 
-  const { name, email, password } = data;
+  const { name, username, password } = data;
 
   try {
-    const existingUser = await User.findOne({ email });
+    const existingUser = await User.findOne({ username });
 
     if (existingUser) {
       return res
@@ -31,7 +31,7 @@ export const registerUser = async (req, res, next) => {
 
     const newUser = new User({
       name,
-      email,
+      username,
       password: hashedPassword,
     });
 
@@ -52,7 +52,7 @@ export const registerUser = async (req, res, next) => {
     return res.status(201).json({
       success: true,
       message: "User registered successfully",
-      user: { name: newUser.name, email: newUser.email, role: newUser.role },
+      user: { name: newUser.name, username: newUser.username, role: newUser.role },
     });
   } catch (error) {
     next(error);
@@ -72,15 +72,15 @@ export const loginUser = async (req, res, next) => {
       .json({ message: "Invalid input data", errors: error.errors });
   }
 
-  const { email, password } = data;
+  const { username, password } = data;
 
   try {
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ username });
 
     if (!user) {
       return res
         .status(400)
-        .json({ success: false, message: "Invalid email or password" });
+        .json({ success: false, message: "Invalid username or password" });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
@@ -88,7 +88,7 @@ export const loginUser = async (req, res, next) => {
     if (!isMatch) {
       return res
         .status(400)
-        .json({ success: false, message: "Invalid email or password" });
+        .json({ success: false, message: "Invalid username or password" });
     }
 
     const session = new Session({
@@ -102,7 +102,7 @@ export const loginUser = async (req, res, next) => {
     return res.status(200).json({
       success: true,
       message: "User logged in successfully",
-      user: { name: user.name, email: user.email, role: user.role },
+      user: { name: user.name, username: user.username, role: user.role },
     });
   } catch (error) {
     next(error);
