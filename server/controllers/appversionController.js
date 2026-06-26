@@ -26,6 +26,7 @@ export const getVersion = async (req, res, next) => {
     const version = await Version.findOne();
     return res.json({
       success: true,
+      name: process.env.RESTAURANT_NAME,
       version,
     });
   } catch (error) {

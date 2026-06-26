@@ -21,17 +21,53 @@ export const openInstallPrompt = () => {
 };
 
 export const getAppRoute = (appName, path = "") => {
+  const appRouteSegment = `${appName || ""}`
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, "-");
   const normalizedPath = path
     ? path.startsWith("/")
       ? path
       : `/${path}`
     : "";
 
-  if (!appName) {
+  if (!appRouteSegment) {
     return normalizedPath || "/";
   }
 
-  return `${`/${appName}`}${normalizedPath}`;
+  return `${`/${appRouteSegment}`}${normalizedPath}`;
+};
+
+export const getAppName = () => {
+  const envAppName = import.meta.env.VITE_APP_NAME?.trim();
+
+  if (envAppName) {
+    return envAppName;
+  }
+
+  const pathSegment = window.location.pathname.split("/").filter(Boolean)[0];
+
+  if (!pathSegment) {
+    return "Menu App";
+  }
+
+  return `${pathSegment.charAt(0).toUpperCase()}${pathSegment.slice(1)}`;
+};
+
+export const getAppSlug = () => {
+  const envAppName = import.meta.env.VITE_APP_NAME?.trim();
+
+  if (envAppName) {
+    return envAppName.toLowerCase().replace(/\s+/g, "-");
+  }
+
+  const pathSegment = window.location.pathname.split("/").filter(Boolean)[0];
+
+  if (!pathSegment) {
+    return "menu-app";
+  }
+
+  return pathSegment.toLowerCase();
 };
 
 export const adminStylesLoaderFunction = (location, appName) => {

@@ -25,7 +25,7 @@ const HomePage = ({ appName }) => {
   return (
     <>
       <header>
-        <Navbar name={"Cafeteria"} appName={appName} />
+        <Navbar name={appName} appName={appName} />
         <CategoriesContainer setCategory={setCategory} />
       </header>
       <main>

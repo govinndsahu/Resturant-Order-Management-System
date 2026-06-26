@@ -1,4 +1,6 @@
-const DB_NAME = "cafeteriaDB";
+import { getAppSlug } from "../utils/util";
+
+const DB_NAME = `${getAppSlug()}DB`;
 const DB_VERSION = 1;
 const PRODUCTS_STORE = "products";
 const CATEGORIES_STORE = "categories";

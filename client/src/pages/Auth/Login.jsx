@@ -6,7 +6,7 @@ import { userLoginApi } from "../../apis/userApis";
 import { getAppRoute } from "../../utils/util";
 
 const Login = ({ appName }) => {
-  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const formRef = useRef();
@@ -34,16 +34,16 @@ const Login = ({ appName }) => {
       <div className="auth-container w-[90%] sm:w-[80%] md:w-[70%] lg:w-[60%] xl:w-[600px]">
         <h1 className="text-2xl">User Login</h1>
         <form ref={formRef} id="login-form">
-          <label htmlFor="phone">Phone Number</label>
+          <label htmlFor="email">Email</label>
           <input
-            type="number"
-            id="phone"
-            name="phone"
-            placeholder="Enter your phone number"
+            type="email"
+            id="email"
+            name="email"
+            placeholder="Enter your email"
             required
-            value={phone}
+            value={email}
             onChange={(e) => {
-              setPhone(e.target.value);
+              setEmail(e.target.value);
             }}
           />
           <label htmlFor="password">Password</label>

@@ -8,7 +8,7 @@ import { getAppRoute } from "../../utils/util";
 
 const Register = ({ appName }) => {
   const [name, setName] = useState("");
-  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const user = JSON.parse(localStorage.getItem("user"));
@@ -35,7 +35,7 @@ const Register = ({ appName }) => {
 
   return (
     <>
-      <Navbar name={"Logo name"} appName={appName} />
+      <Navbar name={appName} appName={appName} />
       <main id="user-auth">
         <div className="auth-container w-[90%] sm:w-[80%] md:w-[70%] lg:w-[60%] xl:w-[800px]">
           <h1 className="text-2xl">User Registration</h1>
@@ -57,18 +57,18 @@ const Register = ({ appName }) => {
               />
             </div>
             <div>
-              <label className="" htmlFor="phone">
-                Phone Number
+              <label className="" htmlFor="email">
+                Email
               </label>
               <input
-                value={phone}
-                type="tel"
-                id="phone"
-                name="phone"
-                placeholder="Enter your phone number"
+                value={email}
+                type="email"
+                id="email"
+                name="email"
+                placeholder="Enter your email"
                 required
                 onChange={(e) => {
-                  setPhone(e.target.value);
+                  setEmail(e.target.value);
                 }}
               />
             </div>

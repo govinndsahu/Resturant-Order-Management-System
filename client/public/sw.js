@@ -1,4 +1,4 @@
-const cacheName = "cafeteria-v1";
+const cacheName = "menu-app-v1";
 
 const staticAssets = [
   "/",
@@ -74,7 +74,7 @@ async function networkAndCache(req) {
 // Show notification when push is received
 self.addEventListener("push", (e) => {
   const data = e.data?.json() ?? {
-    title: "Cafeteria",
+    title: "Menu App",
     body: "You have a new notification!",
   };
 
