@@ -50,7 +50,7 @@ app.use("/version", appversionRoutes);
 app.use(globalError);
 
 if (!process.env.AWS_LAMBDA_FUNCTION_VERSION) {
-  await handleAppListen(app, port, connectDB);
+  await handleAppListen(app, 4001, connectDB);
 }
 
 export default app;

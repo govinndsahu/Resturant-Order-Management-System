@@ -10,8 +10,11 @@ import {
 } from "../../apis/orderApis";
 import { createHistoriesApi } from "../../apis/historyApis";
 import CalendarRangePicker from "../../components/CalendarRangePicker";
+import { useConfig } from "../../contexts/ConfigContext";
 
 const Orders = () => {
+  const { backendUrl } = useConfig();
+
   const [orders, setOrders] = useState([]);
 
   const [name, setName] = useState("");
@@ -21,7 +24,7 @@ const Orders = () => {
 
   const fetchOrders = async () => {
     try {
-      const { data } = await getOrdersApi();
+      const { data } = await getOrdersApi(backendUrl);
 
       if (data?.success) {
         setOrders(data.orders);
@@ -37,7 +40,7 @@ const Orders = () => {
 
   const handleSendHistory = async (order) => {
     try {
-      const { data } = await createHistoriesApi(order);
+      const { data } = await createHistoriesApi(order, backendUrl);
 
       if (data?.success) {
         handleDelete(order._id);
@@ -51,7 +54,7 @@ const Orders = () => {
     try {
       setLoader(true);
 
-      const { data } = await deleteOrderApi(id);
+      const { data } = await deleteOrderApi(id, backendUrl);
 
       if (data?.success) {
         setLoader(false);
@@ -101,7 +104,7 @@ const Orders = () => {
         return;
       }
 
-      const { data } = await deleteOrdersApi(ids);
+      const { data } = await deleteOrdersApi(ids, backendUrl);
 
       if (data?.success) {
         setOrders((prevOrders) =>

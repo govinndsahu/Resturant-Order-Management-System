@@ -1,52 +1,44 @@
 import axios from "axios";
 
-export const userRegisterApi = async (formData) => {
-  const { data } = await axios.post(
-    `${import.meta.env.VITE_API_URI}/users/register`,
-    formData,
-    {
-      headers: {
-        "Content-Type": "application/json",
-      },
-      withCredentials: true,
+export const userRegisterApi = async (formData, backendUrl) => {
+  const { data } = await axios.post(`${backendUrl}users/register`, formData, {
+    headers: {
+      "Content-Type": "application/json",
     },
-  );
-  return { data };
-};
-
-export const userLoginApi = async (formData) => {
-  const { data } = await axios.post(
-    `${import.meta.env.VITE_API_URI}/users/login`,
-    formData,
-    {
-      headers: {
-        "Content-Type": "application/json",
-      },
-      withCredentials: true,
-    },
-  );
-  return { data };
-};
-
-export const userLogoutApi = async () => {
-  const { data } = await axios.post(
-    `${import.meta.env.VITE_API_URI}/users/logout`,
-    {},
-    { withCredentials: true },
-  );
-  return { data };
-};
-
-export const getUsersApi = async () => {
-  const { data } = await axios.get(`${import.meta.env.VITE_API_URI}/users`, {
     withCredentials: true,
   });
   return { data };
 };
 
-export const updateUserApi = async (userId) => {
+export const userLoginApi = async (formData, backendUrl) => {
+  const { data } = await axios.post(`${backendUrl}users/login`, formData, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+    withCredentials: true,
+  });
+  return { data };
+};
+
+export const userLogoutApi = async (backendUrl) => {
   const { data } = await axios.post(
-    `${import.meta.env.VITE_API_URI}/users/update/${userId}`,
+    `${backendUrl}users/logout`,
+    {},
+    { withCredentials: true },
+  );
+  return { data };
+};
+
+export const getUsersApi = async (backendUrl) => {
+  const { data } = await axios.get(`${backendUrl}users`, {
+    withCredentials: true,
+  });
+  return { data };
+};
+
+export const updateUserApi = async (userId, backendUrl) => {
+  const { data } = await axios.post(
+    `${backendUrl}users/update/${userId}`,
     {},
     {
       withCredentials: true,
@@ -55,10 +47,9 @@ export const updateUserApi = async (userId) => {
   return { data };
 };
 
-export const deleteUserApi = async (userId) => {
-  const { data } = await axios.delete(
-    `${import.meta.env.VITE_API_URI}/users/delete/${userId}`,
-    { withCredentials: true },
-  );
+export const deleteUserApi = async (userId, backendUrl) => {
+  const { data } = await axios.delete(`${backendUrl}users/delete/${userId}`, {
+    withCredentials: true,
+  });
   return { data };
 };

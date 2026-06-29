@@ -8,8 +8,11 @@ import {
   getHistoriesApi,
 } from "../../apis/historyApis";
 import CalendarRangePicker from "../../components/CalendarRangePicker";
+import { useConfig } from "../../contexts/ConfigContext";
 
 const Histories = () => {
+  const { backendUrl } = useConfig();
+
   const [histories, setHistories] = useState([]);
 
   const [name, setName] = useState("");
@@ -47,7 +50,7 @@ const Histories = () => {
 
   const fetchHistories = async () => {
     try {
-      const { data } = await getHistoriesApi();
+      const { data } = await getHistoriesApi(backendUrl);
 
       if (data?.success) {
         setHistories(data?.histories);
@@ -65,7 +68,7 @@ const Histories = () => {
     try {
       setLoader(true);
 
-      const { data } = await deleteHistoryApi(id);
+      const { data } = await deleteHistoryApi(id, backendUrl);
 
       if (data?.success) {
         setLoader(false);
@@ -93,7 +96,7 @@ const Histories = () => {
     try {
       setLoader(true);
 
-      const { data } = await deleteHistoriesApi(ids);
+      const { data } = await deleteHistoriesApi(ids, backendUrl);
 
       if (data?.success) {
         setLoader(false);

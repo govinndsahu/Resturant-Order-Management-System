@@ -1,18 +1,15 @@
 import axios from "axios";
 
-export const getHistoriesApi = async () => {
-  const { data } = await axios.get(
-    `${import.meta.env.VITE_API_URI}/histories`,
-    {
-      withCredentials: true,
-    },
-  );
+export const getHistoriesApi = async (backendUrl) => {
+  const { data } = await axios.get(`${backendUrl}histories`, {
+    withCredentials: true,
+  });
   return { data };
 };
 
-export const createHistoriesApi = async (order) => {
+export const createHistoriesApi = async (order, backendUrl) => {
   const { data } = await axios.post(
-    `${import.meta.env.VITE_API_URI}/histories/create`,
+    `${backendUrl}histories/create`,
     { order },
     {
       withCredentials: true,
@@ -21,26 +18,20 @@ export const createHistoriesApi = async (order) => {
   return { data };
 };
 
-export const deleteHistoryApi = async (id) => {
-  const { data } = await axios.delete(
-    `${import.meta.env.VITE_API_URI}/histories/delete/${id}`,
-    {
-      withCredentials: true,
-    },
-  );
+export const deleteHistoryApi = async (id, backendUrl) => {
+  const { data } = await axios.delete(`${backendUrl}histories/delete/${id}`, {
+    withCredentials: true,
+  });
   return { data };
 };
 
-export const deleteHistoriesApi = async (ids) => {
-  const { data } = await axios.delete(
-    `${import.meta.env.VITE_API_URI}/histories/delete`,
-    {
-      withCredentials: true,
-      data: { ids },
-      headers: {
-        "Content-Type": "application/json",
-      },
+export const deleteHistoriesApi = async (ids, backendUrl) => {
+  const { data } = await axios.delete(`${backendUrl}histories/delete`, {
+    withCredentials: true,
+    data: { ids },
+    headers: {
+      "Content-Type": "application/json",
     },
-  );
+  });
   return { data };
 };

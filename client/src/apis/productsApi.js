@@ -1,13 +1,13 @@
 import axios from "axios";
 
-export const getProductsApi = async () => {
-  const { data } = await axios.get(`${import.meta.env.VITE_API_URI}/products`);
+export const getProductsApi = async (backendUrl) => {
+  const { data } = await axios.get(`${backendUrl}products`);
   return { data };
 };
 
-export const createProductApi = async (productData) => {
+export const createProductApi = async (productData, backendUrl) => {
   const { data } = await axios.post(
-    `${import.meta.env.VITE_API_URI}/products/create`,
+    `${backendUrl}products/create`,
     productData,
     {
       headers: {
@@ -19,9 +19,9 @@ export const createProductApi = async (productData) => {
   return { data };
 };
 
-export const uploadImageApi = async (id, formData) => {
+export const uploadImageApi = async (id, formData, backendUrl) => {
   const { data } = await axios.post(
-    `${import.meta.env.VITE_API_URI}/products/upload-image/${id}`,
+    `${backendUrl}products/upload-image/${id}`,
     formData,
     {
       headers: {
@@ -33,9 +33,9 @@ export const uploadImageApi = async (id, formData) => {
   return { data };
 };
 
-export const updateProductApi = async (id, productData) => {
+export const updateProductApi = async (id, productData, backendUrl) => {
   const { data } = await axios.put(
-    `${import.meta.env.VITE_API_URI}/products/update/${id}`,
+    `${backendUrl}products/update/${id}`,
     productData,
     {
       headers: {
@@ -47,9 +47,9 @@ export const updateProductApi = async (id, productData) => {
   return { data };
 };
 
-export const deleteProductApi = async (id) => {
+export const deleteProductApi = async (id, backendUrl) => {
   const { data } = await axios.delete(
-    `${import.meta.env.VITE_API_URI}/products/delete/${id}`,
+    `${backendUrl}products/delete/${id}`,
     {
       withCredentials: true,
     },

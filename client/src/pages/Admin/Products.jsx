@@ -16,8 +16,11 @@ import {
   uploadImageApi,
 } from "../../apis/productsApi";
 import Loader from "../../components/Loader";
+import { useConfig } from "../../contexts/ConfigContext";
 
 const Products = () => {
+  const { backendUrl } = useConfig();
+
   const user = JSON.parse(localStorage.getItem("user") || "{}");
 
   const [categories, setCategories] = useState([]);
@@ -63,7 +66,7 @@ const Products = () => {
         return;
       }
 
-      const { data } = await getProductsApi();
+      const { data } = await getProductsApi(backendUrl);
 
       if (data?.success) {
         setProducts(data.products);
@@ -82,7 +85,7 @@ const Products = () => {
         return;
       }
 
-      const { data } = await getCategoriesApi();
+      const { data } = await getCategoriesApi(backendUrl);
 
       if (data?.success) {
         setCategories(data.categories);
@@ -115,14 +118,14 @@ const Products = () => {
 
       setLoader(true);
 
-      const { data } = await createProductApi(productData);
+      const { data } = await createProductApi(productData, backendUrl);
 
       if (data?.success) {
         uploadImage(data.id, image);
 
         const {
           data: { products },
-        } = await getProductsApi();
+        } = await getProductsApi(backendUrl);
 
         await saveAllProducts(products);
 
@@ -140,12 +143,12 @@ const Products = () => {
     formData.append("image", file);
 
     try {
-      const { data } = await uploadImageApi(id, formData);
+      const { data } = await uploadImageApi(id, formData, backendUrl);
 
       if (data?.success) {
         const {
           data: { products },
-        } = await getProductsApi();
+        } = await getProductsApi(backendUrl);
 
         await saveAllProducts(products);
 
@@ -194,7 +197,7 @@ const Products = () => {
 
       setLoader(true);
 
-      const { data } = await updateProductApi(id, productData);
+      const { data } = await updateProductApi(id, productData, backendUrl);
 
       if (data?.success) {
         if (image) {
@@ -203,7 +206,7 @@ const Products = () => {
 
         const {
           data: { products },
-        } = await getProductsApi();
+        } = await getProductsApi(backendUrl);
 
         await saveAllProducts(products);
 
@@ -231,12 +234,12 @@ const Products = () => {
     try {
       setLoader(true);
 
-      const { data } = await deleteProductApi(id);
+      const { data } = await deleteProductApi(id, backendUrl);
 
       if (data?.success) {
         const {
           data: { products },
-        } = await getProductsApi();
+        } = await getProductsApi(backendUrl);
 
         await saveAllProducts(products);
 
@@ -315,7 +318,12 @@ const Products = () => {
                     value={priceType}
                     name="price_type"
                     id="select-input"
-                    onChange={(e) => setPriceType(e.target.value)}
+                    onChange={(e) => {
+                      setPriceType(e.target.value);
+                      if (e.target.value === "both") {
+                        setHalfPrice("");
+                      }
+                    }}
                     className="bg-[#222] text-white outline">
                     <option value="single">single</option>
                     <option value="both">both</option>

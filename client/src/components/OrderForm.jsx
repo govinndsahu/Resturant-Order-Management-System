@@ -22,8 +22,11 @@ import UpdateApp from "./UpdateApp";
 import LocationError from "./LocationError";
 import Tutorial from "./Tutorial";
 import LocationErrorMessage from "./LocationErrorMessage";
+import { useConfig } from "../contexts/ConfigContext";
 
 const OrderForm = ({ dispalyForm, setDisplayForm, appName }) => {
+  const { backendUrl } = useConfig();
+
   const [name, setName] = useState("");
   const [tableNumber, setTableNumber] = useState("");
   const [showTableValidate, setShowTableValidate] = useState(false);
@@ -61,7 +64,7 @@ const OrderForm = ({ dispalyForm, setDisplayForm, appName }) => {
     tableNumber: parseInt(tableNumber),
     buyer: name,
     total: getTotalPrice(),
-    appVersion: JSON.parse(localStorage.getItem("appVersion"))?.version,
+    appVersion: JSON.parse(localStorage.getItem("appVersion"))?.version || "{}",
   };
 
   const handleDisplayForm = (e) => {
@@ -112,27 +115,30 @@ const OrderForm = ({ dispalyForm, setDisplayForm, appName }) => {
 
       const position = await getUserLocation();
 
-      const { data } = await createOrderApi({
-        ...orderData,
-        lat: position?.coords.latitude,
-        lng: position?.coords.longitude,
-      });
+      const { data } = await createOrderApi(
+        {
+          ...orderData,
+          lat: position?.coords.latitude,
+          lng: position?.coords.longitude,
+        },
+        backendUrl,
+      );
 
       // handling data cache if needed
       if (data.message === "Database is updated.") {
         const {
           data: { products },
-        } = await getProductsApi();
+        } = await getProductsApi(backendUrl);
 
         await saveAllProducts(products);
 
         const {
           data: { categories },
-        } = await getCategoriesApi();
+        } = await getCategoriesApi(backendUrl);
 
         await saveAllCategories(categories);
 
-        localStorage.setItem("appVersion", JSON.stringify(data?.version));
+        localStorage.setItem("appVersion", JSON.stringify(data?.version) || {});
 
         setIsUpdated(false);
 
@@ -152,7 +158,7 @@ const OrderForm = ({ dispalyForm, setDisplayForm, appName }) => {
         toast.success("Ordered successfully.");
         navigate(route());
 
-        await sendNotificationApi();
+        await sendNotificationApi(backendUrl);
       }
     } catch (error) {
       setLoader(false);

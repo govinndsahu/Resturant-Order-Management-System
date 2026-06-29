@@ -1,15 +1,17 @@
 import axios from "axios";
 
-export const getCategoriesApi = async () => {
-  const { data } = await axios.get(
-    `${import.meta.env.VITE_API_URI}/categories`,
-  );
+export const getCategoriesApi = async (backendUrl) => {
+  const { data } = await axios.get(`${backendUrl}categories`);
   return { data };
 };
 
-export const createCategoryApi = async (categoryName, serialNumber) => {
+export const createCategoryApi = async (
+  categoryName,
+  serialNumber,
+  backendUrl,
+) => {
   const { data } = await axios.post(
-    `${import.meta.env.VITE_API_URI}/categories/create`,
+    `${backendUrl}categories/create`,
     { name: categoryName, sn: serialNumber },
     {
       withCredentials: true,
@@ -18,9 +20,14 @@ export const createCategoryApi = async (categoryName, serialNumber) => {
   return { data };
 };
 
-export const updateCategoryApi = async (id, categoryName, serialNumber) => {
+export const updateCategoryApi = async (
+  id,
+  categoryName,
+  serialNumber,
+  backendUrl,
+) => {
   const { data } = await axios.put(
-    `${import.meta.env.VITE_API_URI}/categories/update/${id}`,
+    `${backendUrl}categories/update/${id}`,
     { name: categoryName, sn: serialNumber },
     {
       withCredentials: true,
@@ -29,12 +36,9 @@ export const updateCategoryApi = async (id, categoryName, serialNumber) => {
   return { data };
 };
 
-export const deleteCategoryApi = async (id) => {
-  const { data } = await axios.delete(
-    `${import.meta.env.VITE_API_URI}/categories/delete/${id}`,
-    {
-      withCredentials: true,
-    },
-  );
+export const deleteCategoryApi = async (id, backendUrl) => {
+  const { data } = await axios.delete(`${backendUrl}categories/delete/${id}`, {
+    withCredentials: true,
+  });
   return { data };
 };

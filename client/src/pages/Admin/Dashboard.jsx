@@ -4,8 +4,11 @@ import { dashboardPages } from "../../constants";
 import NotificationButton from "../../components/NotificationButton";
 import InstallButton from "../../components/InstallButton";
 import { getAppRoute } from "../../utils/util";
+import { useConfig } from "../../contexts/ConfigContext";
 
 const Dashboard = ({ appName }) => {
+  const { backendUrl } = useConfig();
+
   const user = JSON.parse(localStorage.getItem("user"));
   const route = (path = "") => getAppRoute(appName, path);
 

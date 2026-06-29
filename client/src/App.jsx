@@ -30,9 +30,12 @@ import {
   registerServiceWorker,
 } from "./utils/util.js";
 import { getAppVersionApi } from "./apis/appVersionApis.js";
+import { useConfig } from "./contexts/ConfigContext.jsx";
 
 const App = () => {
   registerServiceWorker();
+
+  const { backendUrl } = useConfig();
 
   const [appName, setAppName] = useState(getAppName());
 
@@ -41,7 +44,7 @@ const App = () => {
 
     const syncAppInfo = async () => {
       try {
-        const { data } = await getAppVersionApi();
+        const { data } = await getAppVersionApi(backendUrl);
 
         if (!isActive) {
           return;
@@ -52,7 +55,10 @@ const App = () => {
         }
 
         if (data?.version) {
-          localStorage.setItem("appVersion", JSON.stringify(data.version));
+          localStorage.setItem(
+            "appVersion",
+            JSON.stringify(data.version) || {},
+          );
         }
       } catch (error) {
         console.log(error);

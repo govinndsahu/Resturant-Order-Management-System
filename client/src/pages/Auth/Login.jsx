@@ -4,8 +4,11 @@ import { Link, useNavigate } from "react-router-dom";
 
 import { userLoginApi } from "../../apis/userApis";
 import { getAppRoute } from "../../utils/util";
+import { useConfig } from "../../contexts/ConfigContext";
 
 const Login = ({ appName }) => {
+  const { backendUrl } = useConfig();
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
@@ -18,7 +21,7 @@ const Login = ({ appName }) => {
 
   const handleLoginUser = async () => {
     try {
-      const { data } = await userLoginApi(formData);
+      const { data } = await userLoginApi(formData, backendUrl);
 
       if (data?.success) {
         localStorage.setItem("user", JSON.stringify(data.user));

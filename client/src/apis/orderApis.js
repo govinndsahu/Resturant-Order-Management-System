@@ -1,15 +1,15 @@
 import axios from "axios";
 
-export const getOrdersApi = async () => {
-  const { data } = await axios.get(`${import.meta.env.VITE_API_URI}/orders`, {
+export const getOrdersApi = async (backendUrl) => {
+  const { data } = await axios.get(`${backendUrl}orders`, {
     withCredentials: true,
   });
   return { data };
 };
 
-export const createOrderApi = async (orderData) => {
+export const createOrderApi = async (orderData, backendUrl) => {
   const { data } = await axios.post(
-    `${import.meta.env.VITE_API_URI}/orders/create`,
+    `${backendUrl}orders/create`,
     orderData,
     {
       headers: {
@@ -20,9 +20,9 @@ export const createOrderApi = async (orderData) => {
   return { data };
 };
 
-export const deleteOrderApi = async (id) => {
+export const deleteOrderApi = async (id, backendUrl) => {
   const { data } = await axios.delete(
-    `${import.meta.env.VITE_API_URI}/orders/delete/${id}`,
+    `${backendUrl}orders/delete/${id}`,
     {
       withCredentials: true,
     },
@@ -30,9 +30,9 @@ export const deleteOrderApi = async (id) => {
   return { data };
 };
 
-export const deleteOrdersApi = async (ids) => {
+export const deleteOrdersApi = async (ids, backendUrl) => {
   const { data } = await axios.delete(
-    `${import.meta.env.VITE_API_URI}/orders/delete`,
+    `${backendUrl}orders/delete`,
     {
       withCredentials: true,
       data: { ids },

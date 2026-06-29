@@ -1,6 +1,4 @@
-import { getAppSlug } from "../utils/util";
-
-const DB_NAME = `${getAppSlug()}DB`;
+const DB_NAME = `MenuDB`;
 const DB_VERSION = 1;
 const PRODUCTS_STORE = "products";
 const CATEGORIES_STORE = "categories";
@@ -92,7 +90,7 @@ export async function saveAllCategories(categories) {
 
     const clearRequest = store.clear();
     clearRequest.onsuccess = () => {
-      categories.forEach((c) => store.put(c));
+      categories?.forEach((c) => store.put(c));
     };
     clearRequest.onerror = (e) => reject(e.target.error);
 

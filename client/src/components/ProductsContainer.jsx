@@ -13,6 +13,7 @@ import {
   addToCart,
   getCart,
 } from "../hooks/useIndexedDB";
+import { useConfig } from "../contexts/ConfigContext";
 
 const ProductsContainer = ({
   showDetails,
@@ -24,6 +25,8 @@ const ProductsContainer = ({
   showMenipulateBtn,
   category,
 }) => {
+  const {backendUrl} = useConfig();
+
   const [products, setProducts] = useState([]);
   const [cart, setCart] = useCart();
 
@@ -37,7 +40,7 @@ const ProductsContainer = ({
         return;
       }
 
-      const { data } = await getProductsApi();
+      const { data } = await getProductsApi(backendUrl);
 
       if (data?.success) {
         setProducts(data?.products);

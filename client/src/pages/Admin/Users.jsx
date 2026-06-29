@@ -2,14 +2,17 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 
 import { deleteUserApi, getUsersApi, updateUserApi } from "../../apis/userApis";
+import { useConfig } from "../../contexts/ConfigContext";
 
 const Users = () => {
+  const { backendUrl } = useConfig();
+
   const user = JSON.parse(localStorage.getItem("user"));
   const [users, setUsers] = useState([]);
 
   const fetchUsers = async () => {
     try {
-      const { data } = await getUsersApi();
+      const { data } = await getUsersApi(backendUrl);
 
       if (data?.success) {
         setUsers(data.users);
@@ -23,7 +26,7 @@ const Users = () => {
 
   const handleMakeAdmin = async (userId) => {
     try {
-      const { data } = await updateUserApi(userId);
+      const { data } = await updateUserApi(userId, backendUrl);
 
       if (data?.success) {
         fetchUsers(); // Refresh the user list after making an admin
@@ -37,7 +40,7 @@ const Users = () => {
 
   const handleDeleteUser = async (userId) => {
     try {
-      const { data } = await deleteUserApi(userId);
+      const { data } = await deleteUserApi(userId, backendUrl);
 
       if (data?.success) {
         fetchUsers(); // Refresh the user list after deleting a user

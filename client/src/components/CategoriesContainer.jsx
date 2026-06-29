@@ -4,8 +4,11 @@ import axios from "axios";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 import { getAllCategories, saveAllCategories } from "../hooks/useIndexedDB";
 import { getCategoriesApi } from "../apis/categoryApis";
+import { useConfig } from "../contexts/ConfigContext";
 
 const CategoriesContainer = ({ setCategory }) => {
+  const { backendUrl } = useConfig();
+
   const [categories, setCategories] = useState("");
   const categoriesRef = useRef(null);
 
@@ -18,7 +21,7 @@ const CategoriesContainer = ({ setCategory }) => {
         return;
       }
 
-      const { data } = await getCategoriesApi();
+      const { data } = await getCategoriesApi(backendUrl);
 
       if (data?.success) {
         setCategories(data?.categories);

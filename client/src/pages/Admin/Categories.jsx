@@ -9,11 +9,14 @@ import {
   getCategoriesApi,
   updateCategoryApi,
 } from "../../apis/categoryApis";
+import { useConfig } from "../../contexts/ConfigContext";
 
 const Categories = () => {
   const createForm = useRef();
   const updateForm = useRef();
   const tableBody = useRef();
+
+  const { backendUrl } = useConfig();
 
   const user = JSON.parse(localStorage.getItem("user"));
 
@@ -55,12 +58,16 @@ const Categories = () => {
     try {
       setLoading(false);
 
-      const { data } = await createCategoryApi(createName, serialNumber || 1);
+      const { data } = await createCategoryApi(
+        createName,
+        serialNumber || 1,
+        backendUrl,
+      );
 
       if (data?.success) {
         const {
           data: { categories },
-        } = await getCategoriesApi();
+        } = await getCategoriesApi(backendUrl);
 
         await saveAllCategories(categories);
 
@@ -78,12 +85,12 @@ const Categories = () => {
     try {
       setLoading(false);
 
-      const { data } = await deleteCategoryApi(id);
+      const { data } = await deleteCategoryApi(id, backendUrl);
 
       if (data?.success) {
         const {
           data: { categories },
-        } = await getCategoriesApi();
+        } = await getCategoriesApi(backendUrl);
 
         await saveAllCategories(categories);
 
@@ -103,12 +110,13 @@ const Categories = () => {
         id,
         updateName,
         serialNumber || 1,
+        backendUrl,
       );
 
       if (data?.success) {
         const {
           data: { categories },
-        } = await getCategoriesApi();
+        } = await getCategoriesApi(backendUrl);
 
         await saveAllCategories(categories);
 

@@ -8,14 +8,17 @@ import ProductsContainer from "../components/ProductsContainer";
 import ProceedContainer from "../components/ProceedContainer";
 import OrderForm from "../components/OrderForm";
 import { getAppVersionApi } from "../apis/appVersionApis";
+import { useConfig } from "../contexts/ConfigContext";
 
 const HomePage = ({ appName }) => {
   const [displayForm, setDisplayForm] = useState(false);
   const [category, setCategory] = useState("");
 
+  const { backendUrl } = useConfig();
+
   const getAppVersion = async () => {
-    const { data } = await getAppVersionApi();
-    localStorage.setItem("appVersion", JSON.stringify(data?.version));
+    const { data } = await getAppVersionApi(backendUrl);
+    localStorage.setItem("appVersion", JSON.stringify(data?.version) || {});
   };
 
   useEffect(() => {

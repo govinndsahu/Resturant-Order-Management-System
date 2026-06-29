@@ -5,8 +5,11 @@ import gsap from "gsap";
 import { CartContext } from "../contexts/Cart";
 import { userLogoutApi } from "../apis/userApis";
 import { getAppRoute } from "../utils/util";
+import { useConfig } from "../contexts/ConfigContext";
 
 const Navbar = ({ name, appName }) => {
+  const { backendUrl } = useConfig();
+
   const [cart] = useContext(CartContext);
   const user = JSON.parse(localStorage?.getItem("user"));
 
@@ -31,7 +34,7 @@ const Navbar = ({ name, appName }) => {
 
   const handleLogout = async () => {
     try {
-      const { data } = await userLogoutApi();
+      const { data } = await userLogoutApi(backendUrl);
       if (data?.success) {
         navigate(route("loginpage"));
         localStorage.removeItem("user");

@@ -5,8 +5,11 @@ import axios from "axios";
 import Navbar from "../../components/Navbar";
 import { userRegisterApi } from "../../apis/userApis";
 import { getAppRoute } from "../../utils/util";
+import { useConfig } from "../../contexts/ConfigContext";
 
 const Register = ({ appName }) => {
+  const { backendUrl } = useConfig();
+
   const [name, setName] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -22,7 +25,7 @@ const Register = ({ appName }) => {
 
   const handleRegisterUser = async () => {
     try {
-      const { data } = await userRegisterApi(formData);
+      const { data } = await userRegisterApi(formData, backendUrl);
 
       if (data.success) {
         navigate(route());

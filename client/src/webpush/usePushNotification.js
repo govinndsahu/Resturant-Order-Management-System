@@ -36,7 +36,7 @@ function waitForServiceWorker(registration) {
   });
 }
 
-export async function subscribeToPush() {
+export async function subscribeToPush(backendUrl) {
   try {
     if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
       console.warn("Push not supported");
@@ -69,7 +69,7 @@ export async function subscribeToPush() {
     });
 
     // Step 3: Send subscription to your backend
-    await saveSubscriberApi(subscription);
+    await saveSubscriberApi(subscription, backendUrl);
 
     return subscription;
   } catch (err) {
