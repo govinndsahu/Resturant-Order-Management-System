@@ -35,7 +35,7 @@ import { useConfig } from "./contexts/ConfigContext.jsx";
 const App = () => {
   registerServiceWorker();
 
-  const { backendUrl } = useConfig();
+  const { backendUrl, menuName } = useConfig();
 
   const [appName, setAppName] = useState(getAppName());
 
@@ -184,7 +184,7 @@ const App = () => {
   return (
     <BrowserRouter>
       <AdminStylesLoader />
-      <Navbar name={appName} appName={appName} />
+      <Navbar name={menuName} appName={appName} />
       <Suspense fallback={<Loader />}>
         <Routes>
           <Route

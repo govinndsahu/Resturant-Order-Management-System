@@ -25,11 +25,7 @@ export const getAppRoute = (appName, path = "") => {
     .trim()
     .toLowerCase()
     .replace(/\s+/g, "-");
-  const normalizedPath = path
-    ? path.startsWith("/")
-      ? path
-      : `/${path}`
-    : "";
+  const normalizedPath = path ? (path.startsWith("/") ? path : `/${path}`) : "";
 
   if (!appRouteSegment) {
     return normalizedPath || "/";
@@ -51,7 +47,7 @@ export const getAppName = () => {
     return "Menu App";
   }
 
-  return `${pathSegment.charAt(0).toUpperCase()}${pathSegment.slice(1)}`;
+  return pathSegment;
 };
 
 export const getAppSlug = () => {
@@ -104,7 +100,7 @@ export const registerServiceWorker = () => {
       navigator.serviceWorker
         .register("/sw.js")
         .then((r) => null)
-        .catch((err) => { });
+        .catch((err) => {});
     });
   }
 };

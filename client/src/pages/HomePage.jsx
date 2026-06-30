@@ -14,7 +14,7 @@ const HomePage = ({ appName }) => {
   const [displayForm, setDisplayForm] = useState(false);
   const [category, setCategory] = useState("");
 
-  const { backendUrl } = useConfig();
+  const { backendUrl, menuName } = useConfig();
 
   const getAppVersion = async () => {
     const { data } = await getAppVersionApi(backendUrl);
@@ -28,7 +28,7 @@ const HomePage = ({ appName }) => {
   return (
     <>
       <header>
-        <Navbar name={appName} appName={appName} />
+        <Navbar name={menuName} appName={appName} />
         <CategoriesContainer setCategory={setCategory} />
       </header>
       <main>

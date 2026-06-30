@@ -8,21 +8,22 @@ export function ConfigProvider({ appName, children }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchConfig = async () => {
-      try {
-        const { data } = await getAppDataApi(appName);
-        setConfig({
-          backendUrl: data.menu.menuBackendUrl,
-          // add other config values here if needed
-        });
-      } catch (err) {
-        setError(err);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchConfig = async () => {
+    try {
+      const { data } = await getAppDataApi(appName);
+      setConfig({
+        backendUrl: data.menu.menuBackendUrl,
+        menuName: data.menu.menuName,
+        // add other config values here if needed
+      });
+    } catch (err) {
+      setError(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchConfig();
   }, [appName]);
 

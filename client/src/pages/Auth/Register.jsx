@@ -8,7 +8,7 @@ import { getAppRoute } from "../../utils/util";
 import { useConfig } from "../../contexts/ConfigContext";
 
 const Register = ({ appName }) => {
-  const { backendUrl } = useConfig();
+  const { backendUrl, menuName } = useConfig();
 
   const [name, setName] = useState("");
   const [username, setUsername] = useState("");
@@ -38,7 +38,7 @@ const Register = ({ appName }) => {
 
   return (
     <>
-      <Navbar name={appName} appName={appName} />
+      <Navbar name={menuName} appName={appName} />
       <main id="user-auth">
         <div className="auth-container w-[90%] sm:w-[80%] md:w-[70%] lg:w-[60%] xl:w-[800px]">
           <h1 className="text-2xl">User Registration</h1>

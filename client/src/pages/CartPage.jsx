@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 
-import Navbar from "../components/Navbar";
 import ProceedContainer from "../components/ProceedContainer";
 import OrderForm from "../components/OrderForm";
 

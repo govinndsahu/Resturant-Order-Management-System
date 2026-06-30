@@ -1,7 +1,10 @@
-const DB_NAME = `MenuDB`;
+import { getAppName } from "../utils/util";
+
+const DB_NAME = `${getAppName()}DB`;
 const DB_VERSION = 1;
 const PRODUCTS_STORE = "products";
 const CATEGORIES_STORE = "categories";
+const APP_VERSION = "appVersion";
 
 function sortBySn(items = []) {
   return [...items].sort((a, b) => {
@@ -41,6 +44,12 @@ function openDB() {
         const store = db.createObjectStore("cart", { keyPath: "_id" });
         store.createIndex("name", "name", { unique: false });
         console.log("✅ Cart store created");
+      }
+
+      if (!db.objectStoreNames.contains(APP_VERSION)) {
+        const store = db.createObjectStore(APP_VERSION, { keyPath: "_id" });
+        store.createIndex("name", "name", { unique: false });
+        console.log("✅ App version store created");
       }
     };
 
@@ -233,6 +242,40 @@ export async function removeFromCart(productId) {
 
     const request = store.delete(productId);
     request.onsuccess = () => resolve("✅ Item removed from cart");
+    request.onerror = (e) => reject(e.target.error);
+  });
+}
+
+// Save app version in IndexedDB
+export async function saveAppVersion(version) {
+  const db = await openDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(APP_VERSION, "readwrite");
+    const store = tx.objectStore(APP_VERSION);
+
+    // Clear existing version before saving the new one
+    const clearRequest = store.clear();
+    clearRequest.onsuccess = () => {
+      store.put({ _id: "appVersion", version });
+      resolve("✅ App version saved");
+    };
+    clearRequest.onerror = (e) => reject(e.target.error);
+
+    tx.onerror = (e) => reject(e.target.error);
+  });
+}
+
+// Get app version from IndexedDB
+export async function getAppVersionFromDB() {
+  const db = await openDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(APP_VERSION, "readonly");
+    const store = tx.objectStore(APP_VERSION);
+    const request = store.get("appVersion");
+
+    request.onsuccess = () => {
+      resolve(request.result?.version || null);
+    };
     request.onerror = (e) => reject(e.target.error);
   });
 }
