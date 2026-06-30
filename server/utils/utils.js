@@ -1,6 +1,11 @@
 import cors from "cors";
 
-const whitelist = [process.env.CLIENT_URL, "http://localhost:5174"];
+const whitelist = [
+  process.env.CLIENT_URL,
+  "http://localhost:5174",
+  "http://localhost:5173",
+  "https://menu.proshift.tech",
+];
 
 export const handleCors = () => {
   return cors({
