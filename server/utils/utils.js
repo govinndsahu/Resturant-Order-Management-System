@@ -1,6 +1,6 @@
 import cors from "cors";
 
-const whitelist = [process.env.CLIENT_URL, "http://localhost:5173"];
+const whitelist = [process.env.CLIENT_URL, "http://localhost:5174"];
 
 export const handleCors = () => {
   return cors({

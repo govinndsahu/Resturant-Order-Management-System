@@ -7,7 +7,6 @@ import CategoriesContainer from "../components/CategoriesContainer";
 import ProductsContainer from "../components/ProductsContainer";
 import ProceedContainer from "../components/ProceedContainer";
 import OrderForm from "../components/OrderForm";
-import { getAppVersionApi } from "../apis/appVersionApis";
 import { useConfig } from "../contexts/ConfigContext";
 
 const HomePage = ({ appName }) => {

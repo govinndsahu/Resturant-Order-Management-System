@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -13,8 +13,10 @@ import { sendNotificationApi } from "../apis/pushSubscriptionApis";
 
 import {
   clearCart,
+  getAppVersionFromDB,
   saveAllCategories,
   saveAllProducts,
+  saveAppVersion,
 } from "../hooks/useIndexedDB";
 import { getAppRoute } from "../utils/util";
 
@@ -64,7 +66,6 @@ const OrderForm = ({ dispalyForm, setDisplayForm, appName }) => {
     tableNumber: parseInt(tableNumber),
     buyer: name,
     total: getTotalPrice(),
-    appVersion: JSON.parse(localStorage.getItem("appVersion"))?.version || "{}",
   };
 
   const handleDisplayForm = (e) => {
@@ -115,9 +116,12 @@ const OrderForm = ({ dispalyForm, setDisplayForm, appName }) => {
 
       const position = await getUserLocation();
 
+      const { version } = await getAppVersionFromDB();
+
       const { data } = await createOrderApi(
         {
           ...orderData,
+          appVersion: version.version,
           lat: position?.coords.latitude,
           lng: position?.coords.longitude,
         },
@@ -138,7 +142,7 @@ const OrderForm = ({ dispalyForm, setDisplayForm, appName }) => {
 
         await saveAllCategories(categories);
 
-        localStorage.setItem("appVersion", JSON.stringify(data?.version) || {});
+        await saveAppVersion(data.version);
 
         setIsUpdated(false);
 

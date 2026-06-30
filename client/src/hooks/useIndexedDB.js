@@ -48,7 +48,7 @@ function openDB() {
 
       if (!db.objectStoreNames.contains(APP_VERSION)) {
         const store = db.createObjectStore(APP_VERSION, { keyPath: "_id" });
-        store.createIndex("name", "name", { unique: false });
+        store.createIndex("version", "version", { unique: false });
         console.log("✅ App version store created");
       }
     };
@@ -246,21 +246,19 @@ export async function removeFromCart(productId) {
   });
 }
 
-// Save app version in IndexedDB
 export async function saveAppVersion(version) {
   const db = await openDB();
   return new Promise((resolve, reject) => {
     const tx = db.transaction(APP_VERSION, "readwrite");
     const store = tx.objectStore(APP_VERSION);
 
-    // Clear existing version before saving the new one
     const clearRequest = store.clear();
     clearRequest.onsuccess = () => {
       store.put({ _id: "appVersion", version });
-      resolve("✅ App version saved");
     };
     clearRequest.onerror = (e) => reject(e.target.error);
 
+    tx.oncomplete = () => resolve("✅ App version saved");
     tx.onerror = (e) => reject(e.target.error);
   });
 }
@@ -272,10 +270,7 @@ export async function getAppVersionFromDB() {
     const tx = db.transaction(APP_VERSION, "readonly");
     const store = tx.objectStore(APP_VERSION);
     const request = store.get("appVersion");
-
-    request.onsuccess = () => {
-      resolve(request.result?.version || null);
-    };
+    request.onsuccess = () => resolve(request.result);
     request.onerror = (e) => reject(e.target.error);
   });
 }

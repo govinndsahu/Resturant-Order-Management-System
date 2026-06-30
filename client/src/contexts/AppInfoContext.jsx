@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { getAppVersionApi } from "../apis/appVersionApis.js";
 import { getAppName } from "../utils/util.js";
 import { useConfig } from "./ConfigContext.jsx";
+import { getAppVersionFromDB, saveAppVersion } from "../hooks/useIndexedDB.js";
 
 const AppInfoContext = createContext(null);
 
@@ -14,15 +15,18 @@ export function AppInfoProvider({ children }) {
 
     const syncAppInfo = async () => {
       try {
-        const { data } = await getAppVersionApi(backendUrl);
-        if (!isActive) return;
+        const cached = await getAppVersionFromDB();
 
-        if (data?.name) {
-          setAppName(data.name);
+        if (cached?.version) {
+          if (!isActive) return;
         }
 
+        const { data } = await getAppVersionApi(backendUrl);
+
+        if (!isActive) return;
+
         if (data?.version) {
-          localStorage.setItem("appVersion", JSON.stringify(data.version));
+          await saveAppVersion(data.version);
         }
       } catch (error) {
         console.log(error);
