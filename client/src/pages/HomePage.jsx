@@ -14,21 +14,11 @@ const HomePage = ({ appName }) => {
   const [displayForm, setDisplayForm] = useState(false);
   const [category, setCategory] = useState("");
 
-  const { backendUrl, menuName } = useConfig();
-
-  const getAppVersion = async () => {
-    const { data } = await getAppVersionApi(backendUrl);
-    localStorage.setItem("appVersion", JSON.stringify(data?.version) || {});
-  };
-
-  useEffect(() => {
-    if (!localStorage.getItem("appVersion")) getAppVersion();
-  }, []);
+  const { menuName } = useConfig();
 
   return (
     <>
       <header>
-        <Navbar name={menuName} appName={appName} />
         <CategoriesContainer setCategory={setCategory} />
       </header>
       <main>
