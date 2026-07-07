@@ -3,17 +3,23 @@ import { getAppDataApi } from "../apis/apis";
 
 const ConfigContext = createContext(null);
 
-export function ConfigProvider({ appName, children }) {
+export function ConfigProvider({ appId, children }) {
   const [config, setConfig] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const fetchConfig = async () => {
     try {
-      const { data } = await getAppDataApi(appName);
+      const { data } = await getAppDataApi(appId);
+      const menuName = data?.menu?.menuName;
+
+      if (menuName) {
+        localStorage.setItem("menuDbName", menuName);
+      }
+
       setConfig({
         backendUrl: data.menu.menuBackendUrl,
-        menuName: data.menu.menuName,
+        menuName,
         // add other config values here if needed
       });
     } catch (err) {
@@ -25,7 +31,7 @@ export function ConfigProvider({ appName, children }) {
 
   useEffect(() => {
     fetchConfig();
-  }, [appName]);
+  }, [appId]);
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Failed to load config.</div>;

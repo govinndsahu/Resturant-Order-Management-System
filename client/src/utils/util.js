@@ -34,37 +34,23 @@ export const getAppRoute = (appName, path = "") => {
   return `${`/${appRouteSegment}`}${normalizedPath}`;
 };
 
-export const getAppName = () => {
-  const envAppName = import.meta.env.VITE_APP_NAME?.trim();
-
-  if (envAppName) {
-    return envAppName;
-  }
-
+export const getAppId = () => {
   const pathSegment = window.location.pathname.split("/").filter(Boolean)[0];
 
-  if (!pathSegment) {
-    return "Menu App";
+  if (pathSegment) {
+    return pathSegment;
   }
 
-  return pathSegment;
+  const envAppId = import.meta.env.VITE_APP_NAME?.trim();
+
+  if (envAppId) {
+    return envAppId;
+  }
+
+  return "Menu App";
 };
 
-export const getAppSlug = () => {
-  const envAppName = import.meta.env.VITE_APP_NAME?.trim();
-
-  if (envAppName) {
-    return envAppName.toLowerCase().replace(/\s+/g, "-");
-  }
-
-  const pathSegment = window.location.pathname.split("/").filter(Boolean)[0];
-
-  if (!pathSegment) {
-    return "menu-app";
-  }
-
-  return pathSegment.toLowerCase();
-};
+export const getAppName = () => getAppId();
 
 export const adminStylesLoaderFunction = (location, appName) => {
   const user = JSON.parse(localStorage?.getItem("user") || "null");

@@ -1,10 +1,15 @@
-import { getAppName } from "../utils/util";
+import { getAppId } from "../utils/util";
 
-const DB_NAME = `${getAppName()}DB`;
 const DB_VERSION = 1;
 const PRODUCTS_STORE = "products";
 const CATEGORIES_STORE = "categories";
 const APP_VERSION = "appVersion";
+
+function getDbName() {
+  const stableName = localStorage.getItem("menuDbName")?.trim();
+  const fallbackId = getAppId();
+  return `${stableName || fallbackId}DB`;
+}
 
 function sortBySn(items = []) {
   return [...items].sort((a, b) => {
@@ -17,7 +22,7 @@ function sortBySn(items = []) {
 // ✅ Open / Initialize DB
 function openDB() {
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open(DB_NAME, DB_VERSION);
+    const request = indexedDB.open(getDbName(), DB_VERSION);
 
     // Runs when DB is created or version changes
     request.onupgradeneeded = (e) => {

@@ -6,13 +6,13 @@ import "./index.css";
 import "remixicon/fonts/remixicon.css";
 
 import App from "./App.jsx";
-import { getAppName } from "./utils/util.js";
+import { getAppId } from "./utils/util.js";
 import { ConfigProvider } from "./contexts/ConfigContext.jsx";
 import { AppInfoProvider } from "./contexts/AppInfoContext.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <ConfigProvider appName={getAppName()}>
+    <ConfigProvider appId={getAppId()}>
       <AppInfoProvider>
         <CartProvider>
           <App />
