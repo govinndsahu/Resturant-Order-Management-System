@@ -52,7 +52,11 @@ export const registerUser = async (req, res, next) => {
     return res.status(201).json({
       success: true,
       message: "User registered successfully",
-      user: { name: newUser.name, username: newUser.username, role: newUser.role },
+      user: {
+        name: newUser.name,
+        username: newUser.username,
+        role: newUser.role,
+      },
     });
   } catch (error) {
     next(error);
@@ -137,6 +141,20 @@ export const logoutUser = async (req, res, next) => {
 export const getAllUsers = async (req, res, next) => {
   try {
     const users = await User.find({});
+
+    return res.status(200).json({ success: true, users });
+  } catch (error) {
+    next(error);
+    console.error("Error fetching all users:", error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Error fetching all users" });
+  }
+};
+
+export const getAllUsersDetails = async (req, res, next) => {
+  try {
+    const users = await User.find({}).select("name username -_id"); // Exclude the password and _id fields from the response
 
     return res.status(200).json({ success: true, users });
   } catch (error) {

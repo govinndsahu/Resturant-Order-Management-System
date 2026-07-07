@@ -3,6 +3,7 @@ import express from "express";
 import {
   deleteUserByAdmin,
   getAllUsers,
+  getAllUsersDetails,
   loginUser,
   logoutUser,
   makeStaffByAdmin,
@@ -19,6 +20,8 @@ router.post("/login", loginUser);
 router.post("/logout", isLogedIn, logoutUser);
 
 router.get("/", isLogedIn, isAdmin, getAllUsers);
+
+router.get("/details/get", getAllUsersDetails);
 
 router.post("/update/:userId", isLogedIn, isAdmin, makeStaffByAdmin);
 
