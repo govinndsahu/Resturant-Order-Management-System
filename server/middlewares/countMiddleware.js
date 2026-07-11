@@ -3,11 +3,7 @@ import crypto from "crypto";
 
 export const checkCount = async (req, res, next) => {
   try {
-    let count = await Count.findOne();
-    if (!count) {
-      const newCount = await Count.create({ count: 0 });
-      count = newCount;
-    }
+    const count = req.count;
     if (count.count >= count.maxCount) {
       return res
         .status(400)
@@ -54,6 +50,37 @@ export const checkSignature = (req, res, next) => {
 
     req.plan = req.body?.payload.subscription.entity.plan;
 
+    next();
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const resetCount = async (req, res, next) => {
+  try {
+    let count = await Count.findOne();
+
+    if (!count) {
+      const newCount = await Count.insertOne({ count: 0 });
+      count = newCount;
+    }
+
+    if (count.maxCount > 100) {
+      req.count = count;
+      next();
+    }
+
+    const currentDate = Date.now();
+
+    console.log(currentDate >= count.resetDate);
+
+    if (currentDate >= count.resetDate) {
+      count.count = 0;
+      count.resetDate = currentDate + 30 * 24 * 60 * 60 * 1000;
+      await count.save();
+    }
+
+    req.count = count;
     next();
   } catch (error) {
     next(error);

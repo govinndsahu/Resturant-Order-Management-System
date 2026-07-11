@@ -2,11 +2,14 @@ import Count from "../models/countModel.js";
 
 export const getCount = async (req, res, next) => {
   try {
-    const count = await Count.findOne().select("-_id count maxCount");
-    if (!count) {
-      return res.status(404).json({ message: "Count not found" });
-    }
-    return res.json({ success: true, count });
+    return res.json({
+      success: true,
+      count: {
+        count: req.count.count,
+        maxCount: req.count.maxCount,
+        resetDate: req.count.resetDate,
+      },
+    });
   } catch (error) {
     next(error);
   }

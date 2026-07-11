@@ -11,7 +11,7 @@ import {
   isStaff,
 } from "../middlewares/validateMiddleware.js";
 import { validateRestaurantLocation } from "../middlewares/validateLocationMiddleware.js";
-import { checkCount, increaseCount } from "../middlewares/countMiddleware.js";
+import { checkCount, increaseCount, resetCount } from "../middlewares/countMiddleware.js";
 
 const router = express.Router();
 
@@ -19,6 +19,7 @@ router.post(
   "/create",
   // validateRestaurantLocation,
   isNewAppVersion,
+  resetCount,
   checkCount,
   increaseCount,
   createOrder,

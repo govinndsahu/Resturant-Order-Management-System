@@ -1,10 +1,10 @@
 import express from "express";
 import { getCount, updateCount } from "../controllers/countController.js";
-import { checkSignature } from "../middlewares/countMiddleware.js";
+import { checkSignature, resetCount } from "../middlewares/countMiddleware.js";
 
 const router = express.Router();
 
-router.get("/", getCount);
+router.get("/", resetCount, getCount);
 
 router.put("/update", checkSignature, updateCount);
 
