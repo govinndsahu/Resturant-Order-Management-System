@@ -47,12 +47,12 @@ export const checkSignature = (req, res, next) => {
       .update(JSON.stringify(req.body.payload))
       .digest("hex");
 
-    console.log({ signature, dgDineSignature });
-
     if (signature !== dgDineSignature) {
       console.log("Signature is invalid.");
       return res.end();
     }
+
+    req.plan = req.body?.payload.subscription.entity.plan;
 
     next();
   } catch (error) {
