@@ -25,7 +25,7 @@ const ProductsContainer = ({
   showMenipulateBtn,
   category,
 }) => {
-  const {backendUrl} = useConfig();
+  const { backendUrl } = useConfig();
 
   const [products, setProducts] = useState([]);
   const [cart, setCart] = useCart();

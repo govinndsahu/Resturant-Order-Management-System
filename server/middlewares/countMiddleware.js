@@ -1,4 +1,5 @@
 import Count from "../models/countModel.js";
+import crypto from "crypto";
 
 export const checkCount = async (req, res, next) => {
   try {
@@ -26,6 +27,33 @@ export const increaseCount = async (req, res, next) => {
     }
     count.count += 1;
     await count.save();
+    next();
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const checkSignature = (req, res, next) => {
+  try {
+    const dgDineSignature = req.headers["dgdine-signature"];
+
+    if (!dgDineSignature) {
+      console.log("Signature not found.");
+      return res.end();
+    }
+
+    const signature = crypto
+      .createHmac("sha256", process.env.MENU_SECRET)
+      .update(JSON.stringify(req.body.payload))
+      .digest("hex");
+
+    console.log({ signature, dgDineSignature });
+
+    if (signature !== dgDineSignature) {
+      console.log("Signature is invalid.");
+      return res.end();
+    }
+
     next();
   } catch (error) {
     next(error);
