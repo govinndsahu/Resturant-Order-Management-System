@@ -48,7 +48,7 @@ export const checkSignature = (req, res, next) => {
       return res.end();
     }
 
-    req.plan = req.body?.payload.subscription.entity.plan;
+    req.planId = req.body?.payload.subscription.entity.plan_id;
 
     next();
   } catch (error) {
@@ -71,8 +71,6 @@ export const resetCount = async (req, res, next) => {
     }
 
     const currentDate = Date.now();
-
-    console.log(currentDate >= count.resetDate);
 
     if (currentDate >= count.resetDate) {
       count.count = 0;

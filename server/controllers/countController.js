@@ -23,21 +23,21 @@ export const updateCount = async (req, res, next) => {
       return res.status(404).json({ message: "Count not found" });
     }
 
-    if (req.plan.id === process.env.RAZORPAY_PLAN_STARTER) {
+    if (req.planId === process.env.RAZORPAY_PLAN_STARTER) {
       count.count = 0;
       count.maxCount = 1000;
       await count.save();
-    } else if (req.plan.id === process.env.RAZORPAY_PLAN_GROWTH) {
+    } else if (req.planId === process.env.RAZORPAY_PLAN_GROWTH) {
       count.count = 0;
       count.maxCount = 5000;
       await count.save();
-    } else if (req.plan.id === process.env.RAZORPAY_PLAN_PRO) {
+    } else if (req.planId === process.env.RAZORPAY_PLAN_PRO) {
       count.count = 0;
-      count.maxCount = 250000;
+      count.maxCount = 25000;
       await count.save();
-    } else if (req.plan.id === process.env.RAZORPAY_PLAN_ENTERPRISE) {
+    } else if (req.planId === process.env.RAZORPAY_PLAN_ENTERPRISE) {
       count.count = 0;
-      count.maxCount = 500000;
+      count.maxCount = 50000;
       await count.save();
     }
 
