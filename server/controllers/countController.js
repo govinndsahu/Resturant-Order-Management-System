@@ -26,18 +26,22 @@ export const updateCount = async (req, res, next) => {
     if (req.planId === process.env.RAZORPAY_PLAN_STARTER) {
       count.count = 0;
       count.maxCount = 1000;
+      count.maxItemCount = 50;
       await count.save();
     } else if (req.planId === process.env.RAZORPAY_PLAN_GROWTH) {
       count.count = 0;
       count.maxCount = 5000;
+      count.maxItemCount = 100;
       await count.save();
     } else if (req.planId === process.env.RAZORPAY_PLAN_PRO) {
       count.count = 0;
       count.maxCount = 25000;
+      count.maxItemCount = 150;
       await count.save();
     } else if (req.planId === process.env.RAZORPAY_PLAN_ENTERPRISE) {
       count.count = 0;
       count.maxCount = 50000;
+      count.maxItemCount = 300;
       await count.save();
     }
 

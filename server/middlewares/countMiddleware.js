@@ -15,13 +15,50 @@ export const checkCount = async (req, res, next) => {
   }
 };
 
-export const increaseCount = async (req, res, next) => {
+export const checkItemCount = async (req, res, next) => {
   try {
     const count = await Count.findOne();
     if (!count) {
       return res.status(404).json({ message: "Count not found" });
     }
+    if (count.itemCount >= count.maxItemCount)
+      return res
+        .status(400)
+        .json({ error: "Iteam count has reached the maximum limit" });
+
+    req.count = count;
+    next();
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const increaseCount = async (req, res, next) => {
+  try {
+    const count = req.count;
     count.count += 1;
+    await count.save();
+    next();
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const increaseItemCount = async (req, res, next) => {
+  try {
+    const count = req.count;
+    count.itemCount += 1;
+    await count.save();
+    next();
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const decreaseItemCount = async (req, res, next) => {
+  try {
+    const count = await Count.findOne();
+    count.itemCount -= 1;
     await count.save();
     next();
   } catch (error) {
