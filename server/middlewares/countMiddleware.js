@@ -65,7 +65,7 @@ export const resetCount = async (req, res, next) => {
       count = newCount;
     }
 
-    if (count.maxCount > 100) {
+    if (count.maxCount <= 100) {
       req.count = count;
       next();
     }
