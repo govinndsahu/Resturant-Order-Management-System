@@ -66,8 +66,12 @@ export const decreaseItemCount = async (req, res, next) => {
   }
 };
 
-export const checkSignature = (req, res, next) => {
+export const checkSignature = async (req, res, next) => {
   try {
+    const count = await Count.findOne();
+
+    const oldCount = count;
+
     const dgDineSignature = req.headers["dgdine-signature"];
 
     if (!dgDineSignature) {
@@ -89,6 +93,15 @@ export const checkSignature = (req, res, next) => {
       req.body?.payload.subscription?.entity.plan_id ||
       req.body?.payload.planId;
 
+    req.count = count;
+    req.oldCount = {
+      count: count.count,
+      maxCount: count.maxCount,
+      maxItemCount: count.maxItemCount,
+      willReset: count.willReset,
+      resetDate: count.resetDate,
+    };
+
     next();
   } catch (error) {
     next(error);
@@ -109,7 +122,7 @@ export const resetCount = async (req, res, next) => {
       return next();
     }
 
-    const currentDate = 1786645800000;
+    const currentDate = Date.now();
 
     if (currentDate >= count.resetDate) {
       count.count = 0;
