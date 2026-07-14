@@ -85,7 +85,9 @@ export const checkSignature = (req, res, next) => {
       return res.end();
     }
 
-    req.planId = req.body?.payload.subscription.entity.plan_id;
+    req.planId =
+      req.body?.payload.subscription?.entity.plan_id ||
+      req.body?.payload.planId;
 
     next();
   } catch (error) {
@@ -102,7 +104,7 @@ export const resetCount = async (req, res, next) => {
       count = newCount;
     }
 
-    if (count.maxCount > 100) {
+    if (!count.willReset) {
       req.count = count;
       return next();
     }
@@ -111,6 +113,8 @@ export const resetCount = async (req, res, next) => {
 
     if (currentDate >= count.resetDate) {
       count.count = 0;
+      count.maxCount = 100;
+      count.maxItemCount = 10;
       count.resetDate = currentDate + 30 * 24 * 60 * 60 * 1000;
       await count.save();
     }

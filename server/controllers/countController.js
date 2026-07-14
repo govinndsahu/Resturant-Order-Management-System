@@ -18,7 +18,7 @@ export const getCount = async (req, res, next) => {
 
 export const updateCount = async (req, res, next) => {
   try {
-    const { event } = req.body;
+    const { event, payload } = req.body;
 
     const count = await Count.findOne();
     if (!count) {
@@ -30,7 +30,7 @@ export const updateCount = async (req, res, next) => {
         await handleChargeEvent({ req, count });
         break;
       case "subscription.cancelled":
-        await handleCancelEvent({ count });
+        await handleCancelEvent({ count, payload });
         break;
       case "subscription.paused":
         break;

@@ -62,28 +62,31 @@ export const handleChargeEvent = async ({ req, count }) => {
     count.count = 0;
     count.maxCount = 1000;
     count.maxItemCount = 50;
+    count.willReset = false;
     await count.save();
   } else if (req.planId === process.env.RAZORPAY_PLAN_GROWTH) {
     count.count = 0;
     count.maxCount = 5000;
     count.maxItemCount = 100;
+    count.willReset = false;
     await count.save();
   } else if (req.planId === process.env.RAZORPAY_PLAN_PRO) {
     count.count = 0;
     count.maxCount = 25000;
     count.maxItemCount = 150;
+    count.willReset = false;
     await count.save();
   } else if (req.planId === process.env.RAZORPAY_PLAN_ENTERPRISE) {
     count.count = 0;
     count.maxCount = 50000;
     count.maxItemCount = 300;
+    count.willReset = false;
     await count.save();
   }
 };
 
-export const handleCancelEvent = async ({ count }) => {
-  count.count = 0;
-  count.maxCount = 100;
-  count.maxItemCount = 10;
+export const handleCancelEvent = async ({ count, payload }) => {
+  count.willReset = true;
+  count.resetDate = payload.currentEnd;
   await count.save();
 };
