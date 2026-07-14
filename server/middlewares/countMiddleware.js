@@ -109,7 +109,7 @@ export const resetCount = async (req, res, next) => {
       return next();
     }
 
-    const currentDate = Date.now();
+    const currentDate = 1786645800000;
 
     if (currentDate >= count.resetDate) {
       count.count = 0;
