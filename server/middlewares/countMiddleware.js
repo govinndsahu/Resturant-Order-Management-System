@@ -91,9 +91,10 @@ export const checkSignature = async (req, res, next) => {
 
     req.planId =
       req.body?.payload.subscription?.entity.plan_id ||
-      req.body?.payload.planId;
+      req.body?.payload.razorpayPlanId;
 
     req.count = count;
+
     req.oldCount = {
       count: count.count,
       maxCount: count.maxCount,
