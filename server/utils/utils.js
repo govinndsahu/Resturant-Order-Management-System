@@ -93,7 +93,7 @@ export const handleCancelEvent = async ({ count, payload }) => {
 
 export const handlePauseEvent = async ({ count, payload }) => {
   count.willReset = true;
-  count.resetDate = payload.subscription.entity.current_end * 1000;
+  count.resetDate = payload.currentEnd;
   count.count = 0;
   count.maxCount = 100;
   count.maxItemCount = 10;
@@ -106,5 +106,23 @@ export const handleResumeEvent = async ({ payload, count }) => {
   count.count = payload.pausedData.count;
   count.maxCount = payload.pausedData.maxCount;
   count.maxItemCount = payload.pausedData.maxItemCount;
+  await count.save();
+};
+
+export const handlePendingEvent = async ({ payload, count }) => {
+  count.willReset = true;
+  count.count = 0;
+  count.maxCount = 100;
+  count.maxItemCount = 10;
+  count.resetDate = payload.currentEnd;
+  await count.save();
+};
+
+export const handleCompletedEvent = async ({ payload, count }) => {
+  count.willReset = true;
+  count.count = 0;
+  count.maxCount = 100;
+  count.maxItemCount = 10;
+  count.resetDate = payload.currentEnd;
   await count.save();
 };
