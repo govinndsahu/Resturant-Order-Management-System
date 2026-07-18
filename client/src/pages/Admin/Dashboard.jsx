@@ -30,6 +30,7 @@ const Dashboard = ({ appName }) => {
     Products: "ri-restaurant-line",
     Orders: "ri-file-list-3-line",
     "Orders Histories": "ri-history-line",
+    "Orders Analytics": "ri-bar-chart-line",
     Users: "ri-team-line",
   };
 
@@ -38,6 +39,7 @@ const Dashboard = ({ appName }) => {
     Products: { bg: "#f0fdf4", icon: "#22c55e", border: "#dcfce7" },
     Orders: { bg: "#fef3c7", icon: "#f59e0b", border: "#fde68a" },
     "Orders Histories": { bg: "#f5f3ff", icon: "#8b5cf6", border: "#ddd6fe" },
+    "Orders Analytics": { bg: "#f0f9ff", icon: "#0ea5e9", border: "#bae6fd" },
     Users: { bg: "#fdf2f8", icon: "#ec4899", border: "#fbcfe8" },
   };
 

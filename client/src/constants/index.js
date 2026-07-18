@@ -16,6 +16,10 @@ export const dashboardPages = [
     path: "/dashboard/orders-histories",
   },
   {
+    name: "Orders Analytics",
+    path: "/dashboard/orders-analytics",
+  },
+  {
     name: "Users",
     path: "/dashboard/users",
   },
