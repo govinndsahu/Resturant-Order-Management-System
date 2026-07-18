@@ -1,3 +1,4 @@
+import "../../css/dashboard.css";
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 

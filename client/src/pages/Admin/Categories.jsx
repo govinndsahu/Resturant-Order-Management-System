@@ -1,3 +1,4 @@
+import "../../css/categories.css";
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 
