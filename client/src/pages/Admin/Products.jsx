@@ -20,7 +20,7 @@ import Loader from "../../components/Loader";
 import { useConfig } from "../../contexts/ConfigContext";
 
 const Products = () => {
-  const { backendUrl } = useConfig();
+  const { backendUrl, menu } = useConfig();
 
   const user = JSON.parse(localStorage.getItem("user") || "{}");
 
@@ -119,7 +119,11 @@ const Products = () => {
 
       setLoader(true);
 
-      const { data } = await createProductApi(productData, backendUrl);
+      const { data } = await createProductApi(
+        productData,
+        backendUrl,
+        menu?._id,
+      );
 
       if (data?.success) {
         uploadImage(data.id, image);
@@ -144,7 +148,12 @@ const Products = () => {
     formData.append("image", file);
 
     try {
-      const { data } = await uploadImageApi(id, formData, backendUrl);
+      const { data } = await uploadImageApi(
+        id,
+        formData,
+        backendUrl,
+        menu?._id,
+      );
 
       if (data?.success) {
         const {
@@ -198,7 +207,12 @@ const Products = () => {
 
       setLoader(true);
 
-      const { data } = await updateProductApi(id, productData, backendUrl);
+      const { data } = await updateProductApi(
+        id,
+        productData,
+        backendUrl,
+        menu?._id,
+      );
 
       if (data?.success) {
         if (image) {
@@ -235,7 +249,7 @@ const Products = () => {
     try {
       setLoader(true);
 
-      const { data } = await deleteProductApi(id, backendUrl);
+      const { data } = await deleteProductApi(id, backendUrl, menu?._id);
 
       if (data?.success) {
         const {

@@ -1,5 +1,4 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { getAppVersionApi } from "../apis/appVersionApis.js";
 import { getAppId } from "../utils/util.js";
 import { useConfig } from "./ConfigContext.jsx";
 import { getAppVersionFromDB, saveAppVersion } from "../hooks/useIndexedDB.js";
@@ -21,13 +20,13 @@ export function AppInfoProvider({ children }) {
           if (!isActive) return;
         }
 
-        const { data } = await getAppVersionApi(backendUrl);
+        // const { data } = await getAppVersionApi(backendUrl);
 
         if (!isActive) return;
 
-        if (data?.version) {
-          await saveAppVersion(data.version);
-        }
+        // if (data?.version) {
+        //   await saveAppVersion(data.version);
+        // }
       } catch (error) {
         console.log(error);
       }

@@ -9,11 +9,7 @@ import {
   getOrdersAsHistory,
   markOrderAsDone,
 } from "../controllers/orderController.js";
-import {
-  isLogedIn,
-  isNewAppVersion,
-  isStaff,
-} from "../middlewares/validateMiddleware.js";
+import { isLogedIn, isStaff } from "../middlewares/validateMiddleware.js";
 import { validateRestaurantLocation } from "../middlewares/validateLocationMiddleware.js";
 import {
   checkCount,
@@ -26,7 +22,6 @@ const router = express.Router();
 router.post(
   "/create",
   // validateRestaurantLocation,
-  isNewAppVersion,
   resetCount,
   checkCount,
   increaseCount,
@@ -45,6 +40,6 @@ router.post("/mark-all-as-done", isLogedIn, isStaff, doneAllOrders);
 
 router.get("/history", isLogedIn, isStaff, getOrdersAsHistory);
 
-router.delete("/history/:id", isLogedIn, isStaff, deleteHistory);
+router.delete("/delete", isLogedIn, isStaff, deleteHistory);
 
 export default router;

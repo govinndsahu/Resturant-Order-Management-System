@@ -19,7 +19,6 @@ import {
 } from "../hooks/useIndexedDB";
 import { getAppRoute } from "../utils/util";
 
-import UpdateApp from "./UpdateApp";
 import LocationError from "./LocationError";
 import Tutorial from "./Tutorial";
 import LocationErrorMessage from "./LocationErrorMessage";
@@ -32,7 +31,6 @@ const OrderForm = ({ dispalyForm, setDisplayForm, appName }) => {
   const [tableNumber, setTableNumber] = useState("");
   const [showTableValidate, setShowTableValidate] = useState(false);
 
-  const [isUpdated, setIsUpdated] = useState(true);
   const [locationError, setLocationError] = useState(false);
   const [loader, setLoader] = useState(false);
 
@@ -118,42 +116,14 @@ const OrderForm = ({ dispalyForm, setDisplayForm, appName }) => {
 
       const position = await getUserLocation();
 
-      const { version } = await getAppVersionFromDB();
-
       const { data } = await createOrderApi(
         {
           ...orderData,
-          appVersion: version.version,
           lat: position?.coords.latitude,
           lng: position?.coords.longitude,
         },
         backendUrl,
       );
-
-      // handling data cache if needed
-      if (data.message === "Database is updated.") {
-        const {
-          data: { products },
-        } = await getProductsApi(backendUrl);
-
-        await saveAllProducts(products);
-
-        const {
-          data: { categories },
-        } = await getCategoriesApi(backendUrl);
-
-        await saveAllCategories(categories);
-
-        await saveAppVersion(data.version);
-
-        setIsUpdated(false);
-
-        setLoader(false);
-        setDisplayForm(false);
-        setCart([]);
-        await clearCart();
-        navigate(route());
-      }
 
       // handling order
       if (data.success) {
@@ -300,7 +270,6 @@ const OrderForm = ({ dispalyForm, setDisplayForm, appName }) => {
         </div>
       </div>
 
-      {!isUpdated ? <UpdateApp /> : null}
       {locationError ? (
         <LocationErrorMessage setLocationError={setLocationError} />
       ) : null}

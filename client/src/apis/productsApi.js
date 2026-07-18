@@ -5,10 +5,10 @@ export const getProductsApi = async (backendUrl) => {
   return { data };
 };
 
-export const createProductApi = async (productData, backendUrl) => {
+export const createProductApi = async (productData, backendUrl, menuId) => {
   const { data } = await axios.post(
     `${backendUrl}products/create`,
-    productData,
+    { ...productData, id: menuId },
     {
       headers: {
         "Content-Type": "application/json",
@@ -19,13 +19,14 @@ export const createProductApi = async (productData, backendUrl) => {
   return { data };
 };
 
-export const uploadImageApi = async (id, formData, backendUrl) => {
+export const uploadImageApi = async (id, formData, backendUrl, menuId) => {
   const { data } = await axios.post(
     `${backendUrl}products/upload-image/${id}`,
     formData,
     {
       headers: {
         "Content-Type": "multipart/form-data",
+        id: menuId,
       },
       withCredentials: true,
     },
@@ -33,10 +34,10 @@ export const uploadImageApi = async (id, formData, backendUrl) => {
   return { data };
 };
 
-export const updateProductApi = async (id, productData, backendUrl) => {
+export const updateProductApi = async (id, productData, backendUrl, menuId) => {
   const { data } = await axios.put(
     `${backendUrl}products/update/${id}`,
-    productData,
+    { ...productData, id: menuId },
     {
       headers: {
         "Content-Type": "application/json",
@@ -47,12 +48,10 @@ export const updateProductApi = async (id, productData, backendUrl) => {
   return { data };
 };
 
-export const deleteProductApi = async (id, backendUrl) => {
-  const { data } = await axios.delete(
-    `${backendUrl}products/delete/${id}`,
-    {
-      withCredentials: true,
-    },
-  );
+export const deleteProductApi = async (id, backendUrl, menuId) => {
+  const { data } = await axios.delete(`${backendUrl}products/delete/${id}`, {
+    withCredentials: true,
+    data: { id: menuId },
+  });
   return { data };
 };

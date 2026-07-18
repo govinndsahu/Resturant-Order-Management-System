@@ -9,10 +9,11 @@ export const createCategoryApi = async (
   categoryName,
   serialNumber,
   backendUrl,
+  menuId,
 ) => {
   const { data } = await axios.post(
     `${backendUrl}categories/create`,
-    { name: categoryName, sn: serialNumber },
+    { name: categoryName, sn: serialNumber, id: menuId },
     {
       withCredentials: true,
     },
@@ -25,10 +26,11 @@ export const updateCategoryApi = async (
   categoryName,
   serialNumber,
   backendUrl,
+  menuId,
 ) => {
   const { data } = await axios.put(
     `${backendUrl}categories/update/${id}`,
-    { name: categoryName, sn: serialNumber },
+    { name: categoryName, sn: serialNumber, id: menuId },
     {
       withCredentials: true,
     },
@@ -36,9 +38,10 @@ export const updateCategoryApi = async (
   return { data };
 };
 
-export const deleteCategoryApi = async (id, backendUrl) => {
+export const deleteCategoryApi = async (id, backendUrl, menuId) => {
   const { data } = await axios.delete(`${backendUrl}categories/delete/${id}`, {
     withCredentials: true,
+    data: { id: menuId },
   });
   return { data };
 };

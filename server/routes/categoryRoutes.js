@@ -8,23 +8,14 @@ import {
   getCategories,
   updateCategory,
 } from "../controllers/categoryController.js";
-import {
-  isAdmin,
-  isLogedIn,
-  updateAppVersion,
-} from "../middlewares/validateMiddleware.js";
+import { isAdmin, isLogedIn } from "../middlewares/validateMiddleware.js";
+import { updateVersion } from "../middlewares/updateMiddleware.js";
 
-router.post("/create", isLogedIn, isAdmin, updateAppVersion, createCategory);
+router.post("/create", isLogedIn, isAdmin, updateVersion, createCategory);
 
-router.put("/update/:id", isLogedIn, isAdmin, updateAppVersion, updateCategory);
+router.put("/update/:id", isLogedIn, isAdmin, updateVersion, updateCategory);
 
-router.delete(
-  "/delete/:id",
-  isLogedIn,
-  isAdmin,
-  updateAppVersion,
-  deleteCategory,
-);
+router.delete("/delete/:id", isLogedIn, isAdmin, updateVersion, deleteCategory);
 
 router.get("/", getCategories);
 

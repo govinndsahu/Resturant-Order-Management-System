@@ -8,16 +8,13 @@ import {
   updateProduct,
   uploadProductImage,
 } from "../controllers/productController.js";
-import {
-  isAdmin,
-  isLogedIn,
-  updateAppVersion,
-} from "../middlewares/validateMiddleware.js";
+import { isAdmin, isLogedIn } from "../middlewares/validateMiddleware.js";
 import {
   checkItemCount,
   decreaseItemCount,
   increaseItemCount,
 } from "../middlewares/countMiddleware.js";
+import { updateVersion } from "../middlewares/updateMiddleware.js";
 
 const router = express.Router();
 
@@ -30,6 +27,7 @@ router.post(
   isAdmin,
   checkItemCount,
   increaseItemCount,
+  updateVersion,
   createProduct,
 );
 
@@ -37,19 +35,19 @@ router.post(
   "/upload-image/:id",
   isLogedIn,
   isAdmin,
-  updateAppVersion,
   upload.single("image"),
+  updateVersion,
   uploadProductImage,
 );
 
-router.put("/update/:id", isLogedIn, isAdmin, updateAppVersion, updateProduct);
+router.put("/update/:id", isLogedIn, isAdmin, updateVersion, updateProduct);
 
 router.delete(
   "/delete/:id",
   isLogedIn,
   isAdmin,
-  updateAppVersion,
   decreaseItemCount,
+  updateVersion,
   deleteProduct,
 );
 

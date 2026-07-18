@@ -16,7 +16,7 @@ const Categories = () => {
   const createForm = useRef();
   const updateForm = useRef();
 
-  const { backendUrl } = useConfig();
+  const { backendUrl, menu } = useConfig();
 
   const user = JSON.parse(localStorage.getItem("user"));
 
@@ -63,6 +63,7 @@ const Categories = () => {
         createName,
         serialNumber || 1,
         backendUrl,
+        menu?._id,
       );
 
       if (data?.success) {
@@ -87,7 +88,7 @@ const Categories = () => {
     try {
       setLoading(true);
 
-      const { data } = await deleteCategoryApi(id, backendUrl);
+      const { data } = await deleteCategoryApi(id, backendUrl, menu?._id);
 
       if (data?.success) {
         const {
@@ -115,6 +116,7 @@ const Categories = () => {
         updateName,
         serialNumber || 1,
         backendUrl,
+        menu?._id,
       );
 
       if (data?.success) {
