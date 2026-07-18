@@ -2,7 +2,7 @@ const FiltereInput = ({ name, setName, tableNumber, setTableNumber }) => {
   return (
     <div className="filter-bar">
       <div className="filter-group">
-        <i className="ri-user-search-line"></i>
+        {/* <i className="ri-user-search-line"></i> */}
         <input
           type="text"
           placeholder="Search by customer name"
@@ -19,7 +19,7 @@ const FiltereInput = ({ name, setName, tableNumber, setTableNumber }) => {
         )}
       </div>
       <div className="filter-group">
-        <i className="ri-hashtag"></i>
+        {/* <i className="ri-hashtag"></i> */}
         <input
           type="number"
           placeholder="Table number"

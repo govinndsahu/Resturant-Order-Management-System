@@ -117,3 +117,16 @@ export const getOrdersAsHistory = async (req, res, next) => {
     next(error);
   }
 };
+
+export const deleteHistory = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    await Order.findOneAndDelete({ _id: id, isDone: true });
+    return res.status(200).json({
+      success: true,
+      message: "History deleted successfully",
+    });
+  } catch (error) {
+    next(error);
+  }
+};

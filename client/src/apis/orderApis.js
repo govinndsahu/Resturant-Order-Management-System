@@ -55,3 +55,17 @@ export const doneAllOrdersApi = async (backendUrl) => {
   );
   return { data };
 };
+
+export const getHistoryOrdersApi = async (backendUrl) => {
+  const { data } = await axios.get(`${backendUrl}orders/history`, {
+    withCredentials: true,
+  });
+  return { data };
+};
+
+export const deleteHistoryApi = async (id, backendUrl) => {
+  const { data } = await axios.delete(`${backendUrl}orders/history/${id}`, {
+    withCredentials: true,
+  });
+  return { data };
+};

@@ -2,6 +2,7 @@ import express from "express";
 import {
   clearOrders,
   createOrder,
+  deleteHistory,
   deleteOrder,
   doneAllOrders,
   getOrders,
@@ -43,5 +44,7 @@ router.post("/mark-as-done/:id", isLogedIn, isStaff, markOrderAsDone);
 router.post("/mark-all-as-done", isLogedIn, isStaff, doneAllOrders);
 
 router.get("/history", isLogedIn, isStaff, getOrdersAsHistory);
+
+router.delete("/history/:id", isLogedIn, isStaff, deleteHistory);
 
 export default router;
