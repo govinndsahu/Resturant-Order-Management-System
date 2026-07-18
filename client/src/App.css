@@ -124,15 +124,14 @@
   width: 48px;
   height: 48px;
   border-radius: 14px;
-  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #ffffff;
   font-size: 1.3rem;
   font-weight: 700;
   flex-shrink: 0;
-  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.3);
 }
 
 .admin-welcome-text {
@@ -402,15 +401,15 @@
 
 /* Install button - gradient blue */
 .admin-actions button:last-child {
-  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: #ffffff;
-  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.25);
+  box-shadow: 0 4px 16px rgba(102, 126, 234, 0.25);
 }
 
 .admin-actions button:last-child:hover {
-  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  background: linear-gradient(135deg, #4458b0 0%, #5d3487 100%);
   transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.35);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.35);
 }
 
 /* ============================================
@@ -917,7 +916,7 @@ tbody td {
 /* ============================ */
 
 #install-button {
-  background-color: rgb(2, 255, 2);
+  background-color: #764ba2;
   color: white;
   font-size: 20px;
   font-weight: 600;
