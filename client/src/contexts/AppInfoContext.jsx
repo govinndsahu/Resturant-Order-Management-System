@@ -6,33 +6,11 @@ import { getAppVersionFromDB, saveAppVersion } from "../hooks/useIndexedDB.js";
 const AppInfoContext = createContext(null);
 
 export function AppInfoProvider({ children }) {
-  const { backendUrl } = useConfig();
+  const { backendUrl, menu } = useConfig();
   const [appName, setAppName] = useState(getAppId());
 
   useEffect(() => {
     let isActive = true;
-
-    const syncAppInfo = async () => {
-      try {
-        const cached = await getAppVersionFromDB();
-
-        if (cached?.version) {
-          if (!isActive) return;
-        }
-
-        // const { data } = await getAppVersionApi(backendUrl);
-
-        if (!isActive) return;
-
-        // if (data?.version) {
-        //   await saveAppVersion(data.version);
-        // }
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    syncAppInfo();
 
     return () => {
       isActive = false;

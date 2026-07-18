@@ -1,10 +1,15 @@
 import { useEffect, useRef, useState } from "react";
-import { getAllCategories, saveAllCategories } from "../hooks/useIndexedDB";
+import {
+  getAllCategories,
+  getAppVersionFromDB,
+  saveAllCategories,
+  saveAppVersion,
+} from "../hooks/useIndexedDB";
 import { getCategoriesApi } from "../apis/categoryApis";
 import { useConfig } from "../contexts/ConfigContext";
 
 const CategoriesContainer = ({ setCategory }) => {
-  const { backendUrl } = useConfig();
+  const { backendUrl, menu } = useConfig();
 
   const [categories, setCategories] = useState("");
   const [activeIndex, setActiveIndex] = useState(0);
@@ -15,9 +20,13 @@ const CategoriesContainer = ({ setCategory }) => {
     try {
       const cached = await getAllCategories();
 
-      if (cached?.length > 0) {
+      const version = await getAppVersionFromDB();
+
+      if (menu.version === version?.version) {
         setCategories(cached);
         return;
+      } else {
+        await saveAppVersion(menu.version);
       }
 
       const { data } = await getCategoriesApi(backendUrl);

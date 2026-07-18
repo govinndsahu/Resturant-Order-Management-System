@@ -7,6 +7,8 @@ import {
   getAllProducts,
   addToCart,
   getCart,
+  saveAppVersion,
+  getAppVersionFromDB,
 } from "../hooks/useIndexedDB";
 import { useConfig } from "../contexts/ConfigContext";
 
@@ -20,7 +22,7 @@ const ProductsContainer = ({
   showMenipulateBtn,
   category,
 }) => {
-  const { backendUrl } = useConfig();
+  const { backendUrl, menu } = useConfig();
 
   const [products, setProducts] = useState([]);
   const [cart, setCart] = useCart();
@@ -30,9 +32,13 @@ const ProductsContainer = ({
     try {
       const cached = await getAllProducts();
 
-      if (cached?.length > 0) {
+      const version = await getAppVersionFromDB();
+
+      if (menu.version === version?.version) {
         setProducts(cached);
         return;
+      } else {
+        await saveAppVersion(menu.version);
       }
 
       const { data } = await getProductsApi(backendUrl);
