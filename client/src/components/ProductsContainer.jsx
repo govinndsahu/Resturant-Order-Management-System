@@ -1,12 +1,7 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import toast from "react-hot-toast";
-
 import { useCart } from "../contexts/Cart";
-import { useLocalStorage } from "../hooks/useLocalStorage";
-
 import { getProductsApi } from "../apis/productsApi";
-
 import {
   saveAllProducts,
   getAllProducts,
@@ -29,10 +24,10 @@ const ProductsContainer = ({
 
   const [products, setProducts] = useState([]);
   const [cart, setCart] = useCart();
+  const [addedIds, setAddedIds] = useState(new Set());
 
   const fetchProducts = async () => {
     try {
-      // Try IndexedDB first
       const cached = await getAllProducts();
 
       if (cached?.length > 0) {
@@ -55,7 +50,6 @@ const ProductsContainer = ({
 
   useEffect(() => {
     fetchProducts();
-    // Load cart from IndexedDB on mount
     const loadCart = async () => {
       const savedCart = await getCart();
       setCart(savedCart);
@@ -72,8 +66,9 @@ const ProductsContainer = ({
       price_type: p.price_type,
     };
 
-    const isFullPrice =
-      e.target.parentNode.classList.contains("full-price-content");
+    const isFullPrice = e.target
+      .closest(".price-row")
+      ?.classList.contains("full-price-row");
 
     if (isFullPrice) {
       product = {
@@ -89,101 +84,138 @@ const ProductsContainer = ({
       };
     }
 
-    // Add product to IndexedDB (handles quantity automatically)
     await addToCart(product);
-
-    // Fetch updated cart from IndexedDB
     const updatedCart = await getCart();
     setCart(updatedCart);
+
+    // Show added feedback
+    setAddedIds((prev) => new Set(prev).add(`${p._id}-${product.size}`));
+    setTimeout(() => {
+      setAddedIds((prev) => {
+        const next = new Set(prev);
+        next.delete(`${p._id}-${product.size}`);
+        return next;
+      });
+    }, 1500);
+
+    toast.success("Added to cart!", {
+      icon: "🛒",
+      duration: 1500,
+    });
   };
 
-  return products?.length === 0 ? (
-    <h1 className="">No products found.</h1>
-  ) : (
-    <div className="products-container">
-      {products
-        ?.filter((p) =>
-          category === ""
-            ? p.category?.name.includes(category)
-            : p.category?.name === category,
-        )
-        .map((p) => (
-          <div key={p._id} className="product">
-            <div className="product-image">
-              <img src={`data:${p.mimeType};base64,${p.image}`} alt={p.name} />
-            </div>
-            <div className="product-info">
-              <h2 className="product-name">{p.name}</h2>
-              {showDetails ? (
-                p.price_type === "single" ? (
-                  <div className="full-price-content">
-                    <p className="product-price">Rs.{p.full_price}</p>
-                    {showAddButtons ? (
+  const filteredProducts = products?.filter((p) =>
+    category === "" ? true : p.category?.name === category,
+  );
+
+  if (products?.length === 0) {
+    return (
+      <div className="products-empty">
+        <div className="empty-icon">🍽️</div>
+        <p>No products available</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="products-grid">
+      {filteredProducts.map((p) => (
+        <div key={p._id} className="product-card">
+          <div className="product-image-wrap">
+            <img
+              src={`data:${p.mimeType};base64,${p.image}`}
+              alt={p.name}
+              loading="lazy"
+            />
+          </div>
+
+          <div className="product-details">
+            <h3 className="product-name">{p.name}</h3>
+
+            {showDetails && (
+              <div className="product-prices">
+                {p.price_type === "single" ? (
+                  <div className="price-row full-price-row">
+                    <span className="price-amount">₹{p.full_price}</span>
+                    {showAddButtons && (
                       <button
-                        onClick={(e) => {
-                          handleAddCart(p, e);
-                          toast.success("Added to cart!");
-                        }}
-                        className={addBtnClass}>
-                        {addBtnContent}
+                        onClick={(e) => handleAddCart(p, e)}
+                        className={`${addBtnClass} ${
+                          addedIds.has(`${p._id}-full`) ? "added" : ""
+                        }`}>
+                        {addedIds.has(`${p._id}-full`) ? (
+                          <>
+                            <i className="ri-check-line"></i> Added
+                          </>
+                        ) : (
+                          <>
+                            <i className="ri-add-line"></i> {addBtnContent}
+                          </>
+                        )}
                       </button>
-                    ) : (
-                      ""
                     )}
                   </div>
                 ) : (
                   <>
-                    <div className="half-price-content">
-                      <p className="product-price">
-                        <span>Half</span> Rs.{p.half_price}
-                      </p>
-                      {showAddButtons ? (
+                    <div className="price-row half-price-row">
+                      <div className="price-label">
+                        <span className="size-badge half">Half</span>
+                        <span className="price-amount">₹{p.half_price}</span>
+                      </div>
+                      {showAddButtons && (
                         <button
-                          onClick={(e) => {
-                            handleAddCart(p, e);
-                            toast.success("Added to cart!");
-                          }}
-                          className={addBtnClass}>
-                          {addBtnContent}
+                          onClick={(e) => handleAddCart(p, e)}
+                          className={`${addBtnClass} ${
+                            addedIds.has(`${p._id}-half`) ? "added" : ""
+                          }`}>
+                          {addedIds.has(`${p._id}-half`) ? (
+                            <i className="ri-check-line"></i>
+                          ) : (
+                            <i className="ri-add-line"></i>
+                          )}
                         </button>
-                      ) : (
-                        ""
                       )}
                     </div>
-                    <div className="full-price-content">
-                      <p className="product-price">
-                        <span>Full</span> Rs.{p.full_price}
-                      </p>
-                      {showAddButtons ? (
+                    <div className="price-row full-price-row">
+                      <div className="price-label">
+                        <span className="size-badge full">Full</span>
+                        <span className="price-amount">₹{p.full_price}</span>
+                      </div>
+                      {showAddButtons && (
                         <button
-                          onClick={(e) => {
-                            handleAddCart(p, e);
-                            toast.success("Added to cart!");
-                          }}
-                          className={addBtnClass}>
-                          {addBtnContent}
+                          onClick={(e) => handleAddCart(p, e)}
+                          className={`${addBtnClass} ${
+                            addedIds.has(`${p._id}-full`) ? "added" : ""
+                          }`}>
+                          {addedIds.has(`${p._id}-full`) ? (
+                            <i className="ri-check-line"></i>
+                          ) : (
+                            <i className="ri-add-line"></i>
+                          )}
                         </button>
-                      ) : (
-                        ""
                       )}
                     </div>
                   </>
-                )
-              ) : (
-                ""
-              )}
-            </div>
-            {showSingleBtn ? <button>{singleBtnContent}</button> : ""}
-            {showMenipulateBtn ? (
-              <div className="edit-buttons">
-                <button className="update-btn">Update</button>
-                <button className="delete-btn">Delete</button>
+                )}
               </div>
-            ) : (
-              ""
             )}
           </div>
-        ))}
+
+          {showSingleBtn && (
+            <button className="single-action-btn">{singleBtnContent}</button>
+          )}
+          {showMenipulateBtn && (
+            <div className="edit-buttons">
+              <button className="update-btn">
+                <i className="ri-edit-line"></i>
+              </button>
+              <button className="delete-btn">
+                <i className="ri-delete-bin-line"></i>
+              </button>
+            </div>
+          )}
+        </div>
+      ))}
     </div>
   );
 };

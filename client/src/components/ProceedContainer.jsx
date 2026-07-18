@@ -6,14 +6,11 @@ import { useLocalStorage } from "../hooks/useLocalStorage";
 
 const ProceedContainer = ({ setDisplayForm }) => {
   const [cart] = useCart();
-
   const [locationError, setLocationError] = useLocalStorage(
     "isLocation",
     false,
   );
-
   const [showTutorial, setShowTutorial] = useState(false);
-
   const [loader, setLoader] = useState(false);
 
   const getUserLocation = () => {
@@ -53,7 +50,11 @@ const ProceedContainer = ({ setDisplayForm }) => {
     return total;
   };
 
-  const handleDisplayForm = async (e) => {
+  const getTotalItems = () => {
+    return cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
+  };
+
+  const handleDisplayForm = async () => {
     const permissionStatus = await navigator.permissions.query({
       name: "geolocation",
     });
@@ -67,40 +68,49 @@ const ProceedContainer = ({ setDisplayForm }) => {
     }
 
     setLoader(true);
-
     await getUserLocation();
-
     setLoader(false);
-
     setDisplayForm(true);
   };
 
-  return cart?.length ? (
+  if (!cart?.length) return null;
+
+  return (
     <>
-      <div className="proceed-container w-full h-15 lg:h-20 flex justify-between items-center fixed left-0 bottom-0 ">
-        <b className="text-[20px] lg:text-4xl">Total Rs.{getTotalPrice()}</b>
+      <div className="proceed-bar">
+        <div className="proceed-info">
+          <div className="proceed-items">
+            <i className="ri-shopping-bag-3-line"></i>
+            <span>{getTotalItems()} items</span>
+          </div>
+          <div className="proceed-total">
+            <span className="total-label">Total</span>
+            <span className="total-amount">₹{getTotalPrice()}</span>
+          </div>
+        </div>
 
         {loader ? (
-          <div>
-            <span className="proceed-loader"></span>
-          </div>
+          <button className="proceed-btn loading" disabled>
+            <span className="btn-loader"></span>
+            Locating...
+          </button>
         ) : (
-          <button
-            className="proceed-btn lg:text-2xl"
-            onClick={(e) => handleDisplayForm(e)}>
-            Proceed
+          <button className="proceed-btn" onClick={handleDisplayForm}>
+            Place Order
+            <i className="ri-arrow-right-line"></i>
           </button>
         )}
       </div>
-      {locationError ? (
+
+      {locationError && (
         <LocationError
           getUserLocation={getUserLocation}
           setLocationError={setLocationError}
         />
-      ) : null}
-      {showTutorial ? <Tutorial setShowTutorial={setShowTutorial} /> : null}
+      )}
+      {showTutorial && <Tutorial setShowTutorial={setShowTutorial} />}
     </>
-  ) : null;
+  );
 };
 
 export default ProceedContainer;

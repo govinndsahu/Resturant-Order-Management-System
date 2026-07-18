@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import "./HomePage.css";
 import { Toaster } from "react-hot-toast";
 
-import Navbar from "../components/Navbar";
 import CategoriesContainer from "../components/CategoriesContainer";
 import ProductsContainer from "../components/ProductsContainer";
 import ProceedContainer from "../components/ProceedContainer";
@@ -16,11 +15,14 @@ const HomePage = ({ appName }) => {
   const { menuName } = useConfig();
 
   return (
-    <>
-      <header>
+    <div className="menu-page">
+      {/* Fixed Header */}
+      <header className="menu-header">
         <CategoriesContainer setCategory={setCategory} />
       </header>
-      <main>
+
+      {/* Main Content */}
+      <main className="menu-main">
         <ProductsContainer
           showDetails={true}
           showAddButtons={true}
@@ -29,16 +31,20 @@ const HomePage = ({ appName }) => {
           category={category}
         />
       </main>
-      <footer>
+
+      {/* Fixed Footer */}
+      <footer className="menu-footer">
         <ProceedContainer setDisplayForm={setDisplayForm} />
       </footer>
+
+      {/* Order Form Modal */}
       <OrderForm
         dispalyForm={displayForm}
         setDisplayForm={setDisplayForm}
         appName={appName}
       />
       <Toaster />
-    </>
+    </div>
   );
 };
 
