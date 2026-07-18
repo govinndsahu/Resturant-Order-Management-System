@@ -27,7 +27,7 @@ export const createOrder = async (req, res, next) => {
 
 export const getOrders = async (req, res, next) => {
   try {
-    const orders = await Order.find();
+    const orders = await Order.find({ isDone: false }).sort({ createdAt: 1 });
     return res.status(200).json({
       success: true,
       orders,
@@ -41,7 +41,7 @@ export const getOrders = async (req, res, next) => {
 export const deleteOrder = async (req, res, next) => {
   try {
     const { id } = req.params;
-    await Order.findByIdAndDelete(id);
+    await Order.findOneAndDelete({ _id: id, isDone: false });
     return res.status(200).json({
       success: true,
       message: "Order deleted successfully",
@@ -77,6 +77,43 @@ export const clearOrders = async (req, res, next) => {
     });
   } catch (error) {
     console.log(error);
+    next(error);
+  }
+};
+
+export const doneAllOrders = async (req, res, next) => {
+  try {
+    await Order.updateMany({ isDone: false }, { isDone: true });
+    return res.status(200).json({
+      success: true,
+      message: "All orders marked as done successfully",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const markOrderAsDone = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    await Order.findByIdAndUpdate(id, { isDone: true });
+    return res.status(200).json({
+      success: true,
+      message: "Order marked as done successfully",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getOrdersAsHistory = async (req, res, next) => {
+  try {
+    const orders = await Order.find({ isDone: true }).sort({ createdAt: 1 });
+    return res.status(200).json({
+      success: true,
+      orders,
+    });
+  } catch (error) {
     next(error);
   }
 };

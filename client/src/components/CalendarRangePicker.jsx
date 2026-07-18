@@ -26,58 +26,54 @@ function CalendarRangePicker({ filteredData, refreshData }) {
   }, []);
 
   return (
-    <div
-      style={{
-        position: "relative",
-        background: "#fff",
-        padding: 8,
-        borderRadius: 8,
-        boxShadow: "0 4px 20px rgba(0,0,0,0.15)",
-      }}>
+    <div className="calendar-picker">
       <button
-        onClick={() => {
-          setShowCalendar((prev) => !prev);
-        }}>
-        {format(startDate, "MMM d, yyyy")} - {format(endDate, "MMM d, yyyy")}
+        className="calendar-trigger"
+        onClick={() => setShowCalendar((prev) => !prev)}>
+        <i className="ri-calendar-line"></i>
+        <span>
+          {format(startDate, "MMM d, yyyy")} - {format(endDate, "MMM d, yyyy")}
+        </span>
+        <i
+          className={`ri-arrow-down-s-line calendar-arrow ${showCalendar ? "open" : ""}`}></i>
       </button>
 
       {showCalendar && (
-        <div
-          style={{
-            position: isMobile ? "fixed" : "absolute",
-            top: isMobile ? "30%" : undefined,
-            left: isMobile ? "50%" : 0,
-            transform: isMobile ? "translate(-50%, -50%)" : undefined,
-            zIndex: 50,
-            maxWidth: "95vw",
-            overflowX: "auto",
-            boxShadow: "0 4px 20px rgba(0,0,0,0.15)",
-            background: "#fff",
-            borderRadius: 8,
-          }}>
-          <DateRange
-            ranges={range}
-            onChange={(item) => setRange([item.selection])}
-            moveRangeOnFirstSelection={false}
-            editableDateInputs={true}
-            months={isMobile ? 1 : 2}
-            direction={isMobile ? "vertical" : "horizontal"}
-            rangeColors={["#3b82f6"]}
-          />
+        <>
           <div
-            style={{ display: "flex", justifyContent: "flex-end", padding: 8 }}>
-            <button
-              onClick={() => {
-                localStorage.setItem("startDate", startDate);
-                localStorage.setItem("endDate", endDate);
-                filteredData();
-                refreshData();
-                setShowCalendar(false);
-              }}>
-              Apply
-            </button>
+            className="calendar-overlay"
+            onClick={() => setShowCalendar(false)}></div>
+          <div className={`calendar-dropdown ${isMobile ? "mobile" : ""}`}>
+            <DateRange
+              ranges={range}
+              onChange={(item) => setRange([item.selection])}
+              moveRangeOnFirstSelection={false}
+              editableDateInputs={true}
+              months={isMobile ? 1 : 2}
+              direction={isMobile ? "vertical" : "horizontal"}
+              rangeColors={["#667eea"]}
+            />
+            <div className="calendar-footer">
+              <button
+                className="calendar-cancel"
+                onClick={() => setShowCalendar(false)}>
+                Cancel
+              </button>
+              <button
+                className="calendar-apply"
+                onClick={() => {
+                  localStorage.setItem("startDate", startDate);
+                  localStorage.setItem("endDate", endDate);
+                  filteredData();
+                  refreshData();
+                  setShowCalendar(false);
+                }}>
+                <i className="ri-check-line"></i>
+                Apply
+              </button>
+            </div>
           </div>
-        </div>
+        </>
       )}
     </div>
   );

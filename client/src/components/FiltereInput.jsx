@@ -1,26 +1,42 @@
 const FiltereInput = ({ name, setName, tableNumber, setTableNumber }) => {
   return (
-    <>
-      <div className="filtered-orders">
-        <div className="filter-inputs flex flex-col lg:flex-row gap-2">
-          <input
-            type="text"
-            placeholder="Enter customer name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="w-full lg:w-[10%] bg-[#333] p-2 rounded-md"
-          />
-          <input
-            type="number"
-            placeholder="Enter Table number"
-            value={tableNumber}
-            onChange={(e) => setTableNumber(e.target.value)}
-            className="w-full lg:w-1/2 bg-[#333] p-2 rounded-md"
-          />
-        </div>
+    <div className="filter-bar">
+      <div className="filter-group">
+        <i className="ri-user-search-line"></i>
+        <input
+          type="text"
+          placeholder="Search by customer name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
+        {name && (
+          <button
+            className="filter-clear"
+            onClick={() => setName("")}
+            aria-label="Clear name filter">
+            <i className="ri-close-circle-fill"></i>
+          </button>
+        )}
       </div>
-      <br />
-    </>
+      <div className="filter-group">
+        <i className="ri-hashtag"></i>
+        <input
+          type="number"
+          placeholder="Table number"
+          value={tableNumber}
+          onChange={(e) => setTableNumber(e.target.value)}
+          min="1"
+        />
+        {tableNumber && (
+          <button
+            className="filter-clear"
+            onClick={() => setTableNumber("")}
+            aria-label="Clear table filter">
+            <i className="ri-close-circle-fill"></i>
+          </button>
+        )}
+      </div>
+    </div>
   );
 };
 

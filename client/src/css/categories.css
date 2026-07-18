@@ -3,8 +3,8 @@
    ============================================ */
 
 .cat-page {
-  margin-top: 65px;
   min-height: 100vh;
+  margin-top: 65px;
   background: #f8fafc41;
   backdrop-filter: blur(15px);
   padding-bottom: 40px;

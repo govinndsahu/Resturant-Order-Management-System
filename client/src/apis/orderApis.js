@@ -8,21 +8,36 @@ export const getOrdersApi = async (backendUrl) => {
 };
 
 export const createOrderApi = async (orderData, backendUrl) => {
-  const { data } = await axios.post(
-    `${backendUrl}orders/create`,
-    orderData,
-    {
-      headers: {
-        "Content-Type": "application/json",
-      },
+  const { data } = await axios.post(`${backendUrl}orders/create`, orderData, {
+    headers: {
+      "Content-Type": "application/json",
     },
-  );
+  });
   return { data };
 };
 
 export const deleteOrderApi = async (id, backendUrl) => {
-  const { data } = await axios.delete(
-    `${backendUrl}orders/delete/${id}`,
+  const { data } = await axios.delete(`${backendUrl}orders/delete/${id}`, {
+    withCredentials: true,
+  });
+  return { data };
+};
+
+export const deleteOrdersApi = async (ids, backendUrl) => {
+  const { data } = await axios.delete(`${backendUrl}orders/delete`, {
+    withCredentials: true,
+    data: { ids },
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  return { data };
+};
+
+export const markOrderAsDoneApi = async (id, backendUrl) => {
+  const { data } = await axios.post(
+    `${backendUrl}orders/mark-as-done/${id}`,
+    {},
     {
       withCredentials: true,
     },
@@ -30,15 +45,12 @@ export const deleteOrderApi = async (id, backendUrl) => {
   return { data };
 };
 
-export const deleteOrdersApi = async (ids, backendUrl) => {
-  const { data } = await axios.delete(
-    `${backendUrl}orders/delete`,
+export const doneAllOrdersApi = async (backendUrl) => {
+  const { data } = await axios.post(
+    `${backendUrl}orders/mark-all-as-done`,
+    {},
     {
       withCredentials: true,
-      data: { ids },
-      headers: {
-        "Content-Type": "application/json",
-      },
     },
   );
   return { data };

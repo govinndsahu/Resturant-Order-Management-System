@@ -1,0 +1,699 @@
+/* ============================================
+   ORDERS PAGE - DgDine
+   ============================================ */
+
+.orders-page {
+  min-height: 100vh;
+  margin-top: 65px;
+  background: #f8fafc41;
+  backdrop-filter: blur(15px);
+  padding-bottom: 40px;
+}
+
+/* ============================================
+   HEADER
+   ============================================ */
+
+.orders-header {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  padding: 24px 16px 40px;
+  position: relative;
+  overflow: hidden;
+}
+
+.orders-header::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  right: -20%;
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.1),
+    transparent 70%
+  );
+  pointer-events: none;
+}
+
+.orders-header-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  position: relative;
+  z-index: 1;
+}
+
+.orders-header-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.orders-header h1 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0;
+}
+
+.orders-header p {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.8);
+  margin: 4px 0 0;
+}
+
+/* ============================================
+   CONTAINER
+   ============================================ */
+
+.orders-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+/* ============================================
+   FILTERS
+   ============================================ */
+
+.orders-filters {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: -20px;
+  position: relative;
+  z-index: 2;
+}
+
+/* ============================================
+   STATS
+   ============================================ */
+
+.orders-stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.orders-stat-card {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 16px 12px;
+  text-align: center;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  border: 1px solid #f1f5f9;
+}
+
+.orders-stat-card .stat-value {
+  display: block;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #667eea;
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+.orders-stat-card .stat-label {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+/* ============================================
+   BULK ACTIONS
+   ============================================ */
+
+.orders-bulk-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.bulk-done-btn,
+.bulk-delete-btn {
+  flex: 1;
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.bulk-done-btn {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.2);
+}
+
+.bulk-done-btn:hover {
+  box-shadow: 0 4px 16px rgba(34, 197, 94, 0.3);
+  transform: translateY(-1px);
+}
+
+.bulk-delete-btn {
+  background: #fef2f2;
+  color: #dc2626;
+  border: 1.5px solid #fee2e2;
+}
+
+.bulk-delete-btn:hover {
+  background: #fee2e2;
+}
+
+/* ============================================
+   EMPTY STATE
+   ============================================ */
+
+.orders-empty {
+  text-align: center;
+  padding: 60px 20px;
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid #f1f5f9;
+  margin-top: 16px;
+}
+
+.orders-empty i {
+  font-size: 3rem;
+  color: #cbd5e1;
+  margin-bottom: 12px;
+  display: block;
+}
+
+.orders-empty p {
+  font-size: 0.95rem;
+  color: #94a3b8;
+  margin: 0;
+}
+
+/* ============================================
+   MOBILE CARDS
+   ============================================ */
+
+.orders-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.order-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 16px;
+  border: 1px solid #f1f5f9;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  transition: all 0.25s ease;
+}
+
+.order-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+/* Card Header */
+.order-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.order-time {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.order-time i {
+  color: #667eea;
+  font-size: 1rem;
+}
+
+.order-table-badge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #667eea;
+  background: #f5f3ff;
+  padding: 4px 12px;
+  border-radius: 20px;
+}
+
+.order-table-badge i {
+  font-size: 0.9rem;
+}
+
+/* Customer */
+.order-customer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.customer-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-size: 1.1rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.customer-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.customer-name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.customer-items {
+  font-size: 0.8rem;
+  color: #94a3b8;
+}
+
+.order-total {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #667eea;
+}
+
+/* Items */
+.order-items {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.order-item-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: #f8fafc;
+  border-radius: 10px;
+}
+
+.item-name {
+  font-size: 0.9rem;
+  color: #475569;
+  font-weight: 500;
+}
+
+.item-price {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+/* Card Actions */
+.order-card-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  padding-top: 12px;
+  border-top: 1px solid #f1f5f9;
+}
+
+.order-btn-delete,
+.order-btn-done {
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.order-btn-delete {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.order-btn-delete:hover {
+  background: #fee2e2;
+}
+
+.order-btn-done {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: #ffffff;
+}
+
+.order-btn-done:hover {
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.25);
+}
+
+.order-btn-delete:disabled,
+.order-btn-done:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ============================================
+   DESKTOP TABLE
+   ============================================ */
+
+.orders-table-wrap {
+  margin-top: 20px;
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid #f1f5f9;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  overflow-x: auto;
+}
+
+.orders-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.orders-table thead {
+  background: #f8fafc;
+}
+
+.orders-table th {
+  padding: 14px 16px;
+  text-align: left;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #64748b;
+  border-bottom: 1px solid #e2e8f0;
+  white-space: nowrap;
+}
+
+.orders-table th.text-right {
+  text-align: right;
+}
+
+.orders-table th.text-center {
+  text-align: center;
+}
+
+.orders-table tbody tr {
+  transition: background 0.15s ease;
+}
+
+.orders-table tbody tr:hover {
+  background: #f8fafc;
+}
+
+.orders-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid #f1f5f9;
+  vertical-align: middle;
+}
+
+/* Table cells content */
+.td-time {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #475569;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.td-time i {
+  color: #667eea;
+  font-size: 1rem;
+}
+
+.td-customer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.td-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-size: 0.9rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.td-name {
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.td-table {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #f5f3ff;
+  color: #667eea;
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding: 4px 12px;
+  border-radius: 20px;
+}
+
+.td-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  max-width: 280px;
+}
+
+.td-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #f8fafc;
+  color: #475569;
+  font-size: 0.85rem;
+  padding: 4px 10px;
+  border-radius: 8px;
+  white-space: nowrap;
+}
+
+.item-sep {
+  color: #cbd5e1;
+  margin: 0 2px;
+}
+
+.td-total {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #667eea;
+  white-space: nowrap;
+}
+
+.td-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.table-btn-delete,
+.table-btn-done {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.table-btn-delete {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.table-btn-delete:hover {
+  background: #fee2e2;
+}
+
+.table-btn-done {
+  background: #f0fdf4;
+  color: #22c55e;
+}
+
+.table-btn-done:hover {
+  background: #dcfce7;
+}
+
+.table-btn-delete:disabled,
+.table-btn-done:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Spinner */
+.btn-spinner-sm {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  display: inline-block;
+}
+
+.table-btn-delete .btn-spinner-sm,
+.table-btn-done .btn-spinner-sm {
+  border-color: rgba(0, 0, 0, 0.1);
+  border-top-color: #667eea;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ============================================
+   TABLET+ (640px+)
+   ============================================ */
+
+@media (min-width: 640px) {
+  .orders-header {
+    padding: 32px 24px 48px;
+  }
+
+  .orders-header-icon {
+    width: 56px;
+    height: 56px;
+    font-size: 1.6rem;
+  }
+
+  .orders-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .orders-header p {
+    font-size: 0.9rem;
+  }
+
+  .orders-container {
+    padding: 0 24px;
+  }
+
+  .orders-filters {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 16px;
+    margin-top: -28px;
+  }
+
+  .orders-stats {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-top: 50px;
+  }
+
+  .orders-stat-card {
+    padding: 20px 16px;
+  }
+
+  .orders-stat-card .stat-value {
+    font-size: 1.6rem;
+  }
+
+  .orders-stat-card .stat-label {
+    font-size: 0.8rem;
+  }
+
+  .orders-bulk-actions {
+    justify-content: flex-end;
+    margin-top: 20px;
+  }
+
+  .bulk-done-btn,
+  .bulk-delete-btn {
+    flex: 0 0 auto;
+    padding: 12px 24px;
+  }
+
+  .orders-empty {
+    margin-top: 20px;
+  }
+}
+
+/* ============================================
+   DESKTOP (768px+)
+   ============================================ */
+
+@media (min-width: 768px) {
+  .orders-header {
+    padding: 40px 32px 56px;
+  }
+
+  .orders-header h1 {
+    font-size: 1.7rem;
+  }
+
+  .orders-container {
+    padding: 0 32px;
+  }
+
+  .orders-stats {
+    margin-top: 40px;
+  }
+
+  .orders-table-wrap {
+    margin-top: 24px;
+  }
+
+  .orders-table th,
+  .orders-table td {
+    padding: 16px 20px;
+  }
+}

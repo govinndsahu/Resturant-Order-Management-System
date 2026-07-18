@@ -8,7 +8,6 @@ import userRoutes from "./routes/userRoutes.js";
 import categoryRoutes from "./routes/categoryRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
-import historyRoutes from "./routes/historyRoutes.js";
 import pushsubscriptionRoutes from "./routes/pushsubscriptionRoutes.js";
 import appversionRoutes from "./routes/appversionRoutes.js";
 import countRoutes from "./routes/countRoutes.js";
@@ -41,8 +40,6 @@ app.use("/categories", categoryRoutes);
 app.use("/products", productRoutes);
 
 app.use("/orders", orderRoutes);
-
-app.use("/histories", historyRoutes);
 
 app.use("/push-subscriptions", pushsubscriptionRoutes);
 
