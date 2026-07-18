@@ -4,13 +4,21 @@ const sessionSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
-    required: true,
+    default: null,
   },
   createdAt: {
-    type: Date,
-    default: Date.now,
+    type: Number,
+    default: Date.now(),
     expires: "365d",
-  }, // Session expires after 365 days
+  },
+  expiresAt: {
+    type: Number,
+    default: null,
+  },
+  tableNumber: {
+    type: Number,
+    default: null,
+  },
 });
 
 const Session = mongoose.model("Session", sessionSchema);
