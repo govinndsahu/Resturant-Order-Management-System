@@ -15,6 +15,7 @@ const CategoriesContainer = ({ setCategory }) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const categoriesRef = useRef(null);
   const scrollRef = useRef(null);
+  const activeItemRef = useRef(null);
 
   const fetchCategories = async () => {
     try {
@@ -46,6 +47,20 @@ const CategoriesContainer = ({ setCategory }) => {
     fetchCategories();
   }, []);
 
+  const scrollToActive = () => {
+    activeItemRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "nearest",
+      inline: "center",
+    });
+  };
+
+  useEffect(() => {
+    if (categories?.length) {
+      scrollToActive();
+    }
+  }, [activeIndex, categories]);
+
   const handleCategoryClick = (index, catName) => {
     setActiveIndex(index);
     setCategory(catName);
@@ -61,6 +76,7 @@ const CategoriesContainer = ({ setCategory }) => {
     <div ref={categoriesRef} className="categories-wrapper">
       <div ref={scrollRef} className="categories-scroll">
         <button
+          ref={activeIndex === 0 ? activeItemRef : null}
           className={`category-pill ${activeIndex === 0 ? "active" : ""}`}
           onClick={() => handleCategoryClick(0, "")}>
           All
@@ -68,6 +84,7 @@ const CategoriesContainer = ({ setCategory }) => {
         {categories?.map((c, idx) => (
           <button
             key={c._id}
+            ref={activeIndex === idx + 1 ? activeItemRef : null}
             className={`category-pill ${activeIndex === idx + 1 ? "active" : ""}`}
             onClick={() => handleCategoryClick(idx + 1, c.name)}>
             {c.name}
