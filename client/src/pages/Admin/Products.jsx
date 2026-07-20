@@ -133,12 +133,9 @@ const Products = () => {
         } = await getProductsApi(backendUrl);
 
         await saveAllProducts(products);
-
-        setLoader(false);
       }
     } catch (error) {
       console.error(error);
-      setLoader(false);
     }
   };
 
@@ -175,6 +172,8 @@ const Products = () => {
       }
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoader(false);
     }
   };
 
@@ -525,9 +524,7 @@ const Products = () => {
 
             {/* Actions */}
             {loader ? (
-              <div className="prod-loader-wrap">
-                <Loader />
-              </div>
+              <div className="prod-submit-btn prod-loading-btn">Working...</div>
             ) : (
               <div className="prod-form-actions">
                 {updateMode && (

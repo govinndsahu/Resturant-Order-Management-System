@@ -1,7 +1,7 @@
 import Product from "../models/productModel.js";
 import Category from "../models/categoryModel.js";
 
-import fs from "fs";
+import { compressToTargetSize } from "../utils/utils.js";
 
 // create a product
 export const createProduct = async (req, res, next) => {
@@ -62,15 +62,6 @@ export const uploadProductImage = async (req, res, next) => {
 
   const { file } = req;
 
-  const imageData = file.buffer.toString("base64");
-
-  if (file.size > 500 * 1024) {
-    await Product.findByIdAndDelete(id);
-    return res
-      .status(200)
-      .json({ error: "File size exceeds the limit of 500KB" });
-  }
-
   try {
     const product = await Product.findById(id);
 
@@ -78,7 +69,9 @@ export const uploadProductImage = async (req, res, next) => {
       return res.status(404).json({ error: "Product not found" });
     }
 
-    product.image = imageData;
+    const imageData = await compressToTargetSize(file.buffer, 40, "webp");
+
+    product.image = imageData.toString("base64");
     product.mimeType = file.mimetype;
 
     await product.save();

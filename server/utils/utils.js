@@ -1,4 +1,5 @@
 import cors from "cors";
+import sharp from "sharp";
 
 const whitelist = [
   process.env.CLIENT_URL,
@@ -42,6 +43,39 @@ export const setCookie = (res, session) =>
     sameSite: "none",
     maxAge: 60 * 1000 * 60 * 24 * 365, // 365 days
   });
+
+export const compressToTargetSize = async (
+  buffer,
+  targetKB = 500,
+  format = "webp",
+) => {
+  const targetBytes = targetKB * 1024;
+  let quality = 80;
+  let output;
+
+  // Try reducing quality first
+  for (let i = 0; i < 8; i++) {
+    output = await sharp(buffer)
+      .resize(1600, 1600, { fit: "inside", withoutEnlargement: true })
+      [format]({ quality })
+      .toBuffer();
+
+    if (output.length <= targetBytes || quality <= 20) break;
+    quality -= 10;
+  }
+
+  // If still too big even at low quality, start shrinking dimensions too
+  let width = 1600;
+  while (output.length > targetBytes && width > 400) {
+    width -= 200;
+    output = await sharp(buffer)
+      .resize(width, width, { fit: "inside", withoutEnlargement: true })
+      [format]({ quality: 60 })
+      .toBuffer();
+  }
+
+  return output;
+};
 
 export const getDistanceInMeters = (lat1, lng1, lat2, lng2) => {
   const R = 6371000; // Earth radius in meters

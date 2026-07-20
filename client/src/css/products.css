@@ -659,6 +659,11 @@
   cursor: not-allowed;
 }
 
+.prod-loading-btn {
+  background: linear-gradient(135deg, #4256ad 0%, #553279 100%);
+  color: #8c8c8c;
+}
+
 /* ============================================
    TABLET+ (640px+)
    ============================================ */
