@@ -9,6 +9,7 @@ import categoryRoutes from "./routes/categoryRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
 import pushsubscriptionRoutes from "./routes/pushsubscriptionRoutes.js";
+import configurationRoutes from "./routes/configurationRoutes.js";
 import countRoutes from "./routes/countRoutes.js";
 
 import { pushNotificationSetup } from "./config/webpush.js";
@@ -41,6 +42,8 @@ app.use("/products", productRoutes);
 app.use("/orders", orderRoutes);
 
 app.use("/push-subscriptions", pushsubscriptionRoutes);
+
+app.use("/configuration", configurationRoutes);
 
 app.use("/count", countRoutes);
 

@@ -21,7 +21,7 @@ const router = express.Router();
 
 router.post(
   "/create",
-  // validateRestaurantLocation,
+  validateRestaurantLocation,
   resetCount,
   checkCount,
   increaseCount,

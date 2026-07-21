@@ -1,12 +1,81 @@
+import {
+  disableLocationValidationApi,
+  enableLocationValidationApi,
+  getLocationValidationConfigApi,
+} from "../../apis/configurationApis";
+import LocationEnablePopup from "../../components/LocationEnablePopup";
+import { useConfig } from "../../contexts/ConfigContext";
 import "../../css/menuConfiguration.css";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 const MenuConfiguration = () => {
   const [configs, setConfigs] = useState({ validateLocation: false });
 
+  const [showLocationPopup, setShowLocationPopup] = useState(false);
+
+  const { backendUrl, setError } = useConfig();
+
   const handleToggle = (key) => {
+    if (key === "validateLocation" && !configs[key]) {
+      setShowLocationPopup(true);
+      return;
+    }
+
+    if (configs[key] === true) {
+      if (key === "validateLocation") {
+        handleLocationValidationCancel();
+      }
+    }
+
     setConfigs((prev) => ({ ...prev, [key]: !prev[key] }));
   };
+
+  const handleLocationValidationConfirm = async (d) => {
+    try {
+      const payload = {
+        latitude: d.latitude,
+        longitude: d.longitude,
+        radius: d.radius,
+      };
+
+      const { data } = await enableLocationValidationApi(payload, backendUrl);
+
+      if (data.success) {
+        setConfigs((prev) => ({ ...prev, validateLocation: true }));
+        return true;
+      }
+    } catch (error) {
+      setError(error);
+      return false;
+    }
+  };
+
+  const handleLocationValidationCancel = async () => {
+    try {
+      const { data } = await disableLocationValidationApi(backendUrl);
+      if (data.success) {
+        setConfigs((prev) => ({ ...prev, validateLocation: false }));
+      }
+    } catch (error) {
+      setError(error);
+    }
+  };
+
+  const getLocationValidationConfig = async () => {
+    try {
+      const { data } = await getLocationValidationConfigApi(backendUrl);
+      if (data.success) {
+        const { doValidate } = data.config;
+        setConfigs((prev) => ({ ...prev, validateLocation: doValidate }));
+      }
+    } catch (error) {
+      setError(error);
+    }
+  };
+
+  useEffect(() => {
+    getLocationValidationConfig();
+  }, []);
 
   const ToggleSwitch = ({ label, description, configKey }) => (
     <div className="mc-toggle-row">
@@ -86,6 +155,12 @@ const MenuConfiguration = () => {
           />
         </SectionCard>
       </div>
+
+      <LocationEnablePopup
+        isOpen={showLocationPopup}
+        onClose={() => setShowLocationPopup(false)}
+        onConfirm={handleLocationValidationConfirm}
+      />
     </div>
   );
 };

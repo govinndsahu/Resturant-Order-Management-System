@@ -21,6 +21,7 @@ export function ConfigProvider({ appId, children }) {
         backendUrl: data.menu.menuBackendUrl,
         menuName,
         menu: data.menu,
+        setError,
         // add other config values here if needed
       });
     } catch (err) {

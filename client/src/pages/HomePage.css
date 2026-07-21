@@ -52,73 +52,780 @@
   border-radius: 10px;
 }
 
-/* =================================== */
+/* ============================================
+   Location Error Message — Professional Popup
+   ============================================ */
 
-#location-error {
+/* ============================================
+   Location Error — Allow Location Popup
+   ============================================ */
+
+#location-error-overlay,
+.location-error-overlay {
   position: fixed;
-  top: 0;
-  right: 0;
-  height: 100vh;
-  width: 100vw;
-  background-color: rgba(255, 255, 255, 0.251);
+  inset: 0;
+  z-index: 9998;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(15, 23, 42, 0.55);
   backdrop-filter: blur(10px);
-  z-index: 4;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  -webkit-backdrop-filter: blur(10px);
+  animation: le-fade-in 0.25s ease;
+  padding: 16px;
 }
 
-#location-error > div {
-  height: 30%;
-  width: 80%;
-  background-color: #e4e4e49e;
-  backdrop-filter: blur(15px);
-  border-radius: 10px;
-  box-shadow:
-    rgba(0, 0, 0, 0.25) 0px 54px 55px,
-    rgba(0, 0, 0, 0.12) 0px -12px 30px,
-    rgba(0, 0, 0, 0.12) 0px 4px 6px,
-    rgba(0, 0, 0, 0.17) 0px 12px 13px,
-    rgba(0, 0, 0, 0.09) 0px -3px 5px;
-  display: flex;
-  gap: 30px;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding-top: 20px;
+@keyframes le-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
-#location-error button {
-  background-color: #6df455;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
-  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-}
-
-/* =================================== */
-
-#tutorial {
-  position: fixed;
-  top: 0;
-  right: 0;
-  height: 100vh;
-  width: 100vw;
-  background-color: rgba(255, 255, 255, 0.251);
-  backdrop-filter: blur(10px);
-  z-index: 6;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-#tutorial img {
-  width: 80%;
+.location-error-card {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  background: #ffffff;
   border-radius: 20px;
-  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  box-shadow:
+    0 25px 50px -12px rgba(0, 0, 0, 0.25),
+    0 0 0 1px rgba(0, 0, 0, 0.04);
+  overflow: hidden;
+  animation: le-slide-up 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes le-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(28px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ── Accent Bar ── */
+.le-accent-bar {
+  height: 5px;
+  background: linear-gradient(90deg, #7c3aed 0%, #a78bfa 50%, #c4b5fd 100%);
+}
+
+/* ── Close Button ── */
+.le-close-btn {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 10px;
+  background: #f1f5f9;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0;
+}
+
+.le-close-btn:hover {
+  background: #e2e8f0;
+  color: #334155;
+}
+
+.le-close-btn:active {
+  transform: scale(0.92);
+}
+
+/* ── Icon ── */
+.le-icon-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 32px;
+  margin-bottom: 16px;
+}
+
+.le-icon-bg {
+  width: 72px;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
+  color: #7c3aed;
+  box-shadow: 0 4px 16px rgba(124, 58, 237, 0.15);
+}
+
+/* ── Title ── */
+.le-title {
+  text-align: center;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 10px 0;
+  padding: 0 28px;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+}
+
+/* ── Message ── */
+.le-message {
+  text-align: center;
+  font-size: 0.92rem;
+  color: #64748b;
+  margin: 0;
+  padding: 0 28px;
+  line-height: 1.65;
+}
+
+/* ── Divider ── */
+.le-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #e2e8f0, transparent);
+  margin: 20px 28px;
+}
+
+/* ── Tip ── */
+.le-tip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 28px;
+  margin-bottom: 24px;
+  color: #94a3b8;
+  font-size: 0.78rem;
+  text-align: center;
+}
+
+.le-tip svg {
+  flex-shrink: 0;
+  color: #a78bfa;
+}
+
+/* ── Actions ── */
+.le-actions {
+  display: flex;
+  gap: 10px;
+  padding: 0 24px 24px 24px;
+}
+
+.le-btn-secondary {
+  flex: 1;
+  padding: 13px 16px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #64748b;
+  background: #f1f5f9;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.le-btn-secondary:hover {
+  background: #e2e8f0;
+  color: #475569;
+}
+
+.le-btn-secondary:active {
+  transform: scale(0.97);
+}
+
+.le-btn-primary {
+  flex: 1.3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 13px 16px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #ffffff;
+  background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px rgba(124, 58, 237, 0.35);
+}
+
+.le-btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(124, 58, 237, 0.45);
+}
+
+.le-btn-primary:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(124, 58, 237, 0.3);
+}
+
+/* ============================================
+   Responsive
+   ============================================ */
+
+@media (max-width: 480px) {
+  .location-error-card {
+    border-radius: 16px;
+  }
+
+  .le-icon-bg {
+    width: 64px;
+    height: 64px;
+  }
+
+  .le-title {
+    font-size: 1.15rem;
+    padding: 0 20px;
+  }
+
+  .le-message {
+    font-size: 0.88rem;
+    padding: 0 20px;
+  }
+
+  .le-actions {
+    flex-direction: column;
+    padding: 0 20px 20px 20px;
+  }
+
+  .le-btn-secondary,
+  .le-btn-primary {
+    width: 100%;
+    flex: none;
+  }
+
+  .le-divider {
+    margin: 16px 20px;
+  }
+
+  .le-tip {
+    padding: 0 20px;
+    margin-bottom: 20px;
+  }
+}
+
+#location-error-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 12;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  animation: lem-fade-in 0.2s ease;
+  padding: 16px;
+}
+
+@keyframes lem-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+#location-error-card {
+  position: relative;
+  width: 100%;
+  max-width: 380px;
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow:
+    0 25px 50px -12px rgba(0, 0, 0, 0.25),
+    0 0 0 1px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  animation: lem-slide-up 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes lem-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ── Accent Bar ── */
+.lem-accent-bar {
+  height: 5px;
+  background: linear-gradient(90deg, #ef4444 0%, #f87171 50%, #fca5a5 100%);
+}
+
+/* ── Close Button ── */
+.lem-close-btn {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 10px;
+  background: #f1f5f9;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0;
+}
+
+.lem-close-btn:hover {
+  background: #e2e8f0;
+  color: #334155;
+}
+
+.lem-close-btn:active {
+  transform: scale(0.92);
+}
+
+/* ── Icon ── */
+.lem-icon-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 32px;
+  margin-bottom: 16px;
+}
+
+.lem-icon-bg {
+  width: 72px;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  color: #ef4444;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15);
+}
+
+/* ── Title ── */
+.lem-title {
+  text-align: center;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 8px 0;
+  padding: 0 24px;
+  letter-spacing: -0.01em;
+}
+
+/* ── Message ── */
+.lem-message {
+  text-align: center;
+  font-size: 0.95rem;
+  color: #64748b;
+  margin: 0;
+  padding: 0 24px;
+  line-height: 1.6;
+}
+
+/* ── Divider ── */
+.lem-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #e2e8f0, transparent);
+  margin: 20px 24px;
+}
+
+/* ── Tip ── */
+.lem-tip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 24px;
+  margin-bottom: 24px;
+  color: #94a3b8;
+  font-size: 0.8rem;
+}
+
+.lem-tip svg {
+  flex-shrink: 0;
+  color: #cbd5e1;
+}
+
+/* ── Action Button ── */
+.lem-action-btn {
+  display: block;
+  width: calc(100% - 48px);
+  margin: 0 24px 24px 24px;
+  padding: 14px 20px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #ffffff;
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px rgba(239, 68, 68, 0.3);
+}
+
+.lem-action-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+}
+
+.lem-action-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+}
+
+/* ============================================
+   Responsive
+   ============================================ */
+
+@media (max-width: 480px) {
+  #location-error-card {
+    border-radius: 16px;
+  }
+
+  .lem-icon-bg {
+    width: 64px;
+    height: 64px;
+  }
+
+  .lem-title {
+    font-size: 1.2rem;
+  }
+
+  .lem-message {
+    font-size: 0.9rem;
+  }
+
+  .lem-action-btn {
+    padding: 12px 16px;
+  }
+}
+
+/* =================================== */
+
+/* ============================================
+   Tutorial — Location Permission Guide Popup
+   ============================================ */
+
+#tutorial-overlay,
+.tutorial-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 15;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  animation: tut-fade-in 0.25s ease;
+  padding: 16px;
+  overflow-y: auto;
+  padding-top: 400px;
+}
+
+@media (min-width: 1024px) {
+  #tutorial-overlay,
+  .tutorial-overlay {
+    padding-top: 550px;
+  }
+}
+
+@keyframes tut-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.tutorial-card {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow:
+    0 25px 50px -12px rgba(0, 0, 0, 0.25),
+    0 0 0 1px rgba(0, 0, 0, 0.04);
+  overflow: hidden;
+  animation: tut-slide-up 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes tut-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(28px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ── Close Button ── */
+.tut-close-btn {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 10px;
+  background: #f1f5f9;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0;
+  z-index: 2;
+}
+
+.tut-close-btn:hover {
+  background: #e2e8f0;
+  color: #334155;
+}
+
+.tut-close-btn:active {
+  transform: scale(0.92);
+}
+
+/* ── Header ── */
+.tut-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 28px 28px 0 28px;
+}
+
+.tut-header-icon {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
+  color: #7c3aed;
+}
+
+.tut-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 4px 0;
+  letter-spacing: -0.01em;
+}
+
+.tut-subtitle {
+  font-size: 0.85rem;
+  color: #94a3b8;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ── Steps ── */
+.tut-steps {
+  padding: 20px 28px 0 28px;
+}
+
+.tut-step {
+  display: flex;
+  gap: 14px;
+}
+
+.tut-step-left {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.tut-step-number {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+  color: #ffffff;
+  font-size: 0.85rem;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(124, 58, 237, 0.3);
+}
+
+.tut-step-line {
+  width: 2px;
+  flex: 1;
+  min-height: 24px;
+  background: linear-gradient(180deg, #ddd6fe 0%, #e2e8f0 100%);
+  margin: 8px 0;
+}
+
+.tut-step-content {
+  display: flex;
+  gap: 12px;
+  padding-bottom: 20px;
+  flex: 1;
+}
+
+.tut-step-icon {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background: #f8fafc;
+  color: #64748b;
+  border: 1px solid #e2e8f0;
+}
+
+.tut-step-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.tut-step-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0 0 4px 0;
+}
+
+.tut-step-desc {
+  font-size: 0.82rem;
+  color: #94a3b8;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ── Image ── */
+.tut-image-wrapper {
+  padding: 0 28px;
+  margin-bottom: 20px;
+}
+
+.tut-image {
+  width: 100%;
+  border-radius: 14px;
+  border: 1px solid #e2e8f0;
+  display: block;
+}
+
+/* ── Footer ── */
+.tut-footer {
+  display: flex;
+  gap: 10px;
+  padding: 0 24px 24px 24px;
+}
+
+.tut-btn-secondary {
+  flex: 1;
+  padding: 13px 16px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #64748b;
+  background: #f1f5f9;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tut-btn-secondary:hover {
+  background: #e2e8f0;
+  color: #475569;
+}
+
+.tut-btn-secondary:active {
+  transform: scale(0.97);
+}
+
+.tut-btn-primary {
+  flex: 1.3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 13px 16px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #ffffff;
+  background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px rgba(124, 58, 237, 0.35);
+}
+
+.tut-btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(124, 58, 237, 0.45);
+}
+
+.tut-btn-primary:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(124, 58, 237, 0.3);
+}
+
+/* ============================================
+   Responsive
+   ============================================ */
+
+@media (max-width: 480px) {
+  .tutorial-card {
+    border-radius: 16px;
+  }
+
+  .tut-header {
+    padding: 22px 20px 0 20px;
+  }
+
+  .tut-steps {
+    padding: 16px 20px 0 20px;
+  }
+
+  .tut-image-wrapper {
+    padding: 0 20px;
+    margin-bottom: 16px;
+  }
+
+  .tut-footer {
+    flex-direction: column;
+    padding: 0 20px 20px 20px;
+  }
+
+  .tut-btn-secondary,
+  .tut-btn-primary {
+    width: 100%;
+    flex: none;
+  }
+
+  .tut-title {
+    font-size: 1.1rem;
+  }
+
+  .tut-step-content {
+    padding-bottom: 16px;
+  }
 }
 
 /* ======================= */
@@ -1065,7 +1772,7 @@
 .order-form-overlay {
   position: fixed;
   inset: 0;
-  z-index: 300;
+  z-index: 12;
   background: rgba(15, 23, 42, 0.6);
   backdrop-filter: blur(8px);
   display: flex;
