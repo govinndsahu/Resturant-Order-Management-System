@@ -156,7 +156,6 @@ const Navbar = ({ name, appName }) => {
               <i className="ri-close-line"></i>
             </button>
           </div>
-
           <div className="menu-side-links">
             <NavLink
               to={route()}
@@ -190,7 +189,6 @@ const Navbar = ({ name, appName }) => {
               )}
             </NavLink>
           </div>
-
           <div className="menu-side-footer">
             <button
               className="menu-side-logout"
