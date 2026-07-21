@@ -32,6 +32,7 @@ const Dashboard = ({ appName }) => {
     "Orders Histories": "ri-history-line",
     "Orders Analytics": "ri-bar-chart-line",
     Users: "ri-team-line",
+    "Menu Configuration": "ri-settings-3-line",
   };
 
   const pageColors = {
@@ -41,6 +42,7 @@ const Dashboard = ({ appName }) => {
     "Orders Histories": { bg: "#f5f3ff", icon: "#8b5cf6", border: "#ddd6fe" },
     "Orders Analytics": { bg: "#f0f9ff", icon: "#0ea5e9", border: "#bae6fd" },
     Users: { bg: "#fdf2f8", icon: "#ec4899", border: "#fbcfe8" },
+    "Menu Configuration": { bg: "#f3f4f6", icon: "#6b7280", border: "#d1d5db" },
   };
 
   if (!user) {

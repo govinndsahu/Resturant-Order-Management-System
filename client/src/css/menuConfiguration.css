@@ -1,0 +1,253 @@
+/* ===== Menu Configuration Page ===== */
+#menu-config {
+  min-height: 100vh;
+  padding-bottom: 40px;
+  margin-top: 65px;
+  background: #f8fafc41;
+  backdrop-filter: blur(15px);
+}
+
+/* ===== Header ===== */
+.mc-header {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  padding: 32px 16px 64px;
+  position: relative;
+  overflow: hidden;
+}
+
+.mc-header-content {
+  max-width: 800px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  position: relative;
+  z-index: 1;
+}
+
+.mc-header-icon {
+  width: 56px;
+  height: 56px;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.mc-header-text h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+}
+
+.mc-header-text p {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.8);
+  margin: 4px 0 0;
+}
+
+/* ===== Body ===== */
+.mc-body {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 16px;
+  margin-top: -40px;
+  position: relative;
+  z-index: 2;
+}
+
+/* ===== Summary ===== */
+.mc-summary {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.mc-summary-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px 16px;
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e2e8f0;
+}
+
+.mc-summary-value {
+  display: block;
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #667eea;
+  line-height: 1.2;
+}
+
+.mc-summary-label {
+  display: block;
+  font-size: 0.7rem;
+  color: #64748b;
+  font-weight: 600;
+  margin-top: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ===== Section Card ===== */
+.mc-section {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e2e8f0;
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+
+.mc-section-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 20px 20px 16px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.mc-section-icon {
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, #667eea20, #764ba220);
+  color: #667eea;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.mc-section-header h2 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0;
+}
+
+.mc-section-body {
+  padding: 8px 0;
+}
+
+/* ===== Toggle Row ===== */
+.mc-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 20px;
+  transition: background 0.15s;
+}
+
+.mc-toggle-row:hover {
+  background: #f8fafc;
+}
+
+.mc-toggle-row:not(:last-child) {
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.mc-toggle-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.mc-toggle-label {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.mc-toggle-desc {
+  display: block;
+  font-size: 0.75rem;
+  color: #94a3b8;
+  margin-top: 2px;
+  line-height: 1.4;
+}
+
+/* ===== Toggle Switch ===== */
+.mc-toggle {
+  width: 48px;
+  height: 26px;
+  border-radius: 13px;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  position: relative;
+  flex-shrink: 0;
+  transition: background 0.25s ease;
+  outline: none;
+}
+
+.mc-toggle:focus-visible {
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3);
+}
+
+.mc-toggle-on {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+}
+
+.mc-toggle-off {
+  background: #cbd5e1;
+}
+
+.mc-toggle-knob {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.mc-toggle-on .mc-toggle-knob {
+  transform: translateX(22px);
+}
+
+.mc-toggle-off .mc-toggle-knob {
+  transform: translateX(0);
+}
+
+/* ===== Responsive ===== */
+@media (min-width: 640px) {
+  .mc-header {
+    padding: 40px 24px 80px;
+  }
+
+  .mc-header-text h1 {
+    font-size: 1.75rem;
+  }
+
+  .mc-summary {
+    gap: 16px;
+  }
+
+  .mc-summary-card {
+    padding: 24px;
+  }
+
+  .mc-summary-value {
+    font-size: 2rem;
+  }
+
+  .mc-section-header {
+    padding: 24px 24px 16px;
+  }
+
+  .mc-toggle-row {
+    padding: 16px 24px;
+  }
+}

@@ -26,6 +26,7 @@ import { useAppInfo } from "./contexts/AppInfoContext.jsx";
 import { useInstallPrompt } from "./hooks/useInstallPrompt.js";
 import { useDynamicManifest } from "./hooks/useDynamicManifest.js";
 import OrderAnalytics from "./pages/Admin/OrderAnalytics.jsx";
+import MenuConfiguration from "./pages/Admin/MenuConfiguration.jsx";
 
 const AdminStylesLoader = ({ appName }) => {
   const location = useLocation();
@@ -90,6 +91,10 @@ const App = () => {
           <Route
             path={getAppRoute(appName, "dashboard/orders-analytics")}
             element={<OrderAnalytics />}
+          />
+          <Route
+            path={getAppRoute(appName, "dashboard/menu/configuration")}
+            element={<MenuConfiguration />}
           />
           <Route
             path={getAppRoute(appName, "dashboard/users")}

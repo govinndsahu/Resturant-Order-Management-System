@@ -23,4 +23,8 @@ export const dashboardPages = [
     name: "Users",
     path: "/dashboard/users",
   },
+  {
+    name: "Menu Configuration",
+    path: "/dashboard/menu/configuration",
+  },
 ];
