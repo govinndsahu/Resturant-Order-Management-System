@@ -3,7 +3,7 @@ export const updateVersion = async (req, res, next) => {
     const id = req.body.id || req.headers.id;
 
     const response = await fetch(
-      `https://darling-eject-catty.ngrok-free.dev/menu/update/version`,
+      `${process.env.DGDINE_BACKEND_URL}/menu/update/version`,
       {
         method: "POST",
         headers: {
