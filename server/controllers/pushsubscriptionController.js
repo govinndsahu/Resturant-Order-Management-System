@@ -65,7 +65,7 @@ export const savePushSubscription = async (req, res) => {
 export const sendPushNotification = async (req, res, next) => {
   try {
     const payload = JSON.stringify({
-      title: "Cafeteira ",
+      title: "New Order",
       body: "You have a new order.",
       url: "/",
     });

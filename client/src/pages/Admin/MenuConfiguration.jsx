@@ -9,11 +9,11 @@ import "../../css/menuConfiguration.css";
 import React, { useEffect, useState } from "react";
 
 const MenuConfiguration = () => {
+  const { backendUrl, setError } = useConfig();
+
   const [configs, setConfigs] = useState({ validateLocation: false });
 
   const [showLocationPopup, setShowLocationPopup] = useState(false);
-
-  const { backendUrl, setError } = useConfig();
 
   const handleToggle = (key) => {
     if (key === "validateLocation" && !configs[key]) {
