@@ -25,7 +25,7 @@ import LocationErrorMessage from "./LocationErrorMessage";
 import { useConfig } from "../contexts/ConfigContext";
 
 const OrderForm = ({ dispalyForm, setDisplayForm, appName }) => {
-  const { backendUrl } = useConfig();
+  const { backendUrl, isLocationNeed } = useConfig();
 
   const [name, setName] = useState("");
   const [tableNumber, setTableNumber] = useState("");
@@ -114,7 +114,7 @@ const OrderForm = ({ dispalyForm, setDisplayForm, appName }) => {
 
       setLoader(true);
 
-      const position = await getUserLocation();
+      const position = isLocationNeed ? await getUserLocation() : null;
 
       const { data } = await createOrderApi(
         {

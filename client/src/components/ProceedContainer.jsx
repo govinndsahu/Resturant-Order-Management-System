@@ -3,6 +3,7 @@ import { useCart } from "../contexts/Cart";
 import LocationError from "./LocationError";
 import Tutorial from "./Tutorial";
 import { useLocalStorage } from "../hooks/useLocalStorage";
+import { useConfig } from "../contexts/ConfigContext";
 
 const ProceedContainer = ({ setDisplayForm }) => {
   const [cart] = useCart();
@@ -12,6 +13,8 @@ const ProceedContainer = ({ setDisplayForm }) => {
   );
   const [showTutorial, setShowTutorial] = useState(false);
   const [loader, setLoader] = useState(false);
+
+  const { isLocationNeed } = useConfig();
 
   const getUserLocation = () => {
     return new Promise((resolve, reject) => {
@@ -45,7 +48,9 @@ const ProceedContainer = ({ setDisplayForm }) => {
   const getTotalPrice = () => {
     let total = 0;
     cart.forEach((item) => {
-      total += parseInt(item.half_price ? item.half_price : item.full_price);
+      total +=
+        parseInt(item.half_price ? item.half_price : item.full_price) *
+        (item.quantity || 1);
     });
     return total;
   };
@@ -55,21 +60,23 @@ const ProceedContainer = ({ setDisplayForm }) => {
   };
 
   const handleDisplayForm = async () => {
-    const permissionStatus = await navigator.permissions.query({
-      name: "geolocation",
-    });
+    if (isLocationNeed) {
+      const permissionStatus = await navigator.permissions.query({
+        name: "geolocation",
+      });
 
-    if (
-      permissionStatus.state === "denied" ||
-      permissionStatus.state === "prompt"
-    ) {
-      setLocationError(true);
-      return;
+      if (
+        permissionStatus.state === "denied" ||
+        permissionStatus.state === "prompt"
+      ) {
+        setLocationError(true);
+        return;
+      }
+
+      setLoader(true);
+      await getUserLocation();
+      setLoader(false);
     }
-
-    setLoader(true);
-    await getUserLocation();
-    setLoader(false);
     setDisplayForm(true);
   };
 
@@ -92,7 +99,7 @@ const ProceedContainer = ({ setDisplayForm }) => {
         {loader ? (
           <button className="proceed-btn loading" disabled>
             <span className="btn-loader"></span>
-            Locating...
+            Proceeding...
           </button>
         ) : (
           <button className="proceed-btn" onClick={handleDisplayForm}>

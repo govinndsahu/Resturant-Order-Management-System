@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { getAppDataApi } from "../apis/apis";
+import { getLocationValidationConfigApi } from "../apis/configurationApis";
 
 const ConfigContext = createContext(null);
 
@@ -11,23 +12,43 @@ export function ConfigProvider({ appId, children }) {
   const fetchConfig = async () => {
     try {
       const { data } = await getAppDataApi(appId);
-      const menuName = data?.menu?.menuName;
 
-      if (menuName) {
-        localStorage.setItem("menuDbName", menuName);
+      if (data.success) {
+        const menuName = data?.menu?.menuName;
+        if (menuName) {
+          localStorage.setItem("menuDbName", menuName);
+        }
+        const isLocationNeed = await isLocationRequired(
+          data.menu.menuBackendUrl,
+        );
+
+        setConfig({
+          backendUrl: data.menu.menuBackendUrl,
+          menuName,
+          menu: data.menu,
+          isLocationNeed,
+          setError,
+        });
       }
-
-      setConfig({
-        backendUrl: data.menu.menuBackendUrl,
-        menuName,
-        menu: data.menu,
-        setError,
-        // add other config values here if needed
-      });
     } catch (err) {
       setError(err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const isLocationRequired = async (backendUrl) => {
+    try {
+      const { data } = await getLocationValidationConfigApi(backendUrl);
+
+      if (data.success) {
+        return data?.config.doValidate;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      setError(error);
+      return false;
     }
   };
 
