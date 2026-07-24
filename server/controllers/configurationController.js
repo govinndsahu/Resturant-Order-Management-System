@@ -57,9 +57,9 @@ export const disableLocationValidation = async (req, res, next) => {
       });
     }
 
-    return res.status(404).json({
-      success: false,
-      message: "Location validation configuration not found",
+    return res.status(200).json({
+      success: true,
+      config: { doValidate: false },
     });
   } catch (error) {
     next(error);
@@ -73,11 +73,12 @@ export const getLocationValidationConfig = async (req, res, next) => {
     );
 
     if (!config || !config.locationValidation) {
-      return res.status(404).json({
-        success: false,
-        message: "Location validation configuration not found",
+      return res.status(200).json({
+        success: true,
+        config: { doValidate: false },
       });
     }
+
     return res.status(200).json({
       success: true,
       config: config.locationValidation,
