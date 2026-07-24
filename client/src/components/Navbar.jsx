@@ -8,7 +8,7 @@ import { getAppRoute } from "../utils/util";
 import { useConfig } from "../contexts/ConfigContext";
 
 const Navbar = ({ name, appName }) => {
-  const { backendUrl } = useConfig();
+  const { backendUrl, menu } = useConfig();
 
   const [cart] = useContext(CartContext);
   const user = JSON.parse(localStorage?.getItem("user"));
@@ -65,7 +65,10 @@ const Navbar = ({ name, appName }) => {
           {/* Logo / Restaurant Name */}
           <div className="menu-nav-brand" onClick={() => navigate(route())}>
             <div className="menu-nav-logo">
-              <i className="ri-restaurant-line"></i>
+              <img
+                src={`data:image/png;base64,${menu?.menuLogoImg}`}
+                alt={name}
+              />
             </div>
             <h1 className="menu-nav-title">{name}</h1>
           </div>
