@@ -1,4 +1,4 @@
-const cacheName = "menu-app-v1";
+const cacheName = "menu-app-v2";
 
 const staticAssets = [
   "/",
