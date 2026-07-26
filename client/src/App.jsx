@@ -46,7 +46,6 @@ const App = () => {
   useDynamicManifest(menuName, menu);
 
   useInstallPrompt();
-  useDynamicManifest(menuName, menu);
 
   return (
     <BrowserRouter>
