@@ -19,6 +19,10 @@ import {
 import Loader from "../../components/Loader";
 import { useConfig } from "../../contexts/ConfigContext";
 
+const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png"];
+const MAX_IMAGE_SIZE_MB = 5;
+const MAX_IMAGE_SIZE_BYTES = MAX_IMAGE_SIZE_MB * 1024 * 1024;
+
 const Products = () => {
   const { backendUrl, menu } = useConfig();
 
@@ -39,36 +43,45 @@ const Products = () => {
   const [imagePreview, setImagePreview] = useState(null);
 
   const [updateMode, setUpdateMode] = useState(false);
-
   const [loader, setLoader] = useState(false);
+
+  // Validation errors state
+  const [errors, setErrors] = useState({});
 
   const imageRef = useRef();
   const refImage = useRef();
   const formRef = useRef();
-  const validateCategoryRef = useRef();
+
+  // Refs for scrolling to errors
+  const nameRef = useRef();
+  const categoryRef = useRef();
+  const priceTypeRef = useRef();
+  const snRef = useRef();
+  const priceRef = useRef();
+  const halfPriceRef = useRef();
+  const fullPriceRef = useRef();
+  const imageGroupRef = useRef();
 
   const productData = {
     id: productId,
-    name: productName,
+    name: productName.trim(),
     category,
     price_type: priceType,
-    full_price: priceType === "single" ? price : fullPrice,
-    half_price: priceType === "both" ? halfPrice : null,
+    full_price:
+      priceType === "single" ? Number(price) || 0 : Number(fullPrice) || 0,
+    half_price: priceType === "both" ? Number(halfPrice) || 0 : null,
     image,
-    sn: serialNumber,
+    sn: Number(serialNumber) || 0,
   };
 
   const fetchProducts = async () => {
     try {
       const cached = await getAllProducts();
-
       if (cached?.length > 0) {
         setProducts(cached);
         return;
       }
-
       const { data } = await getProductsApi(backendUrl);
-
       if (data?.success) {
         setProducts(data.products);
       }
@@ -80,14 +93,11 @@ const Products = () => {
   const fetchCategories = async () => {
     try {
       const cached = await getAllCategories();
-
       if (cached?.length > 0) {
         setCategories(cached);
         return;
       }
-
       const { data } = await getCategoriesApi(backendUrl);
-
       if (data?.success) {
         setCategories(data.categories);
       }
@@ -98,22 +108,155 @@ const Products = () => {
 
   const handleImagePreview = (e) => {
     const file = e.target.files[0];
-
     if (file) {
       setImagePreview(URL.createObjectURL(file));
     }
   };
 
+  // ─── VALIDATION ─────────────────────────────────────────────
+  const validateForm = () => {
+    const newErrors = {};
+
+    // 1. Product Name
+    const trimmedName = productName.trim();
+    if (!trimmedName) {
+      newErrors.name = "Product name is required";
+    } else if (trimmedName.length < 2) {
+      newErrors.name = "Product name must be at least 2 characters";
+    } else if (trimmedName.length > 100) {
+      newErrors.name = "Product name must not exceed 100 characters";
+    }
+
+    // 2. Category
+    if (!category) {
+      newErrors.category = "Please select a category";
+    }
+
+    // 3. Price Type
+    if (!priceType) {
+      newErrors.priceType = "Price type is required";
+    }
+
+    // 4. Serial Number
+    const sn = Number(serialNumber);
+    if (!serialNumber || serialNumber === "") {
+      newErrors.serialNumber = "Serial number is required";
+    } else if (isNaN(sn) || sn < 1) {
+      newErrors.serialNumber = "Serial number must be at least 1";
+    } else if (!Number.isInteger(sn)) {
+      newErrors.serialNumber = "Serial number must be a whole number";
+    }
+
+    // 5. Prices
+    if (priceType === "single") {
+      const p = Number(price);
+      if (!price || price === "") {
+        newErrors.price = "Price is required";
+      } else if (isNaN(p) || p <= 0) {
+        newErrors.price = "Price must be greater than 0";
+      } else if (p > 999999) {
+        newErrors.price = "Price seems too high";
+      }
+    } else {
+      const hp = Number(halfPrice);
+      const fp = Number(fullPrice);
+
+      if (!halfPrice || halfPrice === "") {
+        newErrors.halfPrice = "Half price is required";
+      } else if (isNaN(hp) || hp <= 0) {
+        newErrors.halfPrice = "Half price must be greater than 0";
+      } else if (hp > 999999) {
+        newErrors.halfPrice = "Half price seems too high";
+      }
+
+      if (!fullPrice || fullPrice === "") {
+        newErrors.fullPrice = "Full price is required";
+      } else if (isNaN(fp) || fp <= 0) {
+        newErrors.fullPrice = "Full price must be greater than 0";
+      } else if (fp > 999999) {
+        newErrors.fullPrice = "Full price seems too high";
+      }
+
+      // Logical: half must be less than full
+      if (!isNaN(hp) && !isNaN(fp) && hp >= fp) {
+        newErrors.halfPrice = "Half price must be less than full price";
+        newErrors.fullPrice = "Full price must be greater than half price";
+      }
+    }
+
+    // 6. Image
+    if (!updateMode) {
+      // Creating: image is required
+      if (!image) {
+        newErrors.image = "Product image is required";
+      } else if (image instanceof File) {
+        if (!ALLOWED_IMAGE_TYPES.includes(image.type)) {
+          newErrors.image = "Only JPG, JPEG, or PNG images are allowed";
+        }
+        if (image.size > MAX_IMAGE_SIZE_BYTES) {
+          newErrors.image = `Image must be under ${MAX_IMAGE_SIZE_MB}MB`;
+        }
+      }
+    } else {
+      // Updating: image only validated if user selected a new one
+      if (image instanceof File) {
+        if (!ALLOWED_IMAGE_TYPES.includes(image.type)) {
+          newErrors.image = "Only JPG, JPEG, or PNG images are allowed";
+        }
+        if (image.size > MAX_IMAGE_SIZE_BYTES) {
+          newErrors.image = `Image must be under ${MAX_IMAGE_SIZE_MB}MB`;
+        }
+      }
+    }
+
+    setErrors(newErrors);
+    return newErrors;
+  };
+
+  const scrollToFirstError = (errorObj) => {
+    const fieldOrder = [
+      { key: "name", ref: nameRef },
+      { key: "category", ref: categoryRef },
+      { key: "priceType", ref: priceTypeRef },
+      { key: "serialNumber", ref: snRef },
+      { key: "price", ref: priceRef },
+      { key: "halfPrice", ref: halfPriceRef },
+      { key: "fullPrice", ref: fullPriceRef },
+      { key: "image", ref: imageGroupRef },
+    ];
+
+    for (const field of fieldOrder) {
+      if (errorObj[field.key]) {
+        field.ref.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+        // Focus the first input inside the group if possible
+        const input = field.ref.current?.querySelector(
+          "input, select, textarea",
+        );
+        input?.focus();
+        break;
+      }
+    }
+  };
+
+  const clearFieldError = (fieldName) => {
+    setErrors((prev) => {
+      const next = { ...prev };
+      delete next[fieldName];
+      return next;
+    });
+  };
+  // ────────────────────────────────────────────────────────────
+
   const handleSubmit = async (e) => {
     try {
       e.preventDefault();
 
-      if (!category) {
-        window.scrollTo({
-          top: 0,
-          behavior: "smooth",
-        });
-        validateCategoryRef.current.style.display = "block";
+      const validationErrors = validateForm();
+      if (Object.keys(validationErrors).length > 0) {
+        scrollToFirstError(validationErrors);
         return;
       }
 
@@ -141,7 +284,6 @@ const Products = () => {
 
   const uploadImage = async (id, file) => {
     const formData = new FormData();
-
     formData.append("image", file);
 
     try {
@@ -167,6 +309,8 @@ const Products = () => {
         setFullPrice("");
         setImage("");
         setImagePreview(null);
+        setSerialNumber("");
+        setErrors({});
         fetchProducts();
         formRef.current.reset();
       }
@@ -191,16 +335,14 @@ const Products = () => {
     setImagePreview(
       p.image && p.mimeType ? `data:${p.mimeType};base64,${p.image}` : null,
     );
+    setErrors({});
   };
 
   const handleUpdateRequest = async (id) => {
     try {
-      if (!category) {
-        window.scrollTo({
-          top: 0,
-          behavior: "smooth",
-        });
-        validateCategoryRef.current.style.display = "block";
+      const validationErrors = validateForm();
+      if (Object.keys(validationErrors).length > 0) {
+        scrollToFirstError(validationErrors);
         return;
       }
 
@@ -233,6 +375,7 @@ const Products = () => {
         setImage("");
         setSerialNumber("");
         setImagePreview(null);
+        setErrors({});
         fetchProducts();
         setUpdateMode(false);
         formRef.current.reset();
@@ -247,18 +390,13 @@ const Products = () => {
   const handleDeleteProduct = async (id) => {
     try {
       setLoader(true);
-
       const { data } = await deleteProductApi(id, backendUrl, menu?._id);
-
       if (data?.success) {
         const {
           data: { products },
         } = await getProductsApi(backendUrl);
-
         await saveAllProducts(products);
-
         fetchProducts();
-
         setLoader(false);
       }
     } catch (error) {
@@ -317,11 +455,17 @@ const Products = () => {
             onSubmit={(e) => e.preventDefault()}>
             {/* Row 1: Name + Category */}
             <div className="prod-form-row">
-              <div className="prod-form-group">
+              <div className="prod-form-group" ref={nameRef}>
                 <label htmlFor="product-name">
                   <i className="ri-price-tag-3-line"></i>
                   Product Name
                 </label>
+                {errors.name && (
+                  <span className="prod-error-text">
+                    <i className="ri-error-warning-line"></i>
+                    {errors.name}
+                  </span>
+                )}
                 <input
                   required
                   value={productName}
@@ -329,21 +473,24 @@ const Products = () => {
                   name="name"
                   id="product-name"
                   placeholder="e.g., Paneer Tikka"
-                  onChange={(e) => setProductName(e.target.value)}
+                  onChange={(e) => {
+                    setProductName(e.target.value);
+                    clearFieldError("name");
+                  }}
+                  className={errors.name ? "prod-input-error" : ""}
                 />
               </div>
-              <div className="prod-form-group">
+              <div className="prod-form-group" ref={categoryRef}>
                 <label htmlFor="select-category">
                   <i className="ri-apps-line"></i>
                   Category
                 </label>
-                <span
-                  ref={validateCategoryRef}
-                  className="prod-error-text"
-                  style={{ display: "none" }}>
-                  <i className="ri-error-warning-line"></i>
-                  Category is required
-                </span>
+                {errors.category && (
+                  <span className="prod-error-text">
+                    <i className="ri-error-warning-line"></i>
+                    {errors.category}
+                  </span>
+                )}
                 <select
                   required
                   name="category"
@@ -351,10 +498,9 @@ const Products = () => {
                   value={category}
                   onChange={(e) => {
                     setCategory(e.target.value);
-                    if (validateCategoryRef.current) {
-                      validateCategoryRef.current.style.display = "none";
-                    }
-                  }}>
+                    clearFieldError("category");
+                  }}
+                  className={errors.category ? "prod-input-error" : ""}>
                   <option hidden value="">
                     Select a category
                   </option>
@@ -369,11 +515,17 @@ const Products = () => {
 
             {/* Row 2: Price Type + S.N */}
             <div className="prod-form-row">
-              <div className="prod-form-group">
+              <div className="prod-form-group" ref={priceTypeRef}>
                 <label htmlFor="price-type">
                   <i className="ri-money-rupee-circle-line"></i>
                   Price Type
                 </label>
+                {errors.priceType && (
+                  <span className="prod-error-text">
+                    <i className="ri-error-warning-line"></i>
+                    {errors.priceType}
+                  </span>
+                )}
                 <select
                   required
                   value={priceType}
@@ -381,19 +533,29 @@ const Products = () => {
                   id="price-type"
                   onChange={(e) => {
                     setPriceType(e.target.value);
+                    clearFieldError("priceType");
                     if (e.target.value === "single") {
                       setHalfPrice("");
+                      clearFieldError("halfPrice");
+                      clearFieldError("fullPrice");
                     }
-                  }}>
+                  }}
+                  className={errors.priceType ? "prod-input-error" : ""}>
                   <option value="single">Single Price</option>
                   <option value="both">Half & Full</option>
                 </select>
               </div>
-              <div className="prod-form-group prod-sn-group">
+              <div className="prod-form-group prod-sn-group" ref={snRef}>
                 <label htmlFor="serial-number">
                   <i className="ri-hashtag"></i>
                   S.N
                 </label>
+                {errors.serialNumber && (
+                  <span className="prod-error-text">
+                    <i className="ri-error-warning-line"></i>
+                    {errors.serialNumber}
+                  </span>
+                )}
                 <input
                   required
                   value={serialNumber}
@@ -402,7 +564,12 @@ const Products = () => {
                   id="serial-number"
                   placeholder="1"
                   min="1"
-                  onChange={(e) => setSerialNumber(e.target.value)}
+                  step="1"
+                  onChange={(e) => {
+                    setSerialNumber(e.target.value);
+                    clearFieldError("serialNumber");
+                  }}
+                  className={errors.serialNumber ? "prod-input-error" : ""}
                 />
               </div>
             </div>
@@ -410,11 +577,17 @@ const Products = () => {
             {/* Row 3: Prices */}
             <div className="prod-form-row">
               {priceType === "single" ? (
-                <div className="prod-form-group">
+                <div className="prod-form-group" ref={priceRef}>
                   <label htmlFor="product-price">
                     <i className="ri-money-rupee-circle-line"></i>
                     Price (₹)
                   </label>
+                  {errors.price && (
+                    <span className="prod-error-text">
+                      <i className="ri-error-warning-line"></i>
+                      {errors.price}
+                    </span>
+                  )}
                   <input
                     required
                     name="full_price"
@@ -423,16 +596,27 @@ const Products = () => {
                     id="product-price"
                     placeholder="Enter price"
                     min="0"
-                    onChange={(e) => setPrice(e.target.value)}
+                    step="0.01"
+                    onChange={(e) => {
+                      setPrice(e.target.value);
+                      clearFieldError("price");
+                    }}
+                    className={errors.price ? "prod-input-error" : ""}
                   />
                 </div>
               ) : (
                 <>
-                  <div className="prod-form-group">
+                  <div className="prod-form-group" ref={halfPriceRef}>
                     <label htmlFor="half-price">
                       <i className="ri-scissors-cut-line"></i>
                       Half Price (₹)
                     </label>
+                    {errors.halfPrice && (
+                      <span className="prod-error-text">
+                        <i className="ri-error-warning-line"></i>
+                        {errors.halfPrice}
+                      </span>
+                    )}
                     <input
                       required
                       name="half_price"
@@ -441,14 +625,25 @@ const Products = () => {
                       id="half-price"
                       placeholder="Half price"
                       min="0"
-                      onChange={(e) => setHalfPrice(e.target.value)}
+                      step="0.01"
+                      onChange={(e) => {
+                        setHalfPrice(e.target.value);
+                        clearFieldError("halfPrice");
+                      }}
+                      className={errors.halfPrice ? "prod-input-error" : ""}
                     />
                   </div>
-                  <div className="prod-form-group">
+                  <div className="prod-form-group" ref={fullPriceRef}>
                     <label htmlFor="full-price">
                       <i className="ri-restaurant-2-line"></i>
                       Full Price (₹)
                     </label>
+                    {errors.fullPrice && (
+                      <span className="prod-error-text">
+                        <i className="ri-error-warning-line"></i>
+                        {errors.fullPrice}
+                      </span>
+                    )}
                     <input
                       required
                       name="full_price"
@@ -457,7 +652,12 @@ const Products = () => {
                       id="full-price"
                       placeholder="Full price"
                       min="0"
-                      onChange={(e) => setFullPrice(e.target.value)}
+                      step="0.01"
+                      onChange={(e) => {
+                        setFullPrice(e.target.value);
+                        clearFieldError("fullPrice");
+                      }}
+                      className={errors.fullPrice ? "prod-input-error" : ""}
                     />
                   </div>
                 </>
@@ -465,11 +665,19 @@ const Products = () => {
             </div>
 
             {/* Image Upload */}
-            <div className="prod-form-group prod-image-group">
+            <div
+              className="prod-form-group prod-image-group"
+              ref={imageGroupRef}>
               <label>
                 <i className="ri-image-line"></i>
                 Product Image
               </label>
+              {errors.image && (
+                <span className="prod-error-text">
+                  <i className="ri-error-warning-line"></i>
+                  {errors.image}
+                </span>
+              )}
               <div
                 className="prod-image-upload"
                 style={{ display: updateMode ? "none" : "flex" }}>
@@ -481,9 +689,13 @@ const Products = () => {
                   id="product-image"
                   accept=".jpg, .png, .jpeg"
                   onChange={(e) => {
-                    setImage(e.target.files[0]);
-                    handleImagePreview(e);
+                    const file = e.target.files[0];
+                    setImage(file || "");
+                    if (file) handleImagePreview(e);
+                    else setImagePreview(null);
+                    clearFieldError("image");
                   }}
+                  className={errors.image ? "prod-input-error" : ""}
                 />
                 <label htmlFor="product-image" className="prod-upload-btn">
                   <i className="ri-upload-cloud-2-line"></i>
@@ -515,6 +727,7 @@ const Products = () => {
                       setImagePreview(null);
                       setImage("");
                       if (refImage.current) refImage.current.value = "";
+                      clearFieldError("image");
                     }}>
                     <i className="ri-close-line"></i>
                   </button>
@@ -542,6 +755,7 @@ const Products = () => {
                       setImage("");
                       setSerialNumber("");
                       setImagePreview(null);
+                      setErrors({});
                       formRef.current?.reset();
                     }}>
                     <i className="ri-close-line"></i>

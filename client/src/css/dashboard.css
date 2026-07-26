@@ -558,3 +558,21 @@
     margin-top: 40px;
   }
 }
+
+.prod-input-error {
+  border-color: #ef4444 !important;
+  background-color: #fef2f2 !important;
+}
+
+.prod-error-text {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #ef4444;
+  font-size: 0.8rem;
+  margin-bottom: 4px;
+}
+
+.prod-error-text i {
+  font-size: 0.9rem;
+}
