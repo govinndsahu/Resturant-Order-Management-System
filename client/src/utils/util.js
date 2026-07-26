@@ -105,13 +105,28 @@ export const adminStylesLoaderFunction = (location, appName, menu = null) => {
   return undefined;
 };
 
+let isServiceWorkerRegistrationStarted = false;
+
 export const registerServiceWorker = () => {
-  if ("serviceWorker" in navigator) {
-    window.addEventListener("load", () => {
-      navigator.serviceWorker
-        .register("/sw.js")
-        .then((r) => null)
-        .catch((err) => { });
-    });
+  if (isServiceWorkerRegistrationStarted || !("serviceWorker" in navigator)) {
+    return;
   }
+
+  isServiceWorkerRegistrationStarted = true;
+
+  const baseUrl = import.meta.env.BASE_URL || "/";
+  const serviceWorkerUrl = `${baseUrl.endsWith("/") ? baseUrl : `${baseUrl}/`}sw.js`;
+
+  const register = () => {
+    navigator.serviceWorker.register(serviceWorkerUrl).catch(() => {
+      isServiceWorkerRegistrationStarted = false;
+    });
+  };
+
+  if (document.readyState === "complete" || document.readyState === "interactive") {
+    register();
+    return;
+  }
+
+  window.addEventListener("load", register, { once: true });
 };
