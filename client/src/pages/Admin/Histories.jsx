@@ -14,6 +14,7 @@ import {
 
 const Histories = () => {
   const { backendUrl } = useConfig();
+  const user = JSON.parse(localStorage.getItem("user"));
 
   const [histories, setHistories] = useState([]);
 
@@ -158,6 +159,19 @@ const Histories = () => {
   const filtered = filteredHistories();
   const totalRevenue = calculateTotal(filtered);
   const totalOrders = filtered.length;
+
+  // Unauthorized state
+  if (!user || user?.role < 1) {
+    return (
+      <div className="cat-unauthorized">
+        <div className="cat-unauthorized-content">
+          <i className="ri-shield-cross-line"></i>
+          <h2>Access Denied</h2>
+          <p>You are not authorized to manage categories.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div id="histories-page">

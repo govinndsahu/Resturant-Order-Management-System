@@ -5,6 +5,8 @@ import { getHistoryOrdersApi } from "../../apis/orderApis";
 
 const OrderAnalytics = () => {
   const { backendUrl } = useConfig();
+  const user = JSON.parse(localStorage.getItem("user"));
+
   const [histories, setHistories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedMonth, setSelectedMonth] = useState("all");
@@ -302,6 +304,19 @@ const OrderAnalytics = () => {
         <div className="analytics-loading">
           <div className="analytics-spinner"></div>
           <p>Loading analytics...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Unauthorized state
+  if (!user || user?.role < 2) {
+    return (
+      <div className="cat-unauthorized">
+        <div className="cat-unauthorized-content">
+          <i className="ri-shield-cross-line"></i>
+          <h2>Access Denied</h2>
+          <p>You are not authorized to manage categories.</p>
         </div>
       </div>
     );

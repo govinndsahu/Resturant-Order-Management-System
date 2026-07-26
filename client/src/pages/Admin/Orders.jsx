@@ -15,6 +15,7 @@ import { useConfig } from "../../contexts/ConfigContext";
 
 const Orders = () => {
   const { backendUrl } = useConfig();
+  const user = JSON.parse(localStorage.getItem("user"));
 
   const [orders, setOrders] = useState([]);
   const [name, setName] = useState("");
@@ -121,6 +122,19 @@ const Orders = () => {
   };
 
   const displayOrders = filteredOrders();
+
+  // Unauthorized state
+  if (!user || user?.role < 1) {
+    return (
+      <div className="cat-unauthorized">
+        <div className="cat-unauthorized-content">
+          <i className="ri-shield-cross-line"></i>
+          <h2>Access Denied</h2>
+          <p>You are not authorized to manage categories.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="orders-page">

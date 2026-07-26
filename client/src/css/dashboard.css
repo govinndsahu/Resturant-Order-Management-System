@@ -576,3 +576,46 @@
 .prod-error-text i {
   font-size: 0.9rem;
 }
+
+/* ============================================
+   UNAUTHORIZED
+   ============================================ */
+
+.cat-unauthorized {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: #f8fafc;
+}
+
+.cat-unauthorized-content {
+  text-align: center;
+  background: #ffffff;
+  padding: 48px 32px;
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  max-width: 400px;
+  width: 100%;
+}
+
+.cat-unauthorized-content i {
+  font-size: 4rem;
+  color: #ef4444;
+  margin-bottom: 16px;
+  display: block;
+}
+
+.cat-unauthorized-content h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 8px;
+}
+
+.cat-unauthorized-content p {
+  font-size: 1rem;
+  color: #94a3b8;
+  margin: 0;
+}
