@@ -3,6 +3,8 @@ import webpush from "web-push";
 
 export const savePushSubscription = async (req, res) => {
   try {
+    console.log("Hello World!");
+
     const subscription = req.body.subscription ?? req.body;
 
     if (!subscription) {

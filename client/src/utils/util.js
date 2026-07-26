@@ -52,7 +52,7 @@ export const getAppId = () => {
 
 export const getAppName = () => getAppId();
 
-export const adminStylesLoaderFunction = (location, appName) => {
+export const adminStylesLoaderFunction = (location, appName, menu = null) => {
   const user = JSON.parse(localStorage?.getItem("user") || "null");
   const isAdminRoute = location.pathname.startsWith(
     getAppRoute(appName, "dashboard"),
@@ -61,6 +61,12 @@ export const adminStylesLoaderFunction = (location, appName) => {
   const existingLink = document.head.querySelector(
     'link[data-admin-css="true"]',
   );
+  const existingFavicon = document.head.querySelector(
+    'link[data-admin-favicon="true"]',
+  );
+  const faviconHref = menu?.menuLogoImg
+    ? `data:image/png;base64,${menu.menuLogoImg}`
+    : "";
 
   if (isAdminRoute && isAdminUser && !existingLink) {
     const link = document.createElement("link");
@@ -68,13 +74,32 @@ export const adminStylesLoaderFunction = (location, appName) => {
     link.href = new URL("../App.css", import.meta.url).href;
     link.dataset.adminCss = "true";
     document.head.appendChild(link);
+
+    if (faviconHref) {
+      if (existingFavicon) {
+        existingFavicon.href = faviconHref;
+      } else {
+        const favicon = document.createElement("link");
+        favicon.rel = "icon";
+        favicon.type = "image/png";
+        favicon.href = faviconHref;
+        favicon.dataset.adminFavicon = "true";
+        document.head.appendChild(favicon);
+      }
+    }
+
     return () => {
       link.remove();
+      document.head.querySelector('link[data-admin-favicon="true"]')?.remove();
     };
   }
 
   if ((!isAdminRoute || !isAdminUser) && existingLink) {
     existingLink.remove();
+  }
+
+  if ((!isAdminRoute || !isAdminUser) && existingFavicon) {
+    existingFavicon.remove();
   }
 
   return undefined;
@@ -86,7 +111,7 @@ export const registerServiceWorker = () => {
       navigator.serviceWorker
         .register("/sw.js")
         .then((r) => null)
-        .catch((err) => {});
+        .catch((err) => { });
     });
   }
 };
