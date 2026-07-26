@@ -39,13 +39,14 @@ const AdminStylesLoader = ({ appName }) => {
 };
 
 const App = () => {
-  registerServiceWorker();
-
-  const { menuName } = useConfig();
+  const { menuName, menu } = useConfig();
   const { appName } = useAppInfo();
 
+  registerServiceWorker();
+  useDynamicManifest(menuName, menu);
+
   useInstallPrompt();
-  useDynamicManifest(menuName);
+  useDynamicManifest(menuName, menu);
 
   return (
     <BrowserRouter>
