@@ -13,8 +13,7 @@ import {
 } from "../../apis/orderApis";
 
 const Histories = () => {
-  const { backendUrl } = useConfig();
-  const user = JSON.parse(localStorage.getItem("user"));
+  const { backendUrl, user } = useConfig();
 
   const [histories, setHistories] = useState([]);
 
@@ -161,7 +160,7 @@ const Histories = () => {
   const totalOrders = filtered.length;
 
   // Unauthorized state
-  if (!user || user?.role < 1) {
+  if (!user || user?.role <= 0) {
     return (
       <div className="cat-unauthorized">
         <div className="cat-unauthorized-content">

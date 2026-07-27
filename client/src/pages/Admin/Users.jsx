@@ -6,9 +6,9 @@ import { deleteUserApi, getUsersApi, updateUserApi } from "../../apis/userApis";
 import { useConfig } from "../../contexts/ConfigContext";
 
 const Users = () => {
-  const { backendUrl } = useConfig();
+  const { backendUrl, user } = useConfig();
 
-  const currentUser = JSON.parse(localStorage.getItem("user"));
+  const currentUser = user;
   const [users, setUsers] = useState([]);
   const [loadingId, setLoadingId] = useState(null);
 

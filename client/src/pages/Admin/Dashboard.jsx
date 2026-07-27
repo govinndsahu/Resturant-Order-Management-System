@@ -9,10 +9,9 @@ import { getAppRoute } from "../../utils/util";
 import { useConfig } from "../../contexts/ConfigContext";
 
 const Dashboard = ({ appName }) => {
-  const { backendUrl, menuName } = useConfig();
   const navigate = useNavigate();
+  const { backendUrl, menuName, user } = useConfig();
 
-  const user = JSON.parse(localStorage.getItem("user"));
   const route = (path = "") => getAppRoute(appName, path);
 
   const [greeting, setGreeting] = useState("Good day");

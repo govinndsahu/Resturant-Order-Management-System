@@ -9,8 +9,7 @@ import "../../css/menuConfiguration.css";
 import React, { useEffect, useState } from "react";
 
 const MenuConfiguration = () => {
-  const { backendUrl, setError } = useConfig();
-  const user = JSON.parse(localStorage.getItem("user"));
+  const { backendUrl, setError, user } = useConfig();
 
   const [configs, setConfigs] = useState({ validateLocation: false });
 

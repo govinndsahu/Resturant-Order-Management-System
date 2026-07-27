@@ -14,8 +14,7 @@ import CalendarRangePicker from "../../components/CalendarRangePicker";
 import { useConfig } from "../../contexts/ConfigContext";
 
 const Orders = () => {
-  const { backendUrl } = useConfig();
-  const user = JSON.parse(localStorage.getItem("user"));
+  const { backendUrl, user } = useConfig();
 
   const [orders, setOrders] = useState([]);
   const [name, setName] = useState("");
@@ -124,7 +123,7 @@ const Orders = () => {
   const displayOrders = filteredOrders();
 
   // Unauthorized state
-  if (!user || user?.role < 1) {
+  if (!user || user?.role <= 0) {
     return (
       <div className="cat-unauthorized">
         <div className="cat-unauthorized-content">

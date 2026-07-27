@@ -8,10 +8,9 @@ import { getAppRoute } from "../utils/util";
 import { useConfig } from "../contexts/ConfigContext";
 
 const Navbar = ({ name, appName }) => {
-  const { backendUrl, menu } = useConfig();
+  const { backendUrl, menu, user } = useConfig();
 
   const [cart] = useContext(CartContext);
-  const user = JSON.parse(localStorage?.getItem("user"));
 
   const navigate = useNavigate();
   const route = (path = "") => getAppRoute(appName, path);
@@ -46,15 +45,11 @@ const Navbar = ({ name, appName }) => {
       const { data } = await userLogoutApi(backendUrl);
       if (data?.success) {
         navigate(route("loginpage"));
-        localStorage.removeItem("user");
       } else {
         navigate(route("loginpage"));
-        localStorage.removeItem("user");
       }
     } catch (error) {
-      console.log(error);
       navigate(route("loginpage"));
-      localStorage.removeItem("user");
     }
   };
 

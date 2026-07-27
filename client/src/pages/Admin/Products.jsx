@@ -24,9 +24,7 @@ const MAX_IMAGE_SIZE_MB = 5;
 const MAX_IMAGE_SIZE_BYTES = MAX_IMAGE_SIZE_MB * 1024 * 1024;
 
 const Products = () => {
-  const { backendUrl, menu } = useConfig();
-
-  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  const { backendUrl, menu, user } = useConfig();
 
   const [categories, setCategories] = useState([]);
   const [products, setProducts] = useState([]);

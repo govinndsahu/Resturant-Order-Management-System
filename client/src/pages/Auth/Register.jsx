@@ -41,7 +41,6 @@ const Register = ({ appName }) => {
       const { data } = await userRegisterApi(formData, backendUrl);
 
       if (data.success) {
-        localStorage.setItem("user", JSON.stringify(data.user));
         navigate(route());
       }
     } catch (error) {

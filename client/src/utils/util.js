@@ -52,8 +52,7 @@ export const getAppId = () => {
 
 export const getAppName = () => getAppId();
 
-export const adminStylesLoaderFunction = (location, appName, menu = null) => {
-  const user = JSON.parse(localStorage?.getItem("user") || "null");
+export const adminStylesLoaderFunction = (location, appName, user, menu = null) => {
   const isAdminRoute = location.pathname.startsWith(
     getAppRoute(appName, "dashboard"),
   );

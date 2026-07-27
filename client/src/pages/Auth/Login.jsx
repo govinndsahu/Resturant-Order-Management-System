@@ -7,7 +7,7 @@ import { getAppRoute } from "../../utils/util";
 import { useConfig } from "../../contexts/ConfigContext";
 
 const Login = ({ appName }) => {
-  const { backendUrl } = useConfig();
+  const { backendUrl, user } = useConfig();
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -35,11 +35,9 @@ const Login = ({ appName }) => {
       const { data } = await userLoginApi(formData, backendUrl);
 
       if (data?.success) {
-        localStorage.setItem("user", JSON.stringify(data.user));
         navigate(route());
       }
     } catch (error) {
-      console.log(error);
       setError("Invalid username or password");
     } finally {
       setIsLoading(false);
@@ -148,19 +146,14 @@ const Login = ({ appName }) => {
         </form>
 
         {/* Footer */}
-        {localStorage.getItem("user") ? (
-          JSON.parse(localStorage.getItem("user"))?.role === 2 ? (
+        {user ? (
+          user?.role === 2 ? (
             <div className="login-footer">
               <span>Don't have an account?</span>
               <Link to={route("registerpage")}>Create account</Link>
             </div>
           ) : null
-        ) : (
-          <div className="login-footer">
-            <span>Don't have an account?</span>
-            <Link to={route("registerpage")}>Create account</Link>
-          </div>
-        )}
+        ) : null}
       </div>
     </div>
   );

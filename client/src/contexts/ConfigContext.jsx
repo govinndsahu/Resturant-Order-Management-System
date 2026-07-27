@@ -18,15 +18,17 @@ export function ConfigProvider({ appId, children }) {
         if (menuName) {
           localStorage.setItem("menuDbName", menuName);
         }
+
         const isLocationNeed = await isLocationRequired(
           data.menu.menuBackendUrl,
         );
 
         setConfig({
-          backendUrl: data.menu.menuBackendUrl,
           menuName,
+          backendUrl: data.menu.menuBackendUrl,
           menu: data.menu,
-          isLocationNeed,
+          isLocationNeed: isLocationNeed.doValidate,
+          user: isLocationNeed.user,
           setError,
         });
       }
@@ -42,13 +44,13 @@ export function ConfigProvider({ appId, children }) {
       const { data } = await getLocationValidationConfigApi(backendUrl);
 
       if (data.success) {
-        return data?.config.doValidate;
+        return { user: data.user, doValidate: data.config.doValidate };
       } else {
-        return false;
+        return { user: null, doValidate: false };
       }
     } catch (error) {
       setError(error);
-      return false;
+      return { user: null, doValidate: false };
     }
   };
 

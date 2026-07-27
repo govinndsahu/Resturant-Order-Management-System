@@ -16,9 +16,7 @@ const Categories = () => {
   const createForm = useRef();
   const updateForm = useRef();
 
-  const { backendUrl, menu } = useConfig();
-
-  const user = JSON.parse(localStorage.getItem("user"));
+  const { backendUrl, menu, user } = useConfig();
 
   const [categories, setCategories] = useState([]);
   const [switchForm, setSwitchForm] = useState(true);
