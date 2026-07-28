@@ -58,21 +58,7 @@ export function ConfigProvider({ appId, children }) {
     fetchConfig();
   }, [appId]);
 
-  if (loading)
-    return (
-      <div
-        id="config-loader"
-        style={{
-          position: "fixed",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          fontSize: "1.5rem",
-          fontWeight: "bold",
-        }}>
-        Loading...
-      </div>
-    );
+  if (loading) return <span className="app-loader"></span>;
   if (error) return <div>Failed to load config.</div>;
 
   return (
