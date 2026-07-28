@@ -37,7 +37,7 @@ const Products = () => {
   const [halfPrice, setHalfPrice] = useState("");
   const [fullPrice, setFullPrice] = useState("");
   const [image, setImage] = useState("");
-  const [serialNumber, setSerialNumber] = useState("");
+  const [serialNumber, setSerialNumber] = useState("1");
   const [imagePreview, setImagePreview] = useState(null);
 
   const [updateMode, setUpdateMode] = useState(false);
