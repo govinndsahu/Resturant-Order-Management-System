@@ -42,6 +42,7 @@ const Register = ({ appName }) => {
 
       if (data.success) {
         navigate(route());
+        window.location.reload();
       }
     } catch (error) {
       console.log(error);

@@ -36,6 +36,7 @@ const Login = ({ appName }) => {
 
       if (data?.success) {
         navigate(route());
+        window.location.reload();
       }
     } catch (error) {
       setError("Invalid username or password");

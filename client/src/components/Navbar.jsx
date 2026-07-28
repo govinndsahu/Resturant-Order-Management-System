@@ -45,8 +45,10 @@ const Navbar = ({ name, appName }) => {
       const { data } = await userLogoutApi(backendUrl);
       if (data?.success) {
         navigate(route("loginpage"));
+        window.location.reload();
       } else {
         navigate(route("loginpage"));
+        window.location.reload();
       }
     } catch (error) {
       navigate(route("loginpage"));

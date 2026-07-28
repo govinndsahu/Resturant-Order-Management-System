@@ -735,7 +735,9 @@ const Products = () => {
 
             {/* Actions */}
             {loader ? (
-              <div className="prod-submit-btn prod-loading-btn">Working...</div>
+              <div className="prod-submit-btn prod-loading-btn">
+                Working... <span class="p-loader"></span>
+              </div>
             ) : (
               <div className="prod-form-actions">
                 {updateMode && (
