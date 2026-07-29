@@ -4,8 +4,8 @@ const staticAssets = [
   "/",
   "/index.html",
   "/manifest.webmanifest",
-  "/logo.png",
-  "/squarelogo.png",
+  "/DgDine-icon-192.png",
+  "/DgDine-icon-512.png",
 ];
 
 self.addEventListener("install", async () => {

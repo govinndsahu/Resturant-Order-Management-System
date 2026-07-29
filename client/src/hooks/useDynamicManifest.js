@@ -22,28 +22,8 @@ export function useDynamicManifest(appName, menu = null) {
     document.title = appName;
 
     const assetUrl = (path) => new URL(path, window.location.origin).href;
-    const dynamicLogo = toImageSrc(menu?.menuLogoImg) || assetUrl("/logo.png");
-    const dynamicSquareLogo =
-      toImageSrc(menu?.menuSquareLogoImg) ||
-      toImageSrc(menu?.menuLogoImg) ||
-      assetUrl("/squarelogo.png");
-
-    const dynamicScreenshots = Array.isArray(menu?.screenshots)
-      ? menu.screenshots
-        .map((screenshot) => {
-          if (!screenshot?.src) {
-            return null;
-          }
-
-          return {
-            src: toImageSrc(screenshot.src),
-            sizes: screenshot.sizes,
-            type: screenshot.type || "image/png",
-            form_factor: screenshot.form_factor,
-          };
-        })
-        .filter(Boolean)
-      : [];
+    const dynamicLogo = toImageSrc(menu?.menuLogoImg);
+    const dynamicSquareLogo = toImageSrc(menu?.menuLogoImg);
 
     const appleTitle = document.querySelector(
       'meta[name="apple-mobile-web-app-title"]',
@@ -53,7 +33,9 @@ export function useDynamicManifest(appName, menu = null) {
     }
 
     const faviconHref = dynamicSquareLogo || dynamicLogo;
-    const existingFavicon = document.querySelector('link[data-dynamic-favicon="true"]');
+    const existingFavicon = document.querySelector(
+      'link[data-dynamic-favicon="true"]',
+    );
 
     if (faviconHref) {
       if (existingFavicon) {
