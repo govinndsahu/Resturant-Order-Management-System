@@ -154,7 +154,9 @@ const Dashboard = ({ appName }) => {
       {/* Action Buttons */}
       <div className="admin-actions">
         <NotificationButton />
-        <InstallButton menuName={menuName} />
+        {window.matchMedia("(display-mode: standalone)").matches ? null : (
+          <InstallButton menuName={menuName} />
+        )}
       </div>
     </div>
   );
