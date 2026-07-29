@@ -88,7 +88,7 @@ const Login = ({ appName }) => {
                 required
                 value={username}
                 onChange={(e) => {
-                  setUsername(e.target.value);
+                  setUsername(e.target.value.trim());
                   setError("");
                 }}
               />
@@ -110,7 +110,7 @@ const Login = ({ appName }) => {
                 required
                 value={password}
                 onChange={(e) => {
-                  setPassword(e.target.value);
+                  setPassword(e.target.value.trim());
                   setError("");
                 }}
               />

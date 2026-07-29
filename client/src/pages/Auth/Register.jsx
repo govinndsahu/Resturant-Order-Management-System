@@ -95,7 +95,7 @@ const Register = ({ appName }) => {
                 required
                 value={name}
                 onChange={(e) => {
-                  setName(e.target.value);
+                  setName(e.target.value.trim());
                   setError("");
                 }}
               />
@@ -117,7 +117,7 @@ const Register = ({ appName }) => {
                 required
                 value={username}
                 onChange={(e) => {
-                  setUsername(e.target.value);
+                  setUsername(e.target.value.trim());
                   setError("");
                 }}
               />
@@ -139,7 +139,7 @@ const Register = ({ appName }) => {
                 required
                 value={password}
                 onChange={(e) => {
-                  setPassword(e.target.value);
+                  setPassword(e.target.value.trim());
                   setError("");
                 }}
               />
