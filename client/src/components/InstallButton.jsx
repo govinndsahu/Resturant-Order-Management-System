@@ -1,4 +1,4 @@
-function InstallButton() {
+function InstallButton(menuName) {
   const handleClick = () => {
     if (window.deferredPrompt) {
       window.deferredPrompt.prompt();
@@ -10,7 +10,7 @@ function InstallButton() {
 
   return (
     <button id="install-button" type="button" onClick={handleClick}>
-      Install
+      Install {menuName}
     </button>
   );
 }
