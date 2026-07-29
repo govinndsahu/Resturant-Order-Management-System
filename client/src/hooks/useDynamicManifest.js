@@ -55,8 +55,8 @@ export function useDynamicManifest(appName, menu = null) {
 
     const manifest = {
       name: appName,
-      short_name: appName.toLowerCase().replace(/\s+/g, "-"),
-      start_url: assetUrl("/"),
+      short_name: appName,
+      start_url: assetUrl(`/${menu?._id}`),
       display: "standalone",
       background_color: "#222",
       description: "Lets make your order journey smooth and fast.",
