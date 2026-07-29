@@ -95,7 +95,7 @@ const Register = ({ appName }) => {
                 required
                 value={name}
                 onChange={(e) => {
-                  setName(e.target.value.trim());
+                  setName(e.target.value);
                   setError("");
                 }}
               />
