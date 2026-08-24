@@ -1,5 +1,6 @@
 import Configuration from "../models/configurationModel.js";
 import Session from "../models/sessionModel.js";
+import { addCache, preventCaching, purgeCache } from "../utils/cdnUtils.js";
 
 export const enableLocationValidation = async (req, res, next) => {
   try {
@@ -16,6 +17,8 @@ export const enableLocationValidation = async (req, res, next) => {
 
       await existingConfig.save();
 
+      purgeCache({ urls: ["/get/location/validation/config"] });
+
       return res.status(200).json({
         success: true,
         message: "Location validation enabled successfully",
@@ -30,6 +33,8 @@ export const enableLocationValidation = async (req, res, next) => {
         data: { latitude, longitude, radius },
       },
     });
+
+    purgeCache({ urls: ["/get/location/validation/config"] });
 
     return res.status(201).json({
       success: true,
@@ -54,6 +59,8 @@ export const disableLocationValidation = async (req, res, next) => {
 
       await existingConfig.save();
 
+      purgeCache({ urls: ["/get/location/validation/config"] });
+
       return res.status(200).json({
         success: true,
         message: "Location validation disabled successfully",
@@ -61,6 +68,8 @@ export const disableLocationValidation = async (req, res, next) => {
         user: null,
       });
     }
+
+    purgeCache({ urls: ["/get/location/validation/config"] });
 
     return res.status(200).json({
       success: true,
@@ -74,37 +83,25 @@ export const disableLocationValidation = async (req, res, next) => {
 
 export const getLocationValidationConfig = async (req, res, next) => {
   try {
-    const sid = req.signedCookies?.sid;
-
     const config = await Configuration.findOne().select(
       "locationValidation.doValidate -_id",
     );
 
-    let user = null;
-
-    if (sid) {
-      const session = await Session.findById({ _id: sid }).populate("userId");
-      user = session.userId;
-    }
+    addCache({ res, days: 360 });
 
     if (!config || !config.locationValidation) {
       return res.status(200).json({
         success: true,
         config: { doValidate: false },
-        user: user
-          ? { name: user.name, email: user.email, role: user.role }
-          : null,
       });
     }
 
     return res.status(200).json({
       success: true,
       config: config.locationValidation,
-      user: user
-        ? { name: user.name, email: user.email, role: user.role }
-        : null,
     });
   } catch (error) {
+    preventCaching(res);
     next(error);
   }
 };

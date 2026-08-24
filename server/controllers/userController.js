@@ -53,6 +53,7 @@ export const registerUser = async (req, res, next) => {
       success: true,
       message: "User registered successfully",
       user: {
+        _id: newUser.id,
         name: newUser.name,
         username: newUser.username,
         role: newUser.role,
@@ -106,7 +107,12 @@ export const loginUser = async (req, res, next) => {
     return res.status(200).json({
       success: true,
       message: "User logged in successfully",
-      user: { name: user.name, username: user.username, role: user.role },
+      user: {
+        _id: user.id,
+        name: user.name,
+        username: user.username,
+        role: user.role,
+      },
     });
   } catch (error) {
     next(error);
@@ -150,7 +156,7 @@ export const getUser = async (req, res, next) => {
         .json({ message: "Invalid user ID", errors: error.errors });
     }
 
-    const user = await User.findById(data).select("name username role -_id");
+    const user = await User.findById(data).select("name username role");
 
     if (!user) {
       return res
