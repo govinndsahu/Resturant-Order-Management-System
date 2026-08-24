@@ -138,6 +138,32 @@ export const logoutUser = async (req, res, next) => {
   }
 };
 
+export const getUser = async (req, res, next) => {
+  try {
+    const { userId } = req.params;
+
+    const { data, error, success } = z.string().length(24).safeParse(userId);
+
+    if (!success) {
+      return res
+        .status(400)
+        .json({ message: "Invalid user ID", errors: error.errors });
+    }
+
+    const user = await User.findById(data).select("name username role -_id");
+
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+
+    return res.status(200).json({ success: true, user });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const getAllUsers = async (req, res, next) => {
   try {
     const users = await User.find({});

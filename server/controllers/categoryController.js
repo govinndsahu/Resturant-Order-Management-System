@@ -1,13 +1,12 @@
 import express from "express";
 import z from "zod/v4";
 import Category from "../models/categoryModel.js";
+import { addCache, preventCaching, purgeCache } from "../utils/cdnUtils.js";
 
 const router = express.Router();
 
 export const createCategory = async (req, res, next) => {
   const { name, sn } = req.body;
-
-  console.log(req.body);
 
   try {
     const category = await Category.findOne({ name });
@@ -17,6 +16,8 @@ export const createCategory = async (req, res, next) => {
     }
 
     await Category.create({ name, sn });
+
+    purgeCache({ urls: ["/categories"] });
 
     return res
       .status(201)
@@ -44,6 +45,8 @@ export const updateCategory = async (req, res, next) => {
         .json({ success: false, error: "Category not found" });
     }
 
+    purgeCache({ urls: ["/categories"] });
+
     return res
       .status(200)
       .json({ success: true, message: "Category updated successfully" });
@@ -65,6 +68,8 @@ export const deleteCategory = async (req, res, next) => {
         .json({ success: false, error: "Category not found" });
     }
 
+    purgeCache({ urls: ["/categories"] });
+
     return res
       .status(200)
       .json({ success: true, message: "Category deleted successfully" });
@@ -79,8 +84,10 @@ export const deleteCategory = async (req, res, next) => {
 export const getCategories = async (req, res, next) => {
   try {
     const categories = await Category.find().sort({ sn: 1 });
+    addCache({ res, days: 360 });
     return res.status(200).json({ success: true, categories });
   } catch (error) {
+    preventCaching(res);
     next(error);
     return res
       .status(500)

@@ -2,6 +2,7 @@ import Product from "../models/productModel.js";
 import Category from "../models/categoryModel.js";
 
 import { compressToTargetSize } from "../utils/utils.js";
+import { addCache, preventCaching, purgeCache } from "../utils/cdnUtils.js";
 
 // create a product
 export const createProduct = async (req, res, next) => {
@@ -27,6 +28,10 @@ export const createProduct = async (req, res, next) => {
 
       await newProduct.save();
 
+      purgeCache({
+        urls: ["/products"],
+      });
+
       return res.status(201).json({
         success: true,
         id: newProduct._id,
@@ -43,6 +48,10 @@ export const createProduct = async (req, res, next) => {
     });
 
     await newProduct.save();
+
+    purgeCache({
+      urls: ["/products"],
+    });
 
     return res.status(201).json({
       success: true,
@@ -75,6 +84,10 @@ export const uploadProductImage = async (req, res, next) => {
     product.mimeType = file.mimetype;
 
     await product.save();
+
+    purgeCache({
+      urls: ["/products"],
+    });
 
     return res
       .status(200)
@@ -116,6 +129,10 @@ export const updateProduct = async (req, res, next) => {
 
     await product.save();
 
+    purgeCache({
+      urls: ["/products"],
+    });
+
     return res
       .status(200)
       .json({ success: true, message: "Product updated successfully" });
@@ -137,6 +154,9 @@ export const deleteProduct = async (req, res, next) => {
       return res.status(404).json({ error: "Product not found" });
     } else {
       await product.deleteOne();
+      purgeCache({
+        urls: ["/products"],
+      });
       return res
         .status(200)
         .json({ success: true, message: "Product deleted successfully" });
@@ -154,8 +174,13 @@ export const getProducts = async (req, res, next) => {
     const products = await Product.find()
       .populate("category", "name")
       .sort({ sn: 1 });
+    addCache({
+      res,
+      days: 360,
+    });
     return res.status(200).json({ success: true, products });
   } catch (error) {
+    preventCaching(res);
     next(error);
     return res
       .status(500)

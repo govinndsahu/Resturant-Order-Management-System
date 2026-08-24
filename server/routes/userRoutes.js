@@ -4,6 +4,7 @@ import {
   deleteUserByAdmin,
   getAllUsers,
   getAllUsersDetails,
+  getUser,
   loginUser,
   logoutUser,
   makeStaffByAdmin,
@@ -20,6 +21,8 @@ router.post("/login", loginUser);
 router.post("/logout", isLogedIn, logoutUser);
 
 router.get("/", isLogedIn, isAdmin, getAllUsers);
+
+router.get("/me", isLogedIn, getUser);
 
 router.get("/details/get", getAllUsersDetails);
 
