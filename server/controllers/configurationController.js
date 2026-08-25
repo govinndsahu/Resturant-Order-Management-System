@@ -16,7 +16,10 @@ export const enableLocationValidation = async (req, res, next) => {
 
       await existingConfig.save();
 
-      await purgeCache({ urls: ["/get/location/validation/config"] });
+      await purgeCache({
+        urls: ["/get/location/validation/config"],
+        origin: "menu.dgdine.in",
+      });
 
       return res.status(200).json({
         success: true,
@@ -33,7 +36,10 @@ export const enableLocationValidation = async (req, res, next) => {
       },
     });
 
-    await purgeCache({ urls: ["/get/location/validation/config"] });
+    await purgeCache({
+      urls: ["/get/location/validation/config"],
+      origin: "menu.dgdine.in",
+    });
 
     return res.status(201).json({
       success: true,
@@ -58,7 +64,10 @@ export const disableLocationValidation = async (req, res, next) => {
 
       await existingConfig.save();
 
-      await purgeCache({ urls: ["/get/location/validation/config"] });
+      await purgeCache({
+        urls: ["/get/location/validation/config"],
+        origin: "menu.dgdine.in",
+      });
 
       return res.status(200).json({
         success: true,
@@ -68,7 +77,10 @@ export const disableLocationValidation = async (req, res, next) => {
       });
     }
 
-    await purgeCache({ urls: ["/get/location/validation/config"] });
+    await purgeCache({
+      urls: ["/get/location/validation/config"],
+      origin: "menu.dgdine.in",
+    });
 
     return res.status(200).json({
       success: true,

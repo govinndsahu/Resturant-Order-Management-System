@@ -17,7 +17,10 @@ export const createCategory = async (req, res, next) => {
 
     await Category.create({ name, sn });
 
-    await purgeCache({ urls: ["/categories"] });
+    await purgeCache({
+      urls: ["/categories"],
+      origin: "menu.dgdine.in",
+    });
 
     return res
       .status(201)
@@ -45,7 +48,10 @@ export const updateCategory = async (req, res, next) => {
         .json({ success: false, error: "Category not found" });
     }
 
-    await purgeCache({ urls: ["/categories"] });
+    await purgeCache({
+      urls: ["/categories"],
+      origin: "menu.dgdine.in",
+    });
 
     return res
       .status(200)
@@ -68,7 +74,10 @@ export const deleteCategory = async (req, res, next) => {
         .json({ success: false, error: "Category not found" });
     }
 
-    await purgeCache({ urls: ["/categories"] });
+    await purgeCache({
+      urls: ["/categories"],
+      origin: "menu.dgdine.in",
+    });
 
     return res
       .status(200)

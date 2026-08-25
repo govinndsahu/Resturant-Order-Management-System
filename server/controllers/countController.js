@@ -57,6 +57,12 @@ export const updateCount = async (req, res, next) => {
 
     await purgeCache({
       urls: ["/count"],
+      origin: "dgdine.in",
+    });
+    
+    await purgeCache({
+      urls: ["/count"],
+      origin: "www.dgdine.in",
     });
 
     if (event === "subscription.paused") {

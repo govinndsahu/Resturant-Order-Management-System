@@ -10,8 +10,8 @@ export const addCache = ({ res, days }) => {
   );
 };
 
-export const purgeCache = async ({ urls }) => {
-  await fetch(
+export const purgeCache = async ({ urls, origin }) => {
+  const response = await fetch(
     `https://api.cloudflare.com/client/v4/zones/${process.env.CLOUDFLARE_ZONE_ID}/purge_cache`,
     {
       method: "POST",
@@ -23,11 +23,14 @@ export const purgeCache = async ({ urls }) => {
         files: urls.map((u) => ({
           url: `${process.env.SERVER_URL}${u}`,
           headers: {
-            origin:
-              u === "/count" ? "https://dgdine.in" : process.env.CLIENT_URL,
+            origin: `https://${origin}`,
           },
         })),
       }),
     },
   );
+
+  const data = await response.json();
+
+  return { data, response };
 };

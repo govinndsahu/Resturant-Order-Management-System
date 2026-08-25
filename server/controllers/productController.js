@@ -30,6 +30,7 @@ export const createProduct = async (req, res, next) => {
 
       await purgeCache({
         urls: ["/products"],
+        origin: "menu.dgdine.in",
       });
 
       return res.status(201).json({
@@ -51,6 +52,7 @@ export const createProduct = async (req, res, next) => {
 
     await purgeCache({
       urls: ["/products"],
+      origin: "menu.dgdine.in",
     });
 
     return res.status(201).json({
@@ -87,6 +89,7 @@ export const uploadProductImage = async (req, res, next) => {
 
     await purgeCache({
       urls: ["/products"],
+      origin: "menu.dgdine.in",
     });
 
     return res
@@ -131,6 +134,7 @@ export const updateProduct = async (req, res, next) => {
 
     await purgeCache({
       urls: ["/products"],
+      origin: "menu.dgdine.in",
     });
 
     return res
@@ -156,6 +160,7 @@ export const deleteProduct = async (req, res, next) => {
       await product.deleteOne();
       await purgeCache({
         urls: ["/products"],
+        origin: "menu.dgdine.in",
       });
       return res
         .status(200)
