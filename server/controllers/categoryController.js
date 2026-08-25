@@ -17,7 +17,7 @@ export const createCategory = async (req, res, next) => {
 
     await Category.create({ name, sn });
 
-    purgeCache({ urls: ["/categories"] });
+    await purgeCache({ urls: ["/categories"] });
 
     return res
       .status(201)
@@ -45,7 +45,7 @@ export const updateCategory = async (req, res, next) => {
         .json({ success: false, error: "Category not found" });
     }
 
-    purgeCache({ urls: ["/categories"] });
+    await purgeCache({ urls: ["/categories"] });
 
     return res
       .status(200)
@@ -68,7 +68,7 @@ export const deleteCategory = async (req, res, next) => {
         .json({ success: false, error: "Category not found" });
     }
 
-    purgeCache({ urls: ["/categories"] });
+    await purgeCache({ urls: ["/categories"] });
 
     return res
       .status(200)

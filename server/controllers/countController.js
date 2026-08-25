@@ -1,4 +1,3 @@
-import Count from "../models/countModel.js";
 import { addCache, preventCaching, purgeCache } from "../utils/cdnUtils.js";
 import {
   handleCancelEvent,
@@ -21,7 +20,7 @@ export const getCount = async (req, res, next) => {
       },
     });
   } catch (error) {
-    preventCaching(res)
+    preventCaching(res);
     next(error);
   }
 };
@@ -56,7 +55,7 @@ export const updateCount = async (req, res, next) => {
       console.warn(`Unhandled event: ${event}`);
     }
 
-    purgeCache({
+    await purgeCache({
       urls: ["/count"],
     });
 

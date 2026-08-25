@@ -1,5 +1,4 @@
 import Configuration from "../models/configurationModel.js";
-import Session from "../models/sessionModel.js";
 import { addCache, preventCaching, purgeCache } from "../utils/cdnUtils.js";
 
 export const enableLocationValidation = async (req, res, next) => {
@@ -17,7 +16,7 @@ export const enableLocationValidation = async (req, res, next) => {
 
       await existingConfig.save();
 
-      purgeCache({ urls: ["/get/location/validation/config"] });
+      await purgeCache({ urls: ["/get/location/validation/config"] });
 
       return res.status(200).json({
         success: true,
@@ -34,7 +33,7 @@ export const enableLocationValidation = async (req, res, next) => {
       },
     });
 
-    purgeCache({ urls: ["/get/location/validation/config"] });
+    await purgeCache({ urls: ["/get/location/validation/config"] });
 
     return res.status(201).json({
       success: true,
@@ -59,7 +58,7 @@ export const disableLocationValidation = async (req, res, next) => {
 
       await existingConfig.save();
 
-      purgeCache({ urls: ["/get/location/validation/config"] });
+      await purgeCache({ urls: ["/get/location/validation/config"] });
 
       return res.status(200).json({
         success: true,
@@ -69,7 +68,7 @@ export const disableLocationValidation = async (req, res, next) => {
       });
     }
 
-    purgeCache({ urls: ["/get/location/validation/config"] });
+    await purgeCache({ urls: ["/get/location/validation/config"] });
 
     return res.status(200).json({
       success: true,

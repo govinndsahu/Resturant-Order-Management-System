@@ -28,7 +28,7 @@ export const createProduct = async (req, res, next) => {
 
       await newProduct.save();
 
-      purgeCache({
+      await purgeCache({
         urls: ["/products"],
       });
 
@@ -49,7 +49,7 @@ export const createProduct = async (req, res, next) => {
 
     await newProduct.save();
 
-    purgeCache({
+    await purgeCache({
       urls: ["/products"],
     });
 
@@ -85,7 +85,7 @@ export const uploadProductImage = async (req, res, next) => {
 
     await product.save();
 
-    purgeCache({
+    await purgeCache({
       urls: ["/products"],
     });
 
@@ -129,7 +129,7 @@ export const updateProduct = async (req, res, next) => {
 
     await product.save();
 
-    purgeCache({
+    await purgeCache({
       urls: ["/products"],
     });
 
@@ -154,7 +154,7 @@ export const deleteProduct = async (req, res, next) => {
       return res.status(404).json({ error: "Product not found" });
     } else {
       await product.deleteOne();
-      purgeCache({
+      await purgeCache({
         urls: ["/products"],
       });
       return res
