@@ -14,7 +14,6 @@ import {
   decreaseItemCount,
   increaseItemCount,
 } from "../middlewares/countMiddleware.js";
-import { updateVersion } from "../middlewares/updateMiddleware.js";
 
 const router = express.Router();
 
@@ -27,7 +26,6 @@ router.post(
   isAdmin,
   checkItemCount,
   increaseItemCount,
-  updateVersion,
   createProduct,
 );
 
@@ -36,18 +34,16 @@ router.post(
   isLogedIn,
   isAdmin,
   upload.single("image"),
-  updateVersion,
   uploadProductImage,
 );
 
-router.put("/update/:id", isLogedIn, isAdmin, updateVersion, updateProduct);
+router.put("/update/:id", isLogedIn, isAdmin, updateProduct);
 
 router.delete(
   "/delete/:id",
   isLogedIn,
   isAdmin,
   decreaseItemCount,
-  updateVersion,
   deleteProduct,
 );
 
