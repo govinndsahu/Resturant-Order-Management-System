@@ -3,6 +3,8 @@ import Category from "../models/categoryModel.js";
 
 import { compressToTargetSize } from "../utils/utils.js";
 import { addCache, preventCaching, purgeCache } from "../utils/cdnUtils.js";
+import mongoose from "mongoose";
+import { deleteFileFromR2, uploadFileToR2 } from "../utils/r2Utils.js";
 
 // create a product
 export const createProduct = async (req, res, next) => {
@@ -74,16 +76,23 @@ export const uploadProductImage = async (req, res, next) => {
   const { file } = req;
 
   try {
+    const image = new mongoose.Types.ObjectId();
+
     const product = await Product.findById(id);
 
     if (!product) {
       return res.status(404).json({ error: "Product not found" });
     }
 
-    const imageData = await compressToTargetSize(file.buffer, 40, "webp");
+    const imageData = await compressToTargetSize(file.buffer, 49, "webp");
 
-    product.image = imageData.toString("base64");
-    product.mimeType = file.mimetype;
+    const imageUrl = await uploadFileToR2({
+      buffer: imageData,
+      key: `${image.toString()}.png`,
+      contentType: "image/png",
+    });
+
+    product.image = imageUrl;
 
     await product.save();
 
@@ -91,6 +100,11 @@ export const uploadProductImage = async (req, res, next) => {
       urls: ["/products"],
       origin: "menu.dgdine.in",
     });
+
+    if (product.image !== null) {
+      const oldImageKey = product.image.split("/").pop();
+      await deleteFileFromR2({ key: oldImageKey });
+    }
 
     return res
       .status(200)
@@ -108,7 +122,7 @@ export const updateProduct = async (req, res, next) => {
   try {
     const product = await Product.findById(req.params.id);
 
-    const categori = await Category.findById(category);
+    const categori = await Category.findOne({ name: category });
 
     if (!product) {
       return res.status(404).json({ error: "Product not found" });
@@ -162,6 +176,10 @@ export const deleteProduct = async (req, res, next) => {
         urls: ["/products"],
         origin: "menu.dgdine.in",
       });
+
+      const imageKey = product.image.split("/").pop();
+      await deleteFileFromR2({ key: imageKey });
+
       return res
         .status(200)
         .json({ success: true, message: "Product deleted successfully" });

@@ -1,0 +1,25 @@
+import { DeleteObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
+import { r2Client } from "../config/r2Client.js";
+
+export async function uploadFileToR2({ buffer, key, contentType }) {
+  const command = new PutObjectCommand({
+    Bucket: process.env.R2_BUCKET_NAME,
+    Key: key,
+    Body: buffer,
+    ContentType: contentType,
+    CacheControl: "public, max-age=10, s-maxage=31536000",
+  });
+
+  await r2Client.send(command);
+
+  return `https://images.dgdine.in/${key}`;
+}
+
+export async function deleteFileFromR2({key}) {
+  await r2Client.send(
+    new DeleteObjectCommand({
+      Bucket: process.env.R2_BUCKET_NAME,
+      Key: key,
+    }),
+  );
+}

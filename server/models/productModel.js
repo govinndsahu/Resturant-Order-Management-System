@@ -24,10 +24,7 @@ const productSchema = new mongoose.Schema({
   },
   image: {
     type: String,
-  },
-  mimeType: {
-    type: String,
-    default: "image/jpg",
+    default: null,
   },
   sn: {
     type: Number,
