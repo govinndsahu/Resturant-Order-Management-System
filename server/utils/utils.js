@@ -1,6 +1,9 @@
 import cors from "cors";
 import sharp from "sharp";
 
+sharp.cache(false);
+sharp.concurrency(1);
+
 const whitelist = [
   process.env.CLIENT_URL,
   "http://localhost:5174",
@@ -46,37 +49,31 @@ export const setCookie = (res, session) =>
   });
 
 export const compressToTargetSize = async (
-  buffer,
-  targetKB = 500,
-  format = "webp",
-) => {
-  const targetBytes = targetKB * 1024;
-  let quality = 80;
-  let output;
-
-  // Try reducing quality first
-  for (let i = 0; i < 8; i++) {
-    output = await sharp(buffer)
-      .resize(1600, 1600, { fit: "inside", withoutEnlargement: true })
-      [format]({ quality })
-      .toBuffer();
-
-    if (output.length <= targetBytes || quality <= 20) break;
-    quality -= 10;
-  }
-
-  // If still too big even at low quality, start shrinking dimensions too
-  let width = 1600;
-  while (output.length > targetBytes && width > 400) {
-    width -= 200;
-    output = await sharp(buffer)
-      .resize(width, width, { fit: "inside", withoutEnlargement: true })
-      [format]({ quality: 60 })
-      .toBuffer();
-  }
-
-  return output;
-};
+    buffer,
+    targetKB = 500,
+    format = "webp",
+  ) => {
+    const targetBytes = targetKB * 1024;
+  
+    const attempts = [
+      { width: 700,  quality: 60 },
+      { width: 500,  quality: 55 },
+      { width: 400,  quality: 50 },
+    ];
+  
+    let output;
+  
+    for (const { width, quality } of attempts) {
+      output = await sharp(buffer)
+        .resize(width, width, { fit: "inside", withoutEnlargement: true, kernel: sharp.kernel.nearest })
+        [format]({ quality, effort: 2 }) 
+        .toBuffer();
+  
+      if (output.length <= targetBytes) break;
+    }
+  
+    return output;
+  };
 
 export const getDistanceInMeters = (lat1, lng1, lat2, lng2) => {
   const R = 6371000; // Earth radius in meters

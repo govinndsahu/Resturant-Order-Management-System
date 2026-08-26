@@ -5,8 +5,6 @@ import { compressToTargetSize } from "../utils/utils.js";
 import { addCache, preventCaching, purgeCache } from "../utils/cdnUtils.js";
 import mongoose from "mongoose";
 import { deleteFileFromR2, uploadFileToR2 } from "../utils/r2Utils.js";
-import { r2Client } from "../config/r2Client.js";
-import { ListObjectsV2Command } from "@aws-sdk/client-s3";
 
 // create a product
 export const createProduct = async (req, res, next) => {
@@ -84,7 +82,11 @@ export const uploadProductImage = async (req, res, next) => {
 
     const product = await Product.findById(id);
 
-    const oldImageKey = product.image.split("/").pop();
+    let oldImageKey = null;
+
+    if (isUpdating === "true") {
+      oldImageKey = product.image.split("/").pop();
+    }
 
     if (!product) {
       return res.status(404).json({ error: "Product not found" });
@@ -122,6 +124,9 @@ export const uploadProductImage = async (req, res, next) => {
       .json({ success: true, message: "Product image uploaded successfully" });
   } catch (error) {
     next(error);
+    if (isUpdating === "false") {
+      await Product.findByIdAndDelete(id);
+    }
     return res
       .status(500)
       .json({ success: false, error: "Failed to upload product image" });
