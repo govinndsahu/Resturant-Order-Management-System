@@ -5,6 +5,8 @@ import { compressToTargetSize } from "../utils/utils.js";
 import { addCache, preventCaching, purgeCache } from "../utils/cdnUtils.js";
 import mongoose from "mongoose";
 import { deleteFileFromR2, uploadFileToR2 } from "../utils/r2Utils.js";
+import { r2Client } from "../config/r2Client.js";
+import { ListObjectsV2Command } from "@aws-sdk/client-s3";
 
 // create a product
 export const createProduct = async (req, res, next) => {
@@ -73,12 +75,16 @@ export const createProduct = async (req, res, next) => {
 export const uploadProductImage = async (req, res, next) => {
   const { id } = req.params;
 
+  const { isUpdating } = req.query;
+
   const { file } = req;
 
   try {
     const image = new mongoose.Types.ObjectId();
 
     const product = await Product.findById(id);
+
+    const oldImageKey = product.image.split("/").pop();
 
     if (!product) {
       return res.status(404).json({ error: "Product not found" });
@@ -88,9 +94,15 @@ export const uploadProductImage = async (req, res, next) => {
 
     const imageUrl = await uploadFileToR2({
       buffer: imageData,
-      key: `${image.toString()}.png`,
-      contentType: "image/png",
+      key: `${image}.jpg`,
+      contentType: "image/jpg",
     });
+
+    if (!imageUrl) {
+      return res
+        .status(500)
+        .json({ success: false, error: "Failed to upload product image" });
+    }
 
     product.image = imageUrl;
 
@@ -101,8 +113,7 @@ export const uploadProductImage = async (req, res, next) => {
       origin: "menu.dgdine.in",
     });
 
-    if (product.image !== null) {
-      const oldImageKey = product.image.split("/").pop();
+    if (isUpdating === "true") {
       await deleteFileFromR2({ key: oldImageKey });
     }
 
@@ -122,7 +133,7 @@ export const updateProduct = async (req, res, next) => {
   try {
     const product = await Product.findById(req.params.id);
 
-    const categori = await Category.findOne({ name: category });
+    const categori = await Category.findById(category);
 
     if (!product) {
       return res.status(404).json({ error: "Product not found" });
