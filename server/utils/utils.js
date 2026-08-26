@@ -50,7 +50,7 @@ export const setCookie = (res, session) =>
 
 export const compressToTargetSize = async (
     buffer,
-    targetKB = 500,
+    targetKB = 50,
     format = "webp",
   ) => {
     const targetBytes = targetKB * 1024;
