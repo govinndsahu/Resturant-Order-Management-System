@@ -19,9 +19,15 @@ export const createProductApi = async (productData, backendUrl, menuId) => {
   return { data };
 };
 
-export const uploadImageApi = async (id, formData, backendUrl, menuId) => {
+export const uploadImageApi = async (
+  id,
+  formData,
+  backendUrl,
+  menuId,
+  isUpdating = false,
+) => {
   const { data } = await axios.post(
-    `${backendUrl}products/upload-image/${id}`,
+    `${backendUrl}products/upload-image/${id}?isUpdating=${isUpdating}`,
     formData,
     {
       headers: {

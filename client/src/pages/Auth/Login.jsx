@@ -1,5 +1,4 @@
 import { useRef, useState } from "react";
-import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 
 import { userLoginApi } from "../../apis/userApis";
@@ -7,7 +6,8 @@ import { getAppRoute } from "../../utils/util";
 import { useConfig } from "../../contexts/ConfigContext";
 
 const Login = ({ appName }) => {
-  const { backendUrl, user } = useConfig();
+  const { backendUrl } = useConfig();
+  const user = JSON.parse(localStorage.getItem("user"));
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -36,6 +36,7 @@ const Login = ({ appName }) => {
 
       if (data?.success) {
         navigate(route());
+        localStorage.setItem("user", JSON.stringify(data.user));
         window.location.reload();
       }
     } catch (error) {

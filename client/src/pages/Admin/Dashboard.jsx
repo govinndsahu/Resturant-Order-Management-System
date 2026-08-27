@@ -7,20 +7,37 @@ import NotificationButton from "../../components/NotificationButton";
 import InstallButton from "../../components/InstallButton";
 import { getAppRoute } from "../../utils/util";
 import { useConfig } from "../../contexts/ConfigContext";
+import { getUserApi } from "../../apis/userApis";
 
 const Dashboard = ({ appName }) => {
   const navigate = useNavigate();
-  const { backendUrl, menuName, user } = useConfig();
+  const { menuName, backendUrl } = useConfig();
+  const user = JSON.parse(localStorage.getItem("user"));
 
   const route = (path = "") => getAppRoute(appName, path);
 
   const [greeting, setGreeting] = useState("Good day");
+
+  const getUser = async (userId) => {
+    try {
+      const { data } = await getUserApi(backendUrl, userId);
+      if (data?.success) {
+        localStorage.setItem("user", JSON.stringify(data?.user));
+      } else {
+        console.error("Failed to fetch user:", data?.message);
+      }
+    } catch (error) {
+      console.error("Error fetching user:", error);
+    }
+  };
 
   useEffect(() => {
     const hour = new Date().getHours();
     if (hour < 12) setGreeting("Good morning");
     else if (hour < 17) setGreeting("Good afternoon");
     else setGreeting("Good evening");
+
+    getUser(user?._id);
   }, []);
 
   // Page icons mapping

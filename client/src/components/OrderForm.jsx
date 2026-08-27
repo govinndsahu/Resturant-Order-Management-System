@@ -1,26 +1,14 @@
-import { useEffect, useRef, useState } from "react";
-import axios from "axios";
+import { useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
-import { useLocalStorage } from "../hooks/useLocalStorage";
 import { useCart } from "../contexts/Cart";
-import { getCategoriesApi } from "../apis/categoryApis";
-import { getProductsApi } from "../apis/productsApi";
 import { createOrderApi } from "../apis/orderApis";
 import { sendNotificationApi } from "../apis/pushSubscriptionApis";
 
-import {
-  clearCart,
-  getAppVersionFromDB,
-  saveAllCategories,
-  saveAllProducts,
-  saveAppVersion,
-} from "../hooks/useIndexedDB";
+import { clearCart } from "../hooks/useIndexedDB";
 import { getAppRoute } from "../utils/util";
 
-import LocationError from "./LocationError";
-import Tutorial from "./Tutorial";
 import LocationErrorMessage from "./LocationErrorMessage";
 import { useConfig } from "../contexts/ConfigContext";
 

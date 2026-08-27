@@ -1,60 +1,23 @@
 import { getAppId } from "../utils/util";
 
-const DB_VERSION = 1;
-const PRODUCTS_STORE = "products";
-const CATEGORIES_STORE = "categories";
-const APP_VERSION = "appVersion";
-
 function getDbName() {
   const stableName = localStorage.getItem("menuDbName")?.trim();
   const fallbackId = getAppId();
   return `${stableName || fallbackId}DB`;
 }
 
-function sortBySn(items = []) {
-  return [...items].sort((a, b) => {
-    const aSn = Number(a?.sn ?? Number.MAX_SAFE_INTEGER);
-    const bSn = Number(b?.sn ?? Number.MAX_SAFE_INTEGER);
-    return aSn - bSn;
-  });
-}
-
-// ✅ Open / Initialize DB
 function openDB() {
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open(getDbName(), DB_VERSION);
+    const request = indexedDB.open(getDbName(), 1);
 
     // Runs when DB is created or version changes
     request.onupgradeneeded = (e) => {
       const db = e.target.result;
 
-      if (!db.objectStoreNames.contains(PRODUCTS_STORE)) {
-        const store = db.createObjectStore(PRODUCTS_STORE, { keyPath: "_id" });
-
-        // Create indexes for searching/filtering
-        store.createIndex("name", "name", { unique: false });
-        store.createIndex("category", "category", { unique: false });
-      }
-
-      // ✅ Categories store
-      if (!db.objectStoreNames.contains(CATEGORIES_STORE)) {
-        const store = db.createObjectStore(CATEGORIES_STORE, {
-          keyPath: "_id",
-        });
-        store.createIndex("name", "name", { unique: false });
-      }
-
-      // ✅ Cart store
       if (!db.objectStoreNames.contains("cart")) {
         const store = db.createObjectStore("cart", { keyPath: "_id" });
         store.createIndex("name", "name", { unique: false });
         console.log("✅ Cart store created");
-      }
-
-      if (!db.objectStoreNames.contains(APP_VERSION)) {
-        const store = db.createObjectStore(APP_VERSION, { keyPath: "_id" });
-        store.createIndex("version", "version", { unique: false });
-        console.log("✅ App version store created");
       }
     };
 
@@ -63,96 +26,27 @@ function openDB() {
   });
 }
 
-// ✅ Save multiple products at once
-export async function saveAllProducts(products) {
-  const db = await openDB();
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction(PRODUCTS_STORE, "readwrite");
-    const store = tx.objectStore(PRODUCTS_STORE);
-
-    const clearRequest = store.clear();
-    clearRequest.onsuccess = () => {
-      products.forEach((p) => store.put(p));
-    };
-    clearRequest.onerror = (e) => reject(e.target.error);
-
-    tx.oncomplete = () => resolve("✅ All products saved");
-    tx.onerror = (e) => reject(e.target.error);
-  });
-}
-
-// ✅ Get all products
-export async function getAllProducts() {
-  const db = await openDB();
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction(PRODUCTS_STORE, "readonly");
-    const store = tx.objectStore(PRODUCTS_STORE);
-    const request = store.getAll();
-
-    request.onsuccess = () => resolve(sortBySn(request.result));
-    request.onerror = (e) => reject(e.target.error);
-  });
-}
-
-// ============= Categories Store =============
-
-export async function saveAllCategories(categories) {
-  const db = await openDB();
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction(CATEGORIES_STORE, "readwrite");
-    const store = tx.objectStore(CATEGORIES_STORE);
-
-    const clearRequest = store.clear();
-    clearRequest.onsuccess = () => {
-      categories?.forEach((c) => store.put(c));
-    };
-    clearRequest.onerror = (e) => reject(e.target.error);
-
-    tx.oncomplete = () => resolve("✅ Categories saved");
-    tx.onerror = (e) => reject(e.target.error);
-  });
-}
-
-export async function getAllCategories() {
-  const db = await openDB();
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction(CATEGORIES_STORE, "readonly");
-    const store = tx.objectStore(CATEGORIES_STORE);
-    const request = store.getAll();
-    request.onsuccess = () => resolve(sortBySn(request.result));
-    request.onerror = (e) => reject(e.target.error);
-  });
-}
-
-// ============= Cart Store =============
-
-// Generate unique cart item ID combining product ID and size
 function generateCartItemId(productId, size) {
   return `${productId}_${size || "standard"}`;
 }
 
-// Add or update item in cart
 export async function addToCart(product) {
   const db = await openDB();
   return new Promise((resolve, reject) => {
     const tx = db.transaction("cart", "readwrite");
     const store = tx.objectStore("cart");
 
-    // Create unique ID that includes product ID and size
     const cartItemId = generateCartItemId(product._id, product.size);
 
-    // Check if already in cart
     const getRequest = store.get(cartItemId);
 
     getRequest.onsuccess = () => {
       const existing = getRequest.result;
 
       if (existing) {
-        // ✅ Already in cart — increase quantity
         existing.quantity += 1;
         store.put(existing);
       } else {
-        // ✅ New item — add with quantity 1 and the generated ID
         store.put({ ...product, _id: cartItemId, quantity: 1 });
       }
 
@@ -163,7 +57,6 @@ export async function addToCart(product) {
   });
 }
 
-// Get all cart items
 export async function getCart() {
   const db = await openDB();
   return new Promise((resolve, reject) => {
@@ -175,7 +68,6 @@ export async function getCart() {
   });
 }
 
-// Clear entire cart (after order placed)
 export async function clearCart() {
   const db = await openDB();
   return new Promise((resolve, reject) => {
@@ -247,35 +139,6 @@ export async function removeFromCart(productId) {
 
     const request = store.delete(productId);
     request.onsuccess = () => resolve("✅ Item removed from cart");
-    request.onerror = (e) => reject(e.target.error);
-  });
-}
-
-export async function saveAppVersion(version) {
-  const db = await openDB();
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction(APP_VERSION, "readwrite");
-    const store = tx.objectStore(APP_VERSION);
-
-    const clearRequest = store.clear();
-    clearRequest.onsuccess = () => {
-      store.put({ _id: "appVersion", version });
-    };
-    clearRequest.onerror = (e) => reject(e.target.error);
-
-    tx.oncomplete = () => resolve("✅ App version saved");
-    tx.onerror = (e) => reject(e.target.error);
-  });
-}
-
-// Get app version from IndexedDB
-export async function getAppVersionFromDB() {
-  const db = await openDB();
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction(APP_VERSION, "readonly");
-    const store = tx.objectStore(APP_VERSION);
-    const request = store.get("appVersion");
-    request.onsuccess = () => resolve(request.result);
     request.onerror = (e) => reject(e.target.error);
   });
 }

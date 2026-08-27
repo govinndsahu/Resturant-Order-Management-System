@@ -28,7 +28,6 @@ export function ConfigProvider({ appId, children }) {
           backendUrl: data.menu.menuBackendUrl,
           menu: data.menu,
           isLocationNeed: isLocationNeed.doValidate,
-          user: isLocationNeed.user,
           setError,
         });
       }
@@ -44,13 +43,13 @@ export function ConfigProvider({ appId, children }) {
       const { data } = await getLocationValidationConfigApi(backendUrl);
 
       if (data.success) {
-        return { user: data.user, doValidate: data.config.doValidate };
+        return { doValidate: data.config.doValidate };
       } else {
-        return { user: null, doValidate: false };
+        return { doValidate: false };
       }
     } catch (error) {
       setError(error);
-      return { user: null, doValidate: false };
+      return { doValidate: false };
     }
   };
 

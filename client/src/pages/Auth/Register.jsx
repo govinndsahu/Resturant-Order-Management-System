@@ -1,6 +1,5 @@
 import { useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
 
 import { userRegisterApi } from "../../apis/userApis";
 import { getAppRoute } from "../../utils/util";
@@ -42,6 +41,7 @@ const Register = ({ appName }) => {
 
       if (data.success) {
         navigate(route());
+        localStorage.setItem("user", JSON.stringify(data.user));
         window.location.reload();
       }
     } catch (error) {

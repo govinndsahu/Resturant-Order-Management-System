@@ -4,7 +4,8 @@ import { useConfig } from "../../contexts/ConfigContext";
 import { getHistoryOrdersApi } from "../../apis/orderApis";
 
 const OrderAnalytics = () => {
-  const { backendUrl, user } = useConfig();
+  const { backendUrl } = useConfig();
+  const user = JSON.parse(localStorage.getItem("user"));
 
   const [histories, setHistories] = useState([]);
   const [loading, setLoading] = useState(true);

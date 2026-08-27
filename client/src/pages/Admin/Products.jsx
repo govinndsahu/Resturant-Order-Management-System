@@ -1,14 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import axios from "axios";
 import "../../css/products.css";
 
-import {
-  getAllCategories,
-  getAllProducts,
-  saveAllProducts,
-} from "../../hooks/useIndexedDB";
-
 import { getCategoriesApi } from "../../apis/categoryApis";
+
 import {
   createProductApi,
   deleteProductApi,
@@ -16,15 +10,16 @@ import {
   updateProductApi,
   uploadImageApi,
 } from "../../apis/productsApi";
-import Loader from "../../components/Loader";
 import { useConfig } from "../../contexts/ConfigContext";
+import UploadStatus from "../../components/Uploadstatus";
 
 const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png"];
 const MAX_IMAGE_SIZE_MB = 5;
 const MAX_IMAGE_SIZE_BYTES = MAX_IMAGE_SIZE_MB * 1024 * 1024;
 
 const Products = () => {
-  const { backendUrl, menu, user } = useConfig();
+  const { backendUrl, menu } = useConfig();
+  const user = JSON.parse(localStorage.getItem("user"));
 
   const [categories, setCategories] = useState([]);
   const [products, setProducts] = useState([]);
@@ -42,6 +37,7 @@ const Products = () => {
 
   const [updateMode, setUpdateMode] = useState(false);
   const [loader, setLoader] = useState(false);
+  const [showStatus, setShowStatus] = useState(false);
 
   // Validation errors state
   const [errors, setErrors] = useState({});
@@ -74,11 +70,6 @@ const Products = () => {
 
   const fetchProducts = async () => {
     try {
-      const cached = await getAllProducts();
-      if (cached?.length > 0) {
-        setProducts(cached);
-        return;
-      }
       const { data } = await getProductsApi(backendUrl);
       if (data?.success) {
         setProducts(data.products);
@@ -90,12 +81,8 @@ const Products = () => {
 
   const fetchCategories = async () => {
     try {
-      const cached = await getAllCategories();
-      if (cached?.length > 0) {
-        setCategories(cached);
-        return;
-      }
       const { data } = await getCategoriesApi(backendUrl);
+
       if (data?.success) {
         setCategories(data.categories);
       }
@@ -259,6 +246,7 @@ const Products = () => {
       }
 
       setLoader(true);
+      setShowStatus(true);
 
       const { data } = await createProductApi(
         productData,
@@ -268,19 +256,13 @@ const Products = () => {
 
       if (data?.success) {
         uploadImage(data.id, image);
-
-        const {
-          data: { products },
-        } = await getProductsApi(backendUrl);
-
-        await saveAllProducts(products);
       }
     } catch (error) {
       console.error(error);
     }
   };
 
-  const uploadImage = async (id, file) => {
+  const uploadImage = async (id, file, isUpdating = false) => {
     const formData = new FormData();
     formData.append("image", file);
 
@@ -290,15 +272,10 @@ const Products = () => {
         formData,
         backendUrl,
         menu?._id,
+        isUpdating,
       );
 
       if (data?.success) {
-        const {
-          data: { products },
-        } = await getProductsApi(backendUrl);
-
-        await saveAllProducts(products);
-
         setProductName("");
         setCategory("");
         setPriceType("single");
@@ -316,6 +293,7 @@ const Products = () => {
       console.log(error);
     } finally {
       setLoader(false);
+      setShowStatus(false);
     }
   };
 
@@ -330,9 +308,7 @@ const Products = () => {
     setImage("");
     setSerialNumber(p.sn || 1);
     setProductId(p._id);
-    setImagePreview(
-      p.image && p.mimeType ? `data:${p.mimeType};base64,${p.image}` : null,
-    );
+    setImagePreview(p.image ? p.image : null);
     setErrors({});
   };
 
@@ -345,6 +321,7 @@ const Products = () => {
       }
 
       setLoader(true);
+      setShowStatus(true);
 
       const { data } = await updateProductApi(
         id,
@@ -355,14 +332,8 @@ const Products = () => {
 
       if (data?.success) {
         if (image) {
-          await uploadImage(id, image);
+          await uploadImage(id, image, true);
         }
-
-        const {
-          data: { products },
-        } = await getProductsApi(backendUrl);
-
-        await saveAllProducts(products);
 
         setProductName("");
         setCategory("");
@@ -390,10 +361,6 @@ const Products = () => {
       setLoader(true);
       const { data } = await deleteProductApi(id, backendUrl, menu?._id);
       if (data?.success) {
-        const {
-          data: { products },
-        } = await getProductsApi(backendUrl);
-        await saveAllProducts(products);
         fetchProducts();
         setLoader(false);
       }
@@ -422,445 +389,444 @@ const Products = () => {
   }
 
   return (
-    <div className="prod-page">
-      {/* Header */}
-      <div className="prod-header">
-        <div className="prod-header-content">
-          <div className="prod-header-icon">
-            <i className="ri-restaurant-line"></i>
-          </div>
-          <div>
-            <h1>Manage Products</h1>
-            <p>Add, edit, and organize your menu items</p>
+    <>
+      <div className="prod-page">
+        {/* Header */}
+        <div className="prod-header">
+          <div className="prod-header-content">
+            <div className="prod-header-icon">
+              <i className="ri-restaurant-line"></i>
+            </div>
+            <div>
+              <h1>Manage Products</h1>
+              <p>Add, edit, and organize your menu items</p>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className="prod-container">
-        {/* Form Card */}
-        <div className="prod-form-card">
-          <div className="prod-form-header">
-            <i
-              className={
-                updateMode ? "ri-edit-circle-line" : "ri-add-circle-line"
-              }></i>
-            <h2>{updateMode ? "Update Product" : "Add Product"}</h2>
-          </div>
-
-          <form
-            ref={formRef}
-            className="prod-form"
-            onSubmit={(e) => e.preventDefault()}>
-            {/* Row 1: Name + Category */}
-            <div className="prod-form-row">
-              <div className="prod-form-group" ref={nameRef}>
-                <label htmlFor="product-name">
-                  <i className="ri-price-tag-3-line"></i>
-                  Product Name
-                </label>
-                {errors.name && (
-                  <span className="prod-error-text">
-                    <i className="ri-error-warning-line"></i>
-                    {errors.name}
-                  </span>
-                )}
-                <input
-                  required
-                  value={productName}
-                  type="text"
-                  name="name"
-                  id="product-name"
-                  placeholder="e.g., Paneer Tikka"
-                  onChange={(e) => {
-                    setProductName(e.target.value);
-                    clearFieldError("name");
-                  }}
-                  className={errors.name ? "prod-input-error" : ""}
-                />
-              </div>
-              <div className="prod-form-group" ref={categoryRef}>
-                <label htmlFor="select-category">
-                  <i className="ri-apps-line"></i>
-                  Category
-                </label>
-                {errors.category && (
-                  <span className="prod-error-text">
-                    <i className="ri-error-warning-line"></i>
-                    {errors.category}
-                  </span>
-                )}
-                <select
-                  required
-                  name="category"
-                  id="select-category"
-                  value={category}
-                  onChange={(e) => {
-                    setCategory(e.target.value);
-                    clearFieldError("category");
-                  }}
-                  className={errors.category ? "prod-input-error" : ""}>
-                  <option hidden value="">
-                    Select a category
-                  </option>
-                  {categories?.map((cat) => (
-                    <option key={cat._id} value={cat._id}>
-                      {cat.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
+        <div className="prod-container">
+          {/* Form Card */}
+          <div className="prod-form-card">
+            <div className="prod-form-header">
+              <i
+                className={
+                  updateMode ? "ri-edit-circle-line" : "ri-add-circle-line"
+                }></i>
+              <h2>{updateMode ? "Update Product" : "Add Product"}</h2>
             </div>
 
-            {/* Row 2: Price Type + S.N */}
-            <div className="prod-form-row">
-              <div className="prod-form-group" ref={priceTypeRef}>
-                <label htmlFor="price-type">
-                  <i className="ri-money-rupee-circle-line"></i>
-                  Price Type
-                </label>
-                {errors.priceType && (
-                  <span className="prod-error-text">
-                    <i className="ri-error-warning-line"></i>
-                    {errors.priceType}
-                  </span>
-                )}
-                <select
-                  required
-                  value={priceType}
-                  name="price_type"
-                  id="price-type"
-                  onChange={(e) => {
-                    setPriceType(e.target.value);
-                    clearFieldError("priceType");
-                    if (e.target.value === "single") {
-                      setHalfPrice("");
-                      clearFieldError("halfPrice");
-                      clearFieldError("fullPrice");
-                    }
-                  }}
-                  className={errors.priceType ? "prod-input-error" : ""}>
-                  <option value="single">Single Price</option>
-                  <option value="both">Half & Full</option>
-                </select>
-              </div>
-              <div className="prod-form-group prod-sn-group" ref={snRef}>
-                <label htmlFor="serial-number">
-                  <i className="ri-hashtag"></i>
-                  S.N
-                </label>
-                {errors.serialNumber && (
-                  <span className="prod-error-text">
-                    <i className="ri-error-warning-line"></i>
-                    {errors.serialNumber}
-                  </span>
-                )}
-                <input
-                  required
-                  value={serialNumber}
-                  type="number"
-                  name="sn"
-                  id="serial-number"
-                  placeholder="1"
-                  min="1"
-                  step="1"
-                  onChange={(e) => {
-                    setSerialNumber(e.target.value);
-                    clearFieldError("serialNumber");
-                  }}
-                  className={errors.serialNumber ? "prod-input-error" : ""}
-                />
-              </div>
-            </div>
-
-            {/* Row 3: Prices */}
-            <div className="prod-form-row">
-              {priceType === "single" ? (
-                <div className="prod-form-group" ref={priceRef}>
-                  <label htmlFor="product-price">
-                    <i className="ri-money-rupee-circle-line"></i>
-                    Price (₹)
+            <form
+              ref={formRef}
+              className="prod-form"
+              onSubmit={(e) => e.preventDefault()}>
+              {/* Row 1: Name + Category */}
+              <div className="prod-form-row">
+                <div className="prod-form-group" ref={nameRef}>
+                  <label htmlFor="product-name">
+                    <i className="ri-price-tag-3-line"></i>
+                    Product Name
                   </label>
-                  {errors.price && (
+                  {errors.name && (
                     <span className="prod-error-text">
                       <i className="ri-error-warning-line"></i>
-                      {errors.price}
+                      {errors.name}
                     </span>
                   )}
                   <input
                     required
-                    name="full_price"
-                    value={price}
-                    type="number"
-                    id="product-price"
-                    placeholder="Enter price"
-                    min="0"
-                    step="0.01"
+                    value={productName}
+                    type="text"
+                    name="name"
+                    id="product-name"
+                    placeholder="e.g., Paneer Tikka"
                     onChange={(e) => {
-                      setPrice(e.target.value);
-                      clearFieldError("price");
+                      setProductName(e.target.value);
+                      clearFieldError("name");
                     }}
-                    className={errors.price ? "prod-input-error" : ""}
+                    className={errors.name ? "prod-input-error" : ""}
                   />
                 </div>
-              ) : (
-                <>
-                  <div className="prod-form-group" ref={halfPriceRef}>
-                    <label htmlFor="half-price">
-                      <i className="ri-scissors-cut-line"></i>
-                      Half Price (₹)
-                    </label>
-                    {errors.halfPrice && (
-                      <span className="prod-error-text">
-                        <i className="ri-error-warning-line"></i>
-                        {errors.halfPrice}
-                      </span>
-                    )}
-                    <input
-                      required
-                      name="half_price"
-                      value={halfPrice}
-                      type="number"
-                      id="half-price"
-                      placeholder="Half price"
-                      min="0"
-                      step="0.01"
-                      onChange={(e) => {
-                        setHalfPrice(e.target.value);
+                <div className="prod-form-group" ref={categoryRef}>
+                  <label htmlFor="select-category">
+                    <i className="ri-apps-line"></i>
+                    Category
+                  </label>
+                  {errors.category && (
+                    <span className="prod-error-text">
+                      <i className="ri-error-warning-line"></i>
+                      {errors.category}
+                    </span>
+                  )}
+                  <select
+                    required
+                    name="category"
+                    id="select-category"
+                    value={category}
+                    onChange={(e) => {
+                      setCategory(e.target.value);
+                      clearFieldError("category");
+                    }}
+                    className={errors.category ? "prod-input-error" : ""}>
+                    <option hidden value="">
+                      Select a category
+                    </option>
+                    {categories?.map((cat) => (
+                      <option key={cat._id} value={cat._id}>
+                        {cat.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              {/* Row 2: Price Type + S.N */}
+              <div className="prod-form-row">
+                <div className="prod-form-group" ref={priceTypeRef}>
+                  <label htmlFor="price-type">
+                    <i className="ri-money-rupee-circle-line"></i>
+                    Price Type
+                  </label>
+                  {errors.priceType && (
+                    <span className="prod-error-text">
+                      <i className="ri-error-warning-line"></i>
+                      {errors.priceType}
+                    </span>
+                  )}
+                  <select
+                    required
+                    value={priceType}
+                    name="price_type"
+                    id="price-type"
+                    onChange={(e) => {
+                      setPriceType(e.target.value);
+                      clearFieldError("priceType");
+                      if (e.target.value === "single") {
+                        setHalfPrice("");
                         clearFieldError("halfPrice");
-                      }}
-                      className={errors.halfPrice ? "prod-input-error" : ""}
-                    />
-                  </div>
-                  <div className="prod-form-group" ref={fullPriceRef}>
-                    <label htmlFor="full-price">
-                      <i className="ri-restaurant-2-line"></i>
-                      Full Price (₹)
+                        clearFieldError("fullPrice");
+                      }
+                    }}
+                    className={errors.priceType ? "prod-input-error" : ""}>
+                    <option value="single">Single Price</option>
+                    <option value="both">Half & Full</option>
+                  </select>
+                </div>
+                <div className="prod-form-group prod-sn-group" ref={snRef}>
+                  <label htmlFor="serial-number">
+                    <i className="ri-hashtag"></i>
+                    S.N
+                  </label>
+                  {errors.serialNumber && (
+                    <span className="prod-error-text">
+                      <i className="ri-error-warning-line"></i>
+                      {errors.serialNumber}
+                    </span>
+                  )}
+                  <input
+                    required
+                    value={serialNumber}
+                    type="number"
+                    name="sn"
+                    id="serial-number"
+                    placeholder="1"
+                    min="1"
+                    step="1"
+                    onChange={(e) => {
+                      setSerialNumber(e.target.value);
+                      clearFieldError("serialNumber");
+                    }}
+                    className={errors.serialNumber ? "prod-input-error" : ""}
+                  />
+                </div>
+              </div>
+
+              {/* Row 3: Prices */}
+              <div className="prod-form-row">
+                {priceType === "single" ? (
+                  <div className="prod-form-group" ref={priceRef}>
+                    <label htmlFor="product-price">
+                      <i className="ri-money-rupee-circle-line"></i>
+                      Price (₹)
                     </label>
-                    {errors.fullPrice && (
+                    {errors.price && (
                       <span className="prod-error-text">
                         <i className="ri-error-warning-line"></i>
-                        {errors.fullPrice}
+                        {errors.price}
                       </span>
                     )}
                     <input
                       required
                       name="full_price"
-                      value={fullPrice}
+                      value={price}
                       type="number"
-                      id="full-price"
-                      placeholder="Full price"
+                      id="product-price"
+                      placeholder="Enter price"
                       min="0"
                       step="0.01"
                       onChange={(e) => {
-                        setFullPrice(e.target.value);
-                        clearFieldError("fullPrice");
+                        setPrice(e.target.value);
+                        clearFieldError("price");
                       }}
-                      className={errors.fullPrice ? "prod-input-error" : ""}
+                      className={errors.price ? "prod-input-error" : ""}
                     />
                   </div>
-                </>
-              )}
-            </div>
+                ) : (
+                  <>
+                    <div className="prod-form-group" ref={halfPriceRef}>
+                      <label htmlFor="half-price">
+                        <i className="ri-scissors-cut-line"></i>
+                        Half Price (₹)
+                      </label>
+                      {errors.halfPrice && (
+                        <span className="prod-error-text">
+                          <i className="ri-error-warning-line"></i>
+                          {errors.halfPrice}
+                        </span>
+                      )}
+                      <input
+                        required
+                        name="half_price"
+                        value={halfPrice}
+                        type="number"
+                        id="half-price"
+                        placeholder="Half price"
+                        min="0"
+                        step="0.01"
+                        onChange={(e) => {
+                          setHalfPrice(e.target.value);
+                          clearFieldError("halfPrice");
+                        }}
+                        className={errors.halfPrice ? "prod-input-error" : ""}
+                      />
+                    </div>
+                    <div className="prod-form-group" ref={fullPriceRef}>
+                      <label htmlFor="full-price">
+                        <i className="ri-restaurant-2-line"></i>
+                        Full Price (₹)
+                      </label>
+                      {errors.fullPrice && (
+                        <span className="prod-error-text">
+                          <i className="ri-error-warning-line"></i>
+                          {errors.fullPrice}
+                        </span>
+                      )}
+                      <input
+                        required
+                        name="full_price"
+                        value={fullPrice}
+                        type="number"
+                        id="full-price"
+                        placeholder="Full price"
+                        min="0"
+                        step="0.01"
+                        onChange={(e) => {
+                          setFullPrice(e.target.value);
+                          clearFieldError("fullPrice");
+                        }}
+                        className={errors.fullPrice ? "prod-input-error" : ""}
+                      />
+                    </div>
+                  </>
+                )}
+              </div>
 
-            {/* Image Upload */}
-            <div
-              className="prod-form-group prod-image-group"
-              ref={imageGroupRef}>
-              <label>
-                <i className="ri-image-line"></i>
-                Product Image
-              </label>
-              {errors.image && (
-                <span className="prod-error-text">
-                  <i className="ri-error-warning-line"></i>
-                  {errors.image}
-                </span>
-              )}
+              {/* Image Upload */}
               <div
-                className="prod-image-upload"
-                style={{ display: updateMode ? "none" : "flex" }}>
-                <input
-                  required={!updateMode}
-                  ref={refImage}
-                  name="image"
-                  type="file"
-                  id="product-image"
-                  accept=".jpg, .png, .jpeg"
-                  onChange={(e) => {
-                    const file = e.target.files[0];
-                    setImage(file || "");
-                    if (file) handleImagePreview(e);
-                    else setImagePreview(null);
-                    clearFieldError("image");
-                  }}
-                  className={errors.image ? "prod-input-error" : ""}
-                />
-                <label htmlFor="product-image" className="prod-upload-btn">
-                  <i className="ri-upload-cloud-2-line"></i>
-                  Choose Image
+                className="prod-form-group prod-image-group"
+                ref={imageGroupRef}>
+                <label>
+                  <i className="ri-image-line"></i>
+                  Product Image
                 </label>
-              </div>
-
-              {updateMode && (
-                <button
-                  type="button"
-                  className="prod-change-img-btn"
-                  onClick={() => refImage.current?.click()}>
-                  <i className="ri-image-edit-line"></i>
-                  Change Image
-                </button>
-              )}
-
-              {imagePreview && (
-                <div className="prod-image-preview">
-                  <img
-                    ref={imageRef}
-                    src={imagePreview}
-                    alt="Product Preview"
-                  />
-                  <button
-                    type="button"
-                    className="prod-remove-img"
-                    onClick={() => {
-                      setImagePreview(null);
-                      setImage("");
-                      if (refImage.current) refImage.current.value = "";
+                {errors.image && (
+                  <span className="prod-error-text">
+                    <i className="ri-error-warning-line"></i>
+                    {errors.image}
+                  </span>
+                )}
+                <div
+                  className="prod-image-upload"
+                  style={{ display: updateMode ? "none" : "flex" }}>
+                  <input
+                    required={!updateMode}
+                    ref={refImage}
+                    name="image"
+                    type="file"
+                    id="product-image"
+                    accept=".jpg, .png, .jpeg"
+                    onChange={(e) => {
+                      const file = e.target.files[0];
+                      setImage(file || "");
+                      if (file) handleImagePreview(e);
+                      else setImagePreview(null);
                       clearFieldError("image");
-                    }}>
-                    <i className="ri-close-line"></i>
-                  </button>
+                    }}
+                    className={errors.image ? "prod-input-error" : ""}
+                  />
+                  <label htmlFor="product-image" className="prod-upload-btn">
+                    <i className="ri-upload-cloud-2-line"></i>
+                    Choose Image
+                  </label>
                 </div>
-              )}
-            </div>
 
-            {/* Actions */}
-            {loader ? (
-              <div className="prod-submit-btn prod-loading-btn">
-                Working... <span class="p-loader"></span>
-              </div>
-            ) : (
-              <div className="prod-form-actions">
                 {updateMode && (
                   <button
                     type="button"
-                    className="prod-cancel-btn"
-                    onClick={() => {
-                      setUpdateMode(false);
-                      setProductName("");
-                      setCategory("");
-                      setPriceType("single");
-                      setPrice("");
-                      setHalfPrice("");
-                      setFullPrice("");
-                      setImage("");
-                      setSerialNumber("");
-                      setImagePreview(null);
-                      setErrors({});
-                      formRef.current?.reset();
-                    }}>
-                    <i className="ri-close-line"></i>
-                    Cancel
+                    className="prod-change-img-btn"
+                    onClick={() => refImage.current?.click()}>
+                    <i className="ri-image-edit-line"></i>
+                    Change Image
                   </button>
                 )}
-                <button
-                  type="submit"
-                  className="prod-submit-btn"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    updateMode
-                      ? handleUpdateRequest(productId)
-                      : handleSubmit(e);
-                  }}>
-                  <i
-                    className={
-                      updateMode ? "ri-check-line" : "ri-add-line"
-                    }></i>
-                  {updateMode ? "Update Product" : "Add Product"}
-                </button>
-              </div>
-            )}
-          </form>
-        </div>
 
-        {/* Products List */}
-        <div className="prod-list-section">
-          <div className="prod-list-header">
-            <h2>
-              <i className="ri-list-check-2"></i>
-              All Products
-            </h2>
-            <span className="prod-count">{products.length} items</span>
+                {imagePreview && (
+                  <div className="prod-image-preview">
+                    <img
+                      ref={imageRef}
+                      src={imagePreview}
+                      alt="Product Preview"
+                    />
+                    <button
+                      type="button"
+                      className="prod-remove-img"
+                      onClick={() => {
+                        setImagePreview(null);
+                        setImage("");
+                        if (refImage.current) refImage.current.value = "";
+                        clearFieldError("image");
+                      }}>
+                      <i className="ri-close-line"></i>
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {/* Actions */}
+              {loader ? (
+                <div className="prod-submit-btn prod-loading-btn">
+                  Working... <span class="p-loader"></span>
+                </div>
+              ) : (
+                <div className="prod-form-actions">
+                  {updateMode && (
+                    <button
+                      type="button"
+                      className="prod-cancel-btn"
+                      onClick={() => {
+                        setUpdateMode(false);
+                        setProductName("");
+                        setCategory("");
+                        setPriceType("single");
+                        setPrice("");
+                        setHalfPrice("");
+                        setFullPrice("");
+                        setImage("");
+                        setSerialNumber("");
+                        setImagePreview(null);
+                        setErrors({});
+                        formRef.current?.reset();
+                      }}>
+                      <i className="ri-close-line"></i>
+                      Cancel
+                    </button>
+                  )}
+                  <button
+                    type="submit"
+                    className="prod-submit-btn"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      updateMode
+                        ? handleUpdateRequest(productId)
+                        : handleSubmit(e);
+                    }}>
+                    <i
+                      className={
+                        updateMode ? "ri-check-line" : "ri-add-line"
+                      }></i>
+                    {updateMode ? "Update Product" : "Add Product"}
+                  </button>
+                </div>
+              )}
+            </form>
           </div>
 
-          {products.length === 0 ? (
-            <div className="prod-empty">
-              <i className="ri-inbox-line"></i>
-              <p>No products yet. Add your first menu item!</p>
+          {/* Products List */}
+          <div className="prod-list-section">
+            <div className="prod-list-header">
+              <h2>
+                <i className="ri-list-check-2"></i>
+                All Products
+              </h2>
+              <span className="prod-count">{products.length} items</span>
             </div>
-          ) : (
-            <div className="prod-grid">
-              {products.map((p) => (
-                <div key={p._id} className="prod-card">
-                  <div className="prod-card-image">
-                    <img
-                      src={`data:${p?.mimeType};base64,${p?.image}`}
-                      alt={p.name}
-                      loading="lazy"
-                    />
-                    <span className="prod-card-sn">{p.sn}</span>
-                    <span className={`prod-card-badge ${p.price_type}`}>
-                      {p.price_type === "single" ? "Single" : "Half / Full"}
-                    </span>
-                  </div>
-                  <div className="prod-card-body">
-                    <h3 className="prod-card-name">{p.name}</h3>
-                    <span className="prod-card-category">
-                      {p.category?.name}
-                    </span>
-                    <div className="prod-card-prices">
-                      {p.price_type === "single" ? (
-                        <span className="prod-price-single">
-                          ₹{p.full_price}
-                        </span>
-                      ) : (
-                        <div className="prod-price-both">
-                          <span className="price-half">
-                            Half ₹{p.half_price}
+
+            {products.length === 0 ? (
+              <div className="prod-empty">
+                <i className="ri-inbox-line"></i>
+                <p>No products yet. Add your first menu item!</p>
+              </div>
+            ) : (
+              <div className="prod-grid">
+                {products.map((p) => (
+                  <div key={p._id} className="prod-card">
+                    <div className="prod-card-image">
+                      <img src={p.image} alt={p.name} loading="lazy" />
+                      <span className="prod-card-sn">{p.sn}</span>
+                      <span className={`prod-card-badge ${p.price_type}`}>
+                        {p.price_type === "single" ? "Single" : "Half / Full"}
+                      </span>
+                    </div>
+                    <div className="prod-card-body">
+                      <h3 className="prod-card-name">{p.name}</h3>
+                      <span className="prod-card-category">
+                        {p.category?.name}
+                      </span>
+                      <div className="prod-card-prices">
+                        {p.price_type === "single" ? (
+                          <span className="prod-price-single">
+                            ₹{p.full_price}
                           </span>
-                          <span className="price-divider">·</span>
-                          <span className="price-full">
-                            Full ₹{p.full_price}
-                          </span>
-                        </div>
-                      )}
+                        ) : (
+                          <div className="prod-price-both">
+                            <span className="price-half">
+                              Half ₹{p.half_price}
+                            </span>
+                            <span className="price-divider">·</span>
+                            <span className="price-full">
+                              Full ₹{p.full_price}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    <div className="prod-card-actions">
+                      <button
+                        className="prod-btn-update"
+                        onClick={() => {
+                          handleUpdateProduct(p);
+                          window.scrollTo({ top: 0, behavior: "smooth" });
+                        }}
+                        disabled={loader}>
+                        <i className="ri-edit-line"></i>
+                        <span>Edit</span>
+                      </button>
+                      <button
+                        className="prod-btn-delete"
+                        onClick={() => handleDeleteProduct(p._id)}
+                        disabled={loader}>
+                        <i className="ri-delete-bin-6-line"></i>
+                        <span>Delete</span>
+                      </button>
                     </div>
                   </div>
-                  <div className="prod-card-actions">
-                    <button
-                      className="prod-btn-update"
-                      onClick={() => {
-                        handleUpdateProduct(p);
-                        window.scrollTo({ top: 0, behavior: "smooth" });
-                      }}
-                      disabled={loader}>
-                      <i className="ri-edit-line"></i>
-                      <span>Edit</span>
-                    </button>
-                    <button
-                      className="prod-btn-delete"
-                      onClick={() => handleDeleteProduct(p._id)}
-                      disabled={loader}>
-                      <i className="ri-delete-bin-6-line"></i>
-                      <span>Delete</span>
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
-    </div>
+      <UploadStatus show={showStatus} />
+    </>
   );
 };
 

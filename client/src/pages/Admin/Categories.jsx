@@ -1,8 +1,5 @@
 import "../../css/categories.css";
 import { useEffect, useRef, useState } from "react";
-import axios from "axios";
-
-import { getAllCategories, saveAllCategories } from "../../hooks/useIndexedDB";
 
 import {
   createCategoryApi,
@@ -10,13 +7,15 @@ import {
   getCategoriesApi,
   updateCategoryApi,
 } from "../../apis/categoryApis";
+
 import { useConfig } from "../../contexts/ConfigContext";
 
 const Categories = () => {
   const createForm = useRef();
   const updateForm = useRef();
 
-  const { backendUrl, menu, user } = useConfig();
+  const { backendUrl, menu } = useConfig();
+  const user = JSON.parse(localStorage.getItem("user"));
 
   const [categories, setCategories] = useState([]);
   const [switchForm, setSwitchForm] = useState(true);
@@ -30,14 +29,8 @@ const Categories = () => {
 
   const fetchCategories = async () => {
     try {
-      const cached = await getAllCategories();
-
-      if (cached?.length > 0) {
-        setCategories(cached);
-        return;
-      }
-
-      const { data } = await getCategoriesApi();
+      const { data } = await getCategoriesApi(backendUrl);
+      console.log(data);
 
       if (data?.success) {
         setCategories(data.categories);
@@ -65,12 +58,6 @@ const Categories = () => {
       );
 
       if (data?.success) {
-        const {
-          data: { categories },
-        } = await getCategoriesApi(backendUrl);
-
-        await saveAllCategories(categories);
-
         setCreateName("");
         setSerialNumber("");
         fetchCategories();
@@ -88,12 +75,9 @@ const Categories = () => {
 
       const { data } = await deleteCategoryApi(id, backendUrl, menu?._id);
 
+      
       if (data?.success) {
-        const {
-          data: { categories },
-        } = await getCategoriesApi(backendUrl);
-
-        await saveAllCategories(categories);
+        console.log(data);
         fetchCategories();
       }
     } catch (error) {
@@ -118,12 +102,6 @@ const Categories = () => {
       );
 
       if (data?.success) {
-        const {
-          data: { categories },
-        } = await getCategoriesApi(backendUrl);
-
-        await saveAllCategories(categories);
-
         setUpdateName("");
         setSerialNumber("");
         setCategoryId("");

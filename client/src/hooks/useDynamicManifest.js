@@ -14,7 +14,7 @@ const toImageSrc = (value) => {
     return value;
   }
 
-  return `data:image/png;base64,${value}`;
+  return `${value}`;
 };
 
 export function useDynamicManifest(appName, menu = null) {

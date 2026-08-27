@@ -1,12 +1,10 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { getAppId } from "../utils/util.js";
 import { useConfig } from "./ConfigContext.jsx";
-import { getAppVersionFromDB, saveAppVersion } from "../hooks/useIndexedDB.js";
-
 const AppInfoContext = createContext(null);
 
 export function AppInfoProvider({ children }) {
-  const { backendUrl, menu } = useConfig();
+  const { backendUrl } = useConfig();
   const [appName, setAppName] = useState(getAppId());
 
   useEffect(() => {

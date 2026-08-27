@@ -30,7 +30,8 @@ import MenuConfiguration from "./pages/Admin/MenuConfiguration.jsx";
 
 const AdminStylesLoader = ({ appName }) => {
   const location = useLocation();
-  const { menu, user } = useConfig();
+  const { menu } = useConfig();
+  const user = JSON.parse(localStorage.getItem("user"));
   useEffect(
     () => adminStylesLoaderFunction(location, appName, user, menu),
     [location.pathname],

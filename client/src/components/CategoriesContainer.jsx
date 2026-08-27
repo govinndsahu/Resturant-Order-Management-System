@@ -1,10 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import {
-  getAllCategories,
-  getAppVersionFromDB,
-  saveAllCategories,
-  saveAppVersion,
-} from "../hooks/useIndexedDB";
 import { getCategoriesApi } from "../apis/categoryApis";
 import { useConfig } from "../contexts/ConfigContext";
 
@@ -19,22 +13,10 @@ const CategoriesContainer = ({ setCategory }) => {
 
   const fetchCategories = async () => {
     try {
-      const cached = await getAllCategories();
-
-      const version = await getAppVersionFromDB();
-
-      if (menu.version === version?.version) {
-        setCategories(cached);
-        return;
-      } else {
-        await saveAppVersion(menu.version);
-      }
-
       const { data } = await getCategoriesApi(backendUrl);
 
       if (data?.success) {
         setCategories(data?.categories);
-        await saveAllCategories(data?.categories);
       } else {
         console.log("Server Problem");
       }

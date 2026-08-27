@@ -14,7 +14,8 @@ import CalendarRangePicker from "../../components/CalendarRangePicker";
 import { useConfig } from "../../contexts/ConfigContext";
 
 const Orders = () => {
-  const { backendUrl, user } = useConfig();
+  const { backendUrl } = useConfig();
+  const user = JSON.parse(localStorage.getItem("user"));
 
   const [orders, setOrders] = useState([]);
   const [name, setName] = useState("");

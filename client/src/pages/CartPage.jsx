@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
 import ProceedContainer from "../components/ProceedContainer";
@@ -8,7 +8,6 @@ import OrderForm from "../components/OrderForm";
 import { useCart } from "../contexts/Cart";
 
 import {
-  saveAllCartItems,
   updateCartQuantity,
   removeFromCart,
   getCart,
@@ -132,10 +131,7 @@ const CartPage = ({ appName }) => {
               style={{ animationDelay: `${index * 0.05}s` }}>
               {/* Item Image */}
               <div className="cart-item-image">
-                <img
-                  src={`data:${item.mimeType};base64,${item.image}`}
-                  alt={item.name}
-                />
+                <img src={item.image} alt={item.name} />
               </div>
 
               {/* Item Details */}

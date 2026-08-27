@@ -839,3 +839,332 @@
     clip-path: polygon(50% 50%, 0 0, 100% 0, 100% 100%, 0 100%, 0 0);
   }
 }
+
+/* ============================================= */
+
+/* ---------- Tokens — pulled from your dashboard's own palette ---------- */
+.sis-overlay {
+  --sis-indigo: #6366f1;
+  --sis-purple: #9333ea;
+  --sis-navy: #1e293b;
+  --sis-ink: #1e2333;
+  --sis-ink-dim: #6b7280;
+  --sis-border: #e7e5ef;
+  --sis-track: #eef0f7;
+  --sis-surface: #ffffff;
+
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(30, 34, 51, 0.42);
+  backdrop-filter: blur(2px);
+  font-family:
+    ui-sans-serif,
+    -apple-system,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
+}
+
+.sis-overlay--in {
+  animation: sis-fade-in 200ms ease-out both;
+}
+.sis-overlay--out {
+  animation: sis-fade-out 240ms ease-in both;
+}
+
+@keyframes sis-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes sis-fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* ---------- Card ---------- */
+.sis-card {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(340px, 100%);
+  background: var(--sis-surface);
+  border-radius: 20px;
+  border: 1px solid var(--sis-border);
+  box-shadow: 0 20px 45px rgba(30, 41, 59, 0.16);
+  padding: 30px 26px 24px;
+  text-align: center;
+  overflow: hidden;
+}
+
+.sis-overlay--in .sis-card {
+  animation: sis-card-in 340ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.sis-overlay--out .sis-card {
+  animation: sis-card-out 220ms ease-in both;
+}
+
+@keyframes sis-card-in {
+  from {
+    transform: translateY(10px) scale(0.96);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+@keyframes sis-card-out {
+  to {
+    transform: translateY(6px) scale(0.97);
+    opacity: 0;
+  }
+}
+
+.sis-card__glow {
+  position: absolute;
+  top: -60px;
+  left: 50%;
+  translate: -50% 0;
+  width: 220px;
+  height: 140px;
+  background: linear-gradient(135deg, var(--sis-indigo), var(--sis-purple));
+  filter: blur(46px);
+  opacity: 0.22;
+  pointer-events: none;
+}
+
+/* ---------- Spinner ---------- */
+.sis-spinner {
+  position: relative;
+  width: 60px;
+  height: 60px;
+  margin: 0 auto 18px;
+}
+
+.sis-spinner__svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.sis-spinner__track {
+  fill: none;
+  stroke: var(--sis-track);
+  stroke-width: 4;
+}
+
+.sis-spinner__arc {
+  fill: none;
+  stroke: url(#sis-arc-gradient);
+  stroke: var(--sis-indigo);
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-dasharray: 150.8;
+  stroke-dashoffset: 110;
+  transform-origin: 30px 30px;
+  animation: sis-spin 1.1s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+}
+
+@keyframes sis-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.sis-spinner__icon {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 22px;
+  height: 22px;
+}
+
+.sis-spinner__icon path,
+.sis-spinner__icon rect {
+  fill: none;
+  stroke: var(--sis-indigo);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.sis-spinner__icon circle {
+  fill: var(--sis-indigo);
+  stroke: none;
+}
+
+/* ---------- Copy ---------- */
+.sis-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--sis-navy);
+  letter-spacing: -0.01em;
+}
+
+.sis-subtitle {
+  margin: 5px 0 22px;
+  font-size: 12.5px;
+  color: var(--sis-ink-dim);
+  line-height: 1.4;
+}
+
+/* ---------- Steps ---------- */
+.sis-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  text-align: left;
+}
+
+.sis-step {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 10px;
+  border-radius: 10px;
+  transition: background 200ms ease;
+}
+
+.sis-step--active {
+  background: linear-gradient(
+    90deg,
+    rgba(99, 102, 241, 0.08),
+    rgba(147, 51, 234, 0.06)
+  );
+}
+
+.sis-step__marker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  flex: 0 0 auto;
+  border-radius: 999px;
+  background: var(--sis-track);
+  transition:
+    background 220ms ease,
+    transform 220ms ease;
+}
+
+.sis-step--done .sis-step__marker {
+  background: linear-gradient(135deg, var(--sis-indigo), var(--sis-purple));
+  animation: sis-marker-pop 320ms ease;
+}
+
+.sis-step--active .sis-step__marker {
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.16);
+}
+
+@keyframes sis-marker-pop {
+  0% {
+    transform: scale(0.6);
+  }
+  60% {
+    transform: scale(1.12);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.sis-step__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: #c7c9d9;
+}
+
+.sis-step--active .sis-step__dot {
+  background: var(--sis-indigo);
+  animation: sis-dot-pulse 1s ease-in-out infinite;
+}
+
+@keyframes sis-dot-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.5);
+    opacity: 0.55;
+  }
+}
+
+.sis-step__check {
+  width: 11px;
+  height: 11px;
+}
+.sis-step__check path {
+  fill: none;
+  stroke: #ffffff;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 14;
+  stroke-dashoffset: 14;
+  animation: sis-check-draw 280ms ease forwards;
+}
+
+@keyframes sis-check-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.sis-step__label {
+  font-size: 13px;
+  color: var(--sis-ink-dim);
+  font-weight: 500;
+  transition: color 200ms ease;
+}
+
+.sis-step--active .sis-step__label {
+  color: var(--sis-navy);
+  font-weight: 600;
+}
+
+.sis-step--done .sis-step__label {
+  color: var(--sis-navy);
+}
+
+/* ---------- Motion-reduced fallback ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .sis-overlay,
+  .sis-card,
+  .sis-spinner__arc,
+  .sis-step__dot,
+  .sis-step__marker,
+  .sis-step__check path {
+    animation: none !important;
+  }
+  .sis-spinner__arc {
+    stroke-dashoffset: 40;
+  }
+  .sis-step__check path {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* ---------- Small screens ---------- */
+@media (max-width: 400px) {
+  .sis-card {
+    padding: 26px 20px 20px;
+  }
+}

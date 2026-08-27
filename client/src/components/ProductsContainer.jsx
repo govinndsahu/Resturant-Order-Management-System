@@ -2,14 +2,7 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useCart } from "../contexts/Cart";
 import { getProductsApi } from "../apis/productsApi";
-import {
-  saveAllProducts,
-  getAllProducts,
-  addToCart,
-  getCart,
-  saveAppVersion,
-  getAppVersionFromDB,
-} from "../hooks/useIndexedDB";
+import { addToCart, getCart } from "../hooks/useIndexedDB";
 import { useConfig } from "../contexts/ConfigContext";
 
 const ProductsContainer = ({
@@ -30,22 +23,10 @@ const ProductsContainer = ({
 
   const fetchProducts = async () => {
     try {
-      const cached = await getAllProducts();
-
-      const version = await getAppVersionFromDB();
-
-      if (menu.version === version?.version) {
-        setProducts(cached);
-        return;
-      } else {
-        await saveAppVersion(menu.version);
-      }
-
       const { data } = await getProductsApi(backendUrl);
 
       if (data?.success) {
         setProducts(data?.products);
-        await saveAllProducts(data?.products);
       } else {
         console.log("Server Problem");
       }
@@ -128,11 +109,7 @@ const ProductsContainer = ({
       {filteredProducts.map((p) => (
         <div key={p._id} className="product-card">
           <div className="product-image-wrap">
-            <img
-              src={`data:${p.mimeType};base64,${p.image}`}
-              alt={p.name}
-              loading="lazy"
-            />
+            <img src={p.image} alt={p.name} loading="lazy" />
           </div>
 
           <div className="product-details">

@@ -1,5 +1,3 @@
-import React from "react";
-
 const LocationError = ({ getUserLocation, setLocationError }) => {
   return (
     <div

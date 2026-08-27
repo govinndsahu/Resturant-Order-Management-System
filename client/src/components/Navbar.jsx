@@ -1,5 +1,5 @@
 import { useContext, useEffect, useRef, useState } from "react";
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import gsap from "gsap";
 
 import { CartContext } from "../contexts/Cart";
@@ -8,7 +8,8 @@ import { getAppRoute } from "../utils/util";
 import { useConfig } from "../contexts/ConfigContext";
 
 const Navbar = ({ name, appName }) => {
-  const { backendUrl, menu, user } = useConfig();
+  const { backendUrl, menu } = useConfig();
+  const user = JSON.parse(localStorage.getItem("user"));
 
   const [cart] = useContext(CartContext);
 
@@ -45,6 +46,7 @@ const Navbar = ({ name, appName }) => {
       const { data } = await userLogoutApi(backendUrl);
       if (data?.success) {
         navigate(route("loginpage"));
+        localStorage.removeItem("user");
         window.location.reload();
       } else {
         navigate(route("loginpage"));
@@ -63,7 +65,7 @@ const Navbar = ({ name, appName }) => {
           <div className="menu-nav-brand" onClick={() => navigate(route())}>
             <div className="menu-nav-logo">
               <img
-                src={`data:image/png;base64,${menu?.menuLogoImg}`}
+                src={`${menu?.menuLogoImg}`}
                 alt={name}
               />
             </div>

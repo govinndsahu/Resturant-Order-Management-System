@@ -29,6 +29,13 @@ export const userLogoutApi = async (backendUrl) => {
   return { data };
 };
 
+export const getUserApi = async (backendUrl, userId) => {
+  const { data } = await axios.get(`${backendUrl}users/me/${userId}`, {
+    withCredentials: true,
+  });
+  return { data };
+};
+
 export const getUsersApi = async (backendUrl) => {
   const { data } = await axios.get(`${backendUrl}users`, {
     withCredentials: true,

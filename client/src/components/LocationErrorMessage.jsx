@@ -1,5 +1,3 @@
-import React from "react";
-
 const LocationErrorMessage = ({ setLocationError }) => {
   return (
     <div id="location-error-overlay" onClick={() => setLocationError(false)}>

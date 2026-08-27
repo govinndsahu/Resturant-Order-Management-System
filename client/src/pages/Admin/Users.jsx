@@ -1,13 +1,12 @@
 import "../../css/users.css";
 import { useEffect, useState } from "react";
-import axios from "axios";
 
 import { deleteUserApi, getUsersApi, updateUserApi } from "../../apis/userApis";
 import { useConfig } from "../../contexts/ConfigContext";
 
 const Users = () => {
-  const { backendUrl, user } = useConfig();
-
+  const { backendUrl } = useConfig();
+  const user = JSON.parse(localStorage.getItem("user"));
   const currentUser = user;
   const [users, setUsers] = useState([]);
   const [loadingId, setLoadingId] = useState(null);

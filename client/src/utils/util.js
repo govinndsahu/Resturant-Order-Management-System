@@ -64,7 +64,7 @@ export const adminStylesLoaderFunction = (location, appName, user, menu = null) 
     'link[data-admin-favicon="true"]',
   );
   const faviconHref = menu?.menuLogoImg
-    ? `data:image/png;base64,${menu.menuLogoImg}`
+    ? `${menu.menuLogoImg}`
     : "";
 
   if (isAdminRoute && isAdminUser && !existingLink) {

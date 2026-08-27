@@ -13,7 +13,8 @@ import {
 } from "../../apis/orderApis";
 
 const Histories = () => {
-  const { backendUrl, user } = useConfig();
+  const { backendUrl } = useConfig();
+  const user = JSON.parse(localStorage.getItem("user"));
 
   const [histories, setHistories] = useState([]);
 
