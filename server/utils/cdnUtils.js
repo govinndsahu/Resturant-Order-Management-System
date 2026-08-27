@@ -1,5 +1,4 @@
 export const preventCaching = (res) => {
-  res.set("Cache-Control", "no-store");
   res.status(500).json({ error: "Failed to fetch menu" });
 };
 
