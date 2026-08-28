@@ -49,31 +49,35 @@ export const setCookie = (res, session) =>
   });
 
 export const compressToTargetSize = async (
-    buffer,
-    targetKB = 50,
-    format = "webp",
-  ) => {
-    const targetBytes = targetKB * 1024;
-  
-    const attempts = [
-      { width: 700,  quality: 60 },
-      { width: 500,  quality: 55 },
-      { width: 400,  quality: 50 },
-    ];
-  
-    let output;
-  
-    for (const { width, quality } of attempts) {
-      output = await sharp(buffer)
-        .resize(width, width, { fit: "inside", withoutEnlargement: true, kernel: sharp.kernel.nearest })
-        [format]({ quality, effort: 2 }) 
-        .toBuffer();
-  
-      if (output.length <= targetBytes) break;
-    }
-  
-    return output;
-  };
+  buffer,
+  targetKB = 50,
+  format = "webp",
+) => {
+  const targetBytes = targetKB * 1024;
+
+  const attempts = [
+    { width: 700, quality: 60 },
+    { width: 500, quality: 55 },
+    { width: 400, quality: 50 },
+  ];
+
+  let output;
+
+  for (const { width, quality } of attempts) {
+    output = await sharp(buffer)
+      .resize(width, width, {
+        fit: "inside",
+        withoutEnlargement: true,
+        kernel: sharp.kernel.nearest,
+      })
+      [format]({ quality, effort: 2 })
+      .toBuffer();
+
+    if (output.length <= targetBytes) break;
+  }
+
+  return output;
+};
 
 export const getDistanceInMeters = (lat1, lng1, lat2, lng2) => {
   const R = 6371000; // Earth radius in meters
@@ -92,20 +96,26 @@ export const getDistanceInMeters = (lat1, lng1, lat2, lng2) => {
 export const handleChargeEvent = async ({ req, count }) => {
   if (req.planId === process.env.RAZORPAY_PLAN_STARTER) {
     count.count = 0;
-    count.maxCount = 3000;
-    count.maxItemCount = 50;
+    count.maxCount = 5000;
+    count.maxItemCount = 100;
     count.willReset = false;
     await count.save();
   } else if (req.planId === process.env.RAZORPAY_PLAN_GROWTH) {
     count.count = 0;
-    count.maxCount = 7000;
+    count.maxCount = 15000;
     count.maxItemCount = 100;
     count.willReset = false;
     await count.save();
   } else if (req.planId === process.env.RAZORPAY_PLAN_PRO) {
     count.count = 0;
-    count.maxCount = 15000;
+    count.maxCount = 25000;
     count.maxItemCount = 150;
+    count.willReset = false;
+    await count.save();
+  } else if (req.planId === process.env.RAZORPAY_PLAN_ENTERPRISE) {
+    count.count = 0;
+    count.maxCount = 50000;
+    count.maxItemCount = 200;
     count.willReset = false;
     await count.save();
   }
