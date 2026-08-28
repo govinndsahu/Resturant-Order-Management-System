@@ -2,10 +2,10 @@ export const preventCaching = (res) => {
   res.status(500).json({ error: "Failed to fetch menu" });
 };
 
-export const addCache = ({ res, days }) => {
+export const addCache = ({ res, days, browserAge = 30 }) => {
   res.set(
     "Cache-Control",
-    `public, max-age=30, s-maxage=${60 * 60 * 24 * days}`,
+    `public, max-age=${browserAge}, s-maxage=${60 * 60 * 24 * days}`,
   );
 };
 

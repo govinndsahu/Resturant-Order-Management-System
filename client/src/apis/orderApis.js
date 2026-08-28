@@ -64,8 +64,11 @@ export const getHistoryOrdersApi = async (backendUrl) => {
 };
 
 export const deleteHistoryApi = async (id, backendUrl) => {
-  const { data } = await axios.delete(`${backendUrl}orders/history/${id}`, {
-    withCredentials: true,
-  });
+  const { data } = await axios.delete(
+    `${backendUrl}orders/history/delete/${id}`,
+    {
+      withCredentials: true,
+    },
+  );
   return { data };
 };

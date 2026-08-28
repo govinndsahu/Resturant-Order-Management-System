@@ -1,4 +1,5 @@
 import Order from "../models/orderModel.js";
+import { addCache, purgeCache } from "../utils/cdnUtils.js";
 import { createOrderSchema } from "../validator/orderSchema.js";
 
 export const createOrder = async (req, res, next) => {
@@ -15,6 +16,11 @@ export const createOrder = async (req, res, next) => {
 
     await order.save();
 
+    await purgeCache({
+      urls: ["/orders", "/orders/history"],
+      origin: "menu.dgdine.in",
+    });
+
     return res.status(201).json({
       success: true,
       message: "Order created successfully",
@@ -28,6 +34,7 @@ export const createOrder = async (req, res, next) => {
 export const getOrders = async (req, res, next) => {
   try {
     const orders = await Order.find({ isDone: false }).sort({ createdAt: 1 });
+    addCache({ res, days: 7, browserAge: 5 });
     return res.status(200).json({
       success: true,
       orders,
@@ -42,6 +49,10 @@ export const deleteOrder = async (req, res, next) => {
   try {
     const { id } = req.params;
     await Order.findOneAndDelete({ _id: id, isDone: false });
+    await purgeCache({
+      urls: ["/orders", "/orders/history"],
+      origin: "menu.dgdine.in",
+    });
     return res.status(200).json({
       success: true,
       message: "Order deleted successfully",
@@ -71,6 +82,11 @@ export const clearOrders = async (req, res, next) => {
 
     await Order.deleteMany({ _id: { $in: ids } });
 
+    await purgeCache({
+      urls: ["/orders", "/orders/history"],
+      origin: "menu.dgdine.in",
+    });
+
     return res.status(200).json({
       success: true,
       message: "Orders cleared successfully",
@@ -84,6 +100,10 @@ export const clearOrders = async (req, res, next) => {
 export const doneAllOrders = async (req, res, next) => {
   try {
     await Order.updateMany({ isDone: false }, { isDone: true });
+    await purgeCache({
+      urls: ["/orders", "/orders/history"],
+      origin: "menu.dgdine.in",
+    });
     return res.status(200).json({
       success: true,
       message: "All orders marked as done successfully",
@@ -97,6 +117,10 @@ export const markOrderAsDone = async (req, res, next) => {
   try {
     const { id } = req.params;
     await Order.findByIdAndUpdate(id, { isDone: true });
+    await purgeCache({
+      urls: ["/orders", "/orders/history"],
+      origin: "menu.dgdine.in",
+    });
     return res.status(200).json({
       success: true,
       message: "Order marked as done successfully",
@@ -109,6 +133,7 @@ export const markOrderAsDone = async (req, res, next) => {
 export const getOrdersAsHistory = async (req, res, next) => {
   try {
     const orders = await Order.find({ isDone: true }).sort({ createdAt: 1 });
+    addCache({ res, days: 7, browserAge: 5 });
     return res.status(200).json({
       success: true,
       orders,
@@ -122,6 +147,10 @@ export const deleteHistory = async (req, res, next) => {
   try {
     const { id } = req.params;
     await Order.findOneAndDelete({ _id: id, isDone: true });
+    await purgeCache({
+      urls: ["/orders", "/orders/history"],
+      origin: "menu.dgdine.in",
+    });
     return res.status(200).json({
       success: true,
       message: "History deleted successfully",

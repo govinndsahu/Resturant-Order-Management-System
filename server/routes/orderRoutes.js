@@ -40,6 +40,6 @@ router.post("/mark-all-as-done", isLogedIn, isStaff, doneAllOrders);
 
 router.get("/history", isLogedIn, isStaff, getOrdersAsHistory);
 
-router.delete("/delete", isLogedIn, isStaff, deleteHistory);
+router.delete("/history/delete/:id", isLogedIn, isStaff, deleteHistory);
 
 export default router;
