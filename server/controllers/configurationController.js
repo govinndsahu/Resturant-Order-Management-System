@@ -120,6 +120,32 @@ export const enablePhoneValidation = async (req, res, next) => {
   }
 };
 
+export const disablePhoneValidation = async (req, res, next) => {
+  try {
+    const config = await Configuration.findOne();
+
+    config.customerPhoneValidation = {
+      doValidate: false,
+      user: null,
+    };
+    await config.save();
+
+    await purgeCache({
+      urls: ["/configuration/get"],
+      origin: "menu.dgdine.in",
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Phone validation disabled successfully",
+      config,
+      user: null,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 // ========================================= //
 
 export const getConfigurations = async (req, res, next) => {

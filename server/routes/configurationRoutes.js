@@ -1,6 +1,7 @@
 import express from "express";
 import {
   disableLocationValidation,
+  disablePhoneValidation,
   enableLocationValidation,
   enablePhoneValidation,
   getConfigurations,
@@ -28,6 +29,13 @@ router.post(
   isLogedIn,
   isAdmin,
   enablePhoneValidation,
+);
+
+router.post(
+  "/disable/phone/validation",
+  isLogedIn,
+  isAdmin,
+  disablePhoneValidation,
 );
 
 router.get("/get", getConfigurations);
