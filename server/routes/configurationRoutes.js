@@ -2,7 +2,7 @@ import express from "express";
 import {
   disableLocationValidation,
   enableLocationValidation,
-  getLocationValidationConfig,
+  getConfigurations,
 } from "../controllers/configurationController.js";
 import { isAdmin, isLogedIn } from "../middlewares/validateMiddleware.js";
 
@@ -22,6 +22,6 @@ router.post(
   disableLocationValidation,
 );
 
-router.get("/get/location/validation/config", getLocationValidationConfig);
+router.get("/get", getConfigurations);
 
 export default router;

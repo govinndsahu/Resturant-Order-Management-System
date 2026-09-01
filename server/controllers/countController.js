@@ -1,4 +1,3 @@
-import { addCache, preventCaching, purgeCache } from "../utils/cdnUtils.js";
 import {
   handleCancelEvent,
   handleChargeEvent,
@@ -10,7 +9,6 @@ import {
 
 export const getCount = async (req, res, next) => {
   try {
-    addCache({ res, days: 360 });
     return res.json({
       success: true,
       count: {
@@ -20,7 +18,6 @@ export const getCount = async (req, res, next) => {
       },
     });
   } catch (error) {
-    preventCaching(res);
     next(error);
   }
 };
@@ -54,16 +51,6 @@ export const updateCount = async (req, res, next) => {
     } else {
       console.warn(`Unhandled event: ${event}`);
     }
-
-    await purgeCache({
-      urls: ["/count"],
-      origin: "dgdine.in",
-    });
-    
-    await purgeCache({
-      urls: ["/count"],
-      origin: "www.dgdine.in",
-    });
 
     if (event === "subscription.paused") {
       return res.status(200).json({ success: true, count: req.oldCount });

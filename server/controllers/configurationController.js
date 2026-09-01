@@ -17,7 +17,7 @@ export const enableLocationValidation = async (req, res, next) => {
       await existingConfig.save();
 
       await purgeCache({
-        urls: ["/get/location/validation/config"],
+        urls: ["/configuration/get"],
         origin: "menu.dgdine.in",
       });
 
@@ -37,7 +37,7 @@ export const enableLocationValidation = async (req, res, next) => {
     });
 
     await purgeCache({
-      urls: ["/get/location/validation/config"],
+      urls: ["/configuration/get"],
       origin: "menu.dgdine.in",
     });
 
@@ -65,7 +65,7 @@ export const disableLocationValidation = async (req, res, next) => {
       await existingConfig.save();
 
       await purgeCache({
-        urls: ["/get/location/validation/config"],
+        urls: ["/configuration/get"],
         origin: "menu.dgdine.in",
       });
 
@@ -78,7 +78,7 @@ export const disableLocationValidation = async (req, res, next) => {
     }
 
     await purgeCache({
-      urls: ["/get/location/validation/config"],
+      urls: ["/configuration/get"],
       origin: "menu.dgdine.in",
     });
 
@@ -92,24 +92,30 @@ export const disableLocationValidation = async (req, res, next) => {
   }
 };
 
-export const getLocationValidationConfig = async (req, res, next) => {
+// ========================================== //
+
+export const enablePhoneValidation = async (req, res, next) => {};
+
+// ========================================= //
+
+export const getConfigurations = async (req, res, next) => {
   try {
-    const config = await Configuration.findOne().select(
-      "locationValidation.doValidate -_id",
-    );
+    const config = await Configuration.findOne().select("-_id");
 
     addCache({ res, days: 360 });
 
-    if (!config || !config.locationValidation) {
+    if (!config) {
+      const newConfig = await Configuration.insertOne({});
+
       return res.status(200).json({
         success: true,
-        config: { doValidate: false },
+        config: newConfig,
       });
     }
 
     return res.status(200).json({
       success: true,
-      config: config.locationValidation,
+      config: config,
     });
   } catch (error) {
     preventCaching(res);
