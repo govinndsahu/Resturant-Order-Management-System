@@ -244,7 +244,9 @@ export const disableOtpValidation = async (req, res, next) => {
 
 export const getConfigurations = async (req, res, next) => {
   try {
-    const config = await Configuration.findOne().select("-_id");
+    const config = await Configuration.findOne().select(
+      "-_id -phoneOtpValidation.data.authKey",
+    );
 
     addCache({ res, days: 360 });
 

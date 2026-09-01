@@ -10,7 +10,7 @@ import {
   markOrderAsDone,
 } from "../controllers/orderController.js";
 import { isLogedIn, isStaff } from "../middlewares/validateMiddleware.js";
-import { validateRestaurantLocation } from "../middlewares/validateLocationMiddleware.js";
+import { validateRestaurantLocation } from "../middlewares/validateConfigMiddleware.js";
 import {
   checkCount,
   increaseCount,
