@@ -16,11 +16,13 @@ import {
   increaseCount,
   resetCount,
 } from "../middlewares/countMiddleware.js";
+import { setSession } from "../middlewares/sessionMiddleware.js";
 
 const router = express.Router();
 
 router.post(
   "/create",
+  setSession,
   validateRestaurantLocation,
   resetCount,
   checkCount,

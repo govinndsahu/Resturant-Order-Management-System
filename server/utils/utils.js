@@ -45,7 +45,6 @@ export const setCookie = (res, session) =>
     httpOnly: true,
     secure: true,
     signed: true,
-    sameSite: "none",
     maxAge: 60 * 1000 * 60 * 24 * 365, // 365 days
   });
 

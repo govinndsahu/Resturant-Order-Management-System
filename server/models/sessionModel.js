@@ -9,13 +9,16 @@ const sessionSchema = new mongoose.Schema({
   createdAt: {
     type: Number,
     default: Date.now(),
-    expires: "365d",
   },
   expiresAt: {
     type: Number,
     default: null,
   },
   tableNumber: {
+    type: Number,
+    default: null,
+  },
+  phone: {
     type: Number,
     default: null,
   },
