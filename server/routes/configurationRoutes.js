@@ -1,8 +1,10 @@
 import express from "express";
 import {
   disableLocationValidation,
+  disableOtpValidation,
   disablePhoneValidation,
   enableLocationValidation,
+  enableOtpValidation,
   enablePhoneValidation,
   getConfigurations,
 } from "../controllers/configurationController.js";
@@ -36,6 +38,15 @@ router.post(
   isLogedIn,
   isAdmin,
   disablePhoneValidation,
+);
+
+router.post("/enable/otp/validation", isLogedIn, isAdmin, enableOtpValidation);
+
+router.post(
+  "/disable/otp/validation",
+  isLogedIn,
+  isAdmin,
+  disableOtpValidation,
 );
 
 router.get("/get", getConfigurations);
