@@ -14,10 +14,6 @@ const sessionSchema = new mongoose.Schema({
     type: Number,
     default: null,
   },
-  tableNumber: {
-    type: Number,
-    default: null,
-  },
   phone: {
     type: Number,
     default: null,
