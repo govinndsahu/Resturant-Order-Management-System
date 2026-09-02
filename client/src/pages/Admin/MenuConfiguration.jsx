@@ -1,34 +1,126 @@
 import {
   disableLocationValidationApi,
+  disableNameValidationApi,
+  disablePhoneOtpValidationApi,
+  disablePhoneValidationApi,
   enableLocationValidationApi,
-  getLocationValidationConfigApi,
+  enableNameValidationApi,
+  enablePhoneOtpValidationApi,
+  enablePhoneValidationApi,
 } from "../../apis/configurationApis";
 import LocationEnablePopup from "../../components/LocationEnablePopup";
+import OtpConfigPopup from "../../components/OtpConfigPopup";
 import { useConfig } from "../../contexts/ConfigContext";
 import "../../css/menuConfiguration.css";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 const MenuConfiguration = () => {
-  const { backendUrl, setError } = useConfig();
+  const { backendUrl, setError, configurations } = useConfig();
   const user = JSON.parse(localStorage.getItem("user"));
 
-  const [configs, setConfigs] = useState({ validateLocation: false });
+  // Use configurations from context as the single source of truth
+  const [configs, setConfigs] = useState({});
 
   const [showLocationPopup, setShowLocationPopup] = useState(false);
+  const [showOtpConfigPopup, setShowOtpConfigPopup] = useState(false);
 
-  const handleToggle = (key) => {
-    if (key === "validateLocation" && !configs[key]) {
+  // Sync local state with context configurations whenever they change
+  useEffect(() => {
+    if (configurations && Object.keys(configurations).length > 0) {
+      setConfigs(configurations);
+    }
+  }, [configurations]);
+
+  const handleToggle = async (key) => {
+    if (key === "customerNameValidation" && !configs[key]?.doValidate) {
+      handleNameValidationConfirm();
+      return;
+    }
+
+    if (key === "locationValidation" && !configs[key]?.doValidate) {
       setShowLocationPopup(true);
       return;
     }
 
-    if (configs[key] === true) {
-      if (key === "validateLocation") {
-        handleLocationValidationCancel();
-      }
+    if (key === "customerPhoneValidation" && !configs[key]?.doValidate) {
+      handlePhoneValidationConfirm();
+      return;
     }
 
-    setConfigs((prev) => ({ ...prev, [key]: !prev[key] }));
+    if (key === "phoneOtpValidation" && !configs[key]?.doValidate) {
+      setShowOtpConfigPopup(true);
+      return;
+    }
+
+    if (configs[key]?.doValidate === true && key === "customerNameValidation") {
+      handleNameValidationCancel();
+      return;
+    }
+
+    if (configs[key]?.doValidate === true && key === "locationValidation") {
+      handleLocationValidationCancel();
+      return;
+    }
+
+    if (
+      configs[key]?.doValidate === true &&
+      key === "customerPhoneValidation"
+    ) {
+      handlePhoneValidationCancel();
+      return;
+    }
+
+    if (configs[key]?.doValidate === true && key === "phoneOtpValidation") {
+      handleOtpValidationCancel();
+      return;
+    }
+
+    // For other toggles that don't need API calls — just flip doValidate
+    setConfigs((prev) => ({
+      ...prev,
+      [key]: {
+        ...prev[key],
+        doValidate: !prev[key]?.doValidate,
+      },
+    }));
+  };
+
+  const handleNameValidationConfirm = async () => {
+    try {
+      const { data } = await enableNameValidationApi(backendUrl);
+
+      if (data.success) {
+        setConfigs((prev) => ({
+          ...prev,
+          customerNameValidation: {
+            ...prev.customerNameValidation,
+            doValidate: true,
+            data: null,
+          },
+        }));
+      }
+    } catch (error) {
+      setError(error);
+    }
+  };
+
+  const handleNameValidationCancel = async () => {
+    try {
+      const { data } = await disableNameValidationApi(backendUrl);
+
+      if (data.success) {
+        setConfigs((prev) => ({
+          ...prev,
+          customerNameValidation: {
+            ...prev.customerNameValidation,
+            doValidate: false,
+            data: null,
+          },
+        }));
+      }
+    } catch (error) {
+      setError(error);
+    }
   };
 
   const handleLocationValidationConfirm = async (d) => {
@@ -42,7 +134,15 @@ const MenuConfiguration = () => {
       const { data } = await enableLocationValidationApi(payload, backendUrl);
 
       if (data.success) {
-        setConfigs((prev) => ({ ...prev, validateLocation: true }));
+        setConfigs((prev) => ({
+          ...prev,
+          locationValidation: {
+            ...prev.locationValidation,
+            doValidate: true,
+            data: payload,
+          },
+        }));
+        setShowLocationPopup(false);
         return true;
       }
     } catch (error) {
@@ -55,44 +155,128 @@ const MenuConfiguration = () => {
     try {
       const { data } = await disableLocationValidationApi(backendUrl);
       if (data.success) {
-        setConfigs((prev) => ({ ...prev, validateLocation: false }));
+        setConfigs((prev) => ({
+          ...prev,
+          locationValidation: {
+            ...prev.locationValidation,
+            doValidate: false,
+            data: null,
+          },
+        }));
       }
     } catch (error) {
       setError(error);
     }
   };
 
-  const getLocationValidationConfig = async () => {
+  const handlePhoneValidationConfirm = async () => {
     try {
-      const { data } = await getLocationValidationConfigApi(backendUrl);
+      const { data } = await enablePhoneValidationApi(backendUrl);
+
       if (data.success) {
-        const { doValidate } = data.config;
-        setConfigs((prev) => ({ ...prev, validateLocation: doValidate }));
+        setConfigs((prev) => ({
+          ...prev,
+          customerPhoneValidation: {
+            ...prev.customerPhoneValidation,
+            doValidate: true,
+          },
+        }));
       }
     } catch (error) {
       setError(error);
     }
   };
 
-  useEffect(() => {
-    getLocationValidationConfig();
-  }, []);
+  const handlePhoneValidationCancel = async () => {
+    try {
+      const { data } = await disablePhoneValidationApi(backendUrl);
 
-  const ToggleSwitch = ({ label, description, configKey }) => (
-    <div className="mc-toggle-row">
-      <div className="mc-toggle-info">
-        <span className="mc-toggle-label">{label}</span>
-        {description && <span className="mc-toggle-desc">{description}</span>}
+      if (data.success) {
+        setConfigs((prev) => ({
+          ...prev,
+          customerPhoneValidation: {
+            ...prev.customerPhoneValidation,
+            doValidate: false,
+            data: null,
+          },
+          phoneOtpValidation: {
+            ...prev.phoneOtpValidation,
+            doValidate: false,
+            data: null,
+          },
+        }));
+      }
+    } catch (error) {
+      setError(error);
+    }
+  };
+
+  const handleOtpValidationConfirm = async (payload) => {
+    try {
+      const { data } = await enablePhoneOtpValidationApi(payload, backendUrl);
+
+      if (data.success) {
+        setConfigs((prev) => ({
+          ...prev,
+          customerPhoneValidation: {
+            ...prev.customerPhoneValidation,
+            doValidate: true,
+          },
+          phoneOtpValidation: {
+            ...prev.phoneOtpValidation,
+            doValidate: true,
+            data: payload,
+          },
+        }));
+      }
+    } catch (error) {
+      setError(error);
+    }
+  };
+
+  const handleOtpValidationCancel = async () => {
+    try {
+      const { data } = await disablePhoneOtpValidationApi(backendUrl);
+
+      if (data.success) {
+        setConfigs((prev) => ({
+          ...prev,
+          customerPhoneValidation: {
+            ...prev.customerPhoneValidation,
+            doValidate: false,
+            data: null,
+          },
+          phoneOtpValidation: {
+            ...prev.phoneOtpValidation,
+            doValidate: false,
+            data: null,
+          },
+        }));
+      }
+    } catch (error) {
+      setError(error);
+    }
+  };
+
+  const ToggleSwitch = ({ label, description, configKey }) => {
+    const isOn = configs[configKey]?.doValidate === true;
+
+    return (
+      <div className="mc-toggle-row">
+        <div className="mc-toggle-info">
+          <span className="mc-toggle-label">{label}</span>
+          {description && <span className="mc-toggle-desc">{description}</span>}
+        </div>
+        <button
+          type="button"
+          className={`mc-toggle ${isOn ? "mc-toggle-on" : "mc-toggle-off"}`}
+          onClick={() => handleToggle(configKey)}
+          aria-pressed={isOn}>
+          <span className="mc-toggle-knob" />
+        </button>
       </div>
-      <button
-        type="button"
-        className={`mc-toggle ${configs[configKey] ? "mc-toggle-on" : "mc-toggle-off"}`}
-        onClick={() => handleToggle(configKey)}
-        aria-pressed={configs[configKey]}>
-        <span className="mc-toggle-knob" />
-      </button>
-    </div>
-  );
+    );
+  };
 
   const SectionCard = ({ title, icon, children }) => (
     <div className="mc-section">
@@ -163,9 +347,24 @@ const MenuConfiguration = () => {
             </svg>
           }>
           <ToggleSwitch
+            label="Name Validation"
+            description="Check if the customer's name is required or not while ordering."
+            configKey="customerNameValidation"
+          />
+          <ToggleSwitch
             label="Validate Location"
             description="Check if the customer is inside the restaurant or not while ordering."
-            configKey="validateLocation"
+            configKey="locationValidation"
+          />
+          <ToggleSwitch
+            label="Customer Phone Validation"
+            description="Require customers to verify their phone number before placing orders."
+            configKey="customerPhoneValidation"
+          />
+          <ToggleSwitch
+            label="Phone OTP Validation"
+            description="Send OTP to customer phone for additional order security."
+            configKey="phoneOtpValidation"
           />
         </SectionCard>
       </div>
@@ -174,6 +373,12 @@ const MenuConfiguration = () => {
         isOpen={showLocationPopup}
         onClose={() => setShowLocationPopup(false)}
         onConfirm={handleLocationValidationConfirm}
+      />
+
+      <OtpConfigPopup
+        isOpen={showOtpConfigPopup}
+        onClose={() => setShowOtpConfigPopup(false)}
+        onEnable={(payload) => handleOtpValidationConfirm(payload, backendUrl)}
       />
     </div>
   );

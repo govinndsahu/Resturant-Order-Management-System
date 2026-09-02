@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { getAppDataApi } from "../apis/apis";
-import { getLocationValidationConfigApi } from "../apis/configurationApis";
+import { getConfigurationApi } from "../apis/configurationApis";
 
 const ConfigContext = createContext(null);
 
@@ -19,7 +19,7 @@ export function ConfigProvider({ appId, children }) {
           localStorage.setItem("menuDbName", menuName);
         }
 
-        const isLocationNeed = await isLocationRequired(
+        const { configurations } = await getConfiguration(
           data.menu.menuBackendUrl,
         );
 
@@ -27,7 +27,7 @@ export function ConfigProvider({ appId, children }) {
           menuName,
           backendUrl: data.menu.menuBackendUrl,
           menu: data.menu,
-          isLocationNeed: isLocationNeed.doValidate,
+          configurations,
           setError,
         });
       }
@@ -38,18 +38,32 @@ export function ConfigProvider({ appId, children }) {
     }
   };
 
-  const isLocationRequired = async (backendUrl) => {
+  const getConfiguration = async (backendUrl) => {
     try {
-      const { data } = await getLocationValidationConfigApi(backendUrl);
+      const { data } = await getConfigurationApi(backendUrl);
 
       if (data.success) {
-        return { doValidate: data.config.doValidate };
+        return { configurations: data.config };
       } else {
-        return { doValidate: false };
+        return {
+          configurations: {
+            customerNameValidation: { doValidate: false },
+            locationValidation: { doValidate: false },
+            customerPhoneValidation: { doValidate: false },
+            phoneOtpValidation: { doValidate: false },
+          },
+        };
       }
     } catch (error) {
       setError(error);
-      return { doValidate: false };
+      return {
+        configurations: {
+          customerNameValidation: { doValidate: false },
+          locationValidation: { doValidate: false },
+          customerPhoneValidation: { doValidate: false },
+          phoneOtpValidation: { doValidate: false },
+        },
+      };
     }
   };
 

@@ -12,10 +12,17 @@ import { getAppRoute } from "../utils/util";
 import LocationErrorMessage from "./LocationErrorMessage";
 import { useConfig } from "../contexts/ConfigContext";
 
-const OrderForm = ({ dispalyForm, setDisplayForm, appName }) => {
-  const { backendUrl, isLocationNeed } = useConfig();
+const OrderForm = ({
+  setIsOpen,
+  dispalyForm,
+  setDisplayForm,
+  appName,
+  accessToken,
+}) => {
+  const { backendUrl, configurations } = useConfig();
 
   const [name, setName] = useState("");
+  const [showNameValidation, setShowNameValidation] = useState(false);
   const [tableNumber, setTableNumber] = useState("");
   const [showTableValidate, setShowTableValidate] = useState(false);
 
@@ -59,6 +66,7 @@ const OrderForm = ({ dispalyForm, setDisplayForm, appName }) => {
     if (e.target.classList.contains("order-form-overlay")) {
       setDisplayForm(false);
       setShowTableValidate(false);
+      setShowNameValidation(false);
     }
   };
 
@@ -93,6 +101,13 @@ const OrderForm = ({ dispalyForm, setDisplayForm, appName }) => {
     try {
       e.preventDefault();
 
+      if (configurations.customerNameValidation.doValidate && name === "") {
+        setShowNameValidation(true);
+        return;
+      } else {
+        setShowNameValidation(false);
+      }
+
       if (tableNumber === "") {
         setShowTableValidate(true);
         return;
@@ -102,13 +117,26 @@ const OrderForm = ({ dispalyForm, setDisplayForm, appName }) => {
 
       setLoader(true);
 
-      const position = isLocationNeed ? await getUserLocation() : null;
+      let position = null;
+      if (configurations.locationValidation.doValidate) {
+        try {
+          position = await getUserLocation();
+        } catch (error) {
+          setLoader(false);
+          setLocationError(true);
+          return;
+        }
+      } else {
+        position = null;
+      }
 
       const { data } = await createOrderApi(
         {
           ...orderData,
           lat: position?.coords.latitude,
           lng: position?.coords.longitude,
+          phoneNumber: localStorage.getItem("phoneNumber") || "",
+          accessToken: accessToken || "",
         },
         backendUrl,
       );
@@ -128,6 +156,15 @@ const OrderForm = ({ dispalyForm, setDisplayForm, appName }) => {
       setLoader(false);
       if (error.status === 403) {
         setLocationError(true);
+      }
+
+      const errMessage = error?.response?.data.error;
+      if (
+        errMessage === "PHONE_NUMBER_NOT_FOUND." ||
+        errMessage === "OTP_NOT_VERIFIED"
+      ) {
+        setIsOpen(true);
+        setLoader(false);
       }
     }
   };
@@ -153,6 +190,7 @@ const OrderForm = ({ dispalyForm, setDisplayForm, appName }) => {
               className="order-form-close"
               onClick={() => {
                 setDisplayForm(false);
+                setShowNameValidation(false);
                 setShowTableValidate(false);
               }}
               aria-label="Close">
@@ -197,15 +235,22 @@ const OrderForm = ({ dispalyForm, setDisplayForm, appName }) => {
               <input
                 type="text"
                 id="order-name"
-                placeholder="Enter your name (optional)"
+                placeholder={`Enter your name ${configurations.customerNameValidation.doValidate ? "" : "(optional)"}`}
                 value={name}
                 onChange={(e) => {
                   if (e.target.value === "authpage") {
                     navigate(route("loginpage"));
                   }
                   setName(e.target.value);
+                  setShowNameValidation(false);
                 }}
               />
+              {showNameValidation && (
+                <span className="error-message">
+                  <i className="ri-error-warning-line"></i>
+                  Name is required
+                </span>
+              )}
             </div>
 
             <div className="form-group">
@@ -220,6 +265,7 @@ const OrderForm = ({ dispalyForm, setDisplayForm, appName }) => {
                 value={tableNumber}
                 onChange={(e) => {
                   setTableNumber(e.target.value);
+                  setShowNameValidation(false);
                   setShowTableValidate(false);
                 }}
                 className={showTableValidate ? "error" : ""}
@@ -238,6 +284,7 @@ const OrderForm = ({ dispalyForm, setDisplayForm, appName }) => {
                 className="btn-secondary"
                 onClick={() => {
                   setDisplayForm(false);
+                  setShowNameValidation(false);
                   setShowTableValidate(false);
                 }}>
                 Cancel

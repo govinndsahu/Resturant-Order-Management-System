@@ -14,7 +14,7 @@ const ProceedContainer = ({ setDisplayForm }) => {
   const [showTutorial, setShowTutorial] = useState(false);
   const [loader, setLoader] = useState(false);
 
-  const { isLocationNeed } = useConfig();
+  const { configurations } = useConfig();
 
   const getUserLocation = () => {
     return new Promise((resolve, reject) => {
@@ -60,7 +60,7 @@ const ProceedContainer = ({ setDisplayForm }) => {
   };
 
   const handleDisplayForm = async () => {
-    if (isLocationNeed) {
+    if (configurations.locationValidation.doValidate) {
       const permissionStatus = await navigator.permissions.query({
         name: "geolocation",
       });

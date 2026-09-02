@@ -1,0 +1,447 @@
+/* ============================================
+   Phone OTP Flow — Verification Modal
+   ============================================ */
+
+/* ── Overlay ── */
+.po-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  animation: po-fade-in 0.2s ease;
+  padding: 16px;
+}
+
+@keyframes po-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ── Card ── */
+.po-card {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow:
+    0 25px 50px -12px rgba(0, 0, 0, 0.25),
+    0 0 0 1px rgba(0, 0, 0, 0.04);
+  overflow: hidden;
+  animation: po-slide-up 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  padding: 28px;
+}
+
+@keyframes po-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ── Close Button ── */
+.po-close-btn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 10px;
+  background: #f1f5f9;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0;
+  z-index: 2;
+}
+
+.po-close-btn:hover {
+  background: #e2e8f0;
+  color: #334155;
+}
+
+.po-close-btn:active {
+  transform: scale(0.92);
+}
+
+/* ── Header ── */
+.po-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.po-header-icon {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
+  color: #7c3aed;
+  flex-shrink: 0;
+}
+
+.po-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 4px 0;
+  letter-spacing: -0.01em;
+}
+
+.po-subtitle {
+  font-size: 0.85rem;
+  color: #94a3b8;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ── Info Banner ── */
+.po-info-banner {
+  display: flex;
+  gap: 12px;
+  padding: 14px 16px;
+  background: linear-gradient(135deg, #f5f3ff 0%, #faf9f6 100%);
+  border-radius: 12px;
+  border: 1px solid #ede9fe;
+  margin-bottom: 20px;
+}
+
+.po-info-icon {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #7c3aed;
+  flex-shrink: 0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.po-info-text {
+  font-size: 0.82rem;
+  color: #64748b;
+  margin: 0;
+  line-height: 1.6;
+}
+
+.po-info-text strong {
+  color: #7c3aed;
+  font-weight: 600;
+}
+
+/* ── Form ── */
+.po-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ── Field ── */
+.po-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.po-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #475569;
+}
+
+.po-label svg {
+  color: #7c3aed;
+}
+
+/* ── Input Wrapper ── */
+.po-input-wrapper {
+  display: flex;
+  align-items: center;
+  background: #f8fafc;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.po-input-wrapper:focus-within {
+  border-color: #a78bfa;
+  box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.15);
+}
+
+.po-country-code {
+  padding: 12px 0 12px 14px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #64748b;
+  border-right: 1px solid #e2e8f0;
+  margin-right: 10px;
+}
+
+.po-input {
+  flex: 1;
+  padding: 12px 14px 12px 0;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #1e293b;
+  background: transparent;
+  border: none;
+  outline: none;
+  letter-spacing: 0.05em;
+}
+
+.po-input::placeholder {
+  color: #cbd5e1;
+  font-weight: 400;
+}
+
+/* ── Error ── */
+.po-error {
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: #ef4444;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ── OTP Grid ── */
+.po-otp-grid {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.po-otp-input {
+  width: 44px;
+  height: 52px;
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #1e293b;
+  background: #f8fafc;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.po-otp-input:focus {
+  border-color: #7c3aed;
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
+  background: #ffffff;
+}
+
+.po-otp-filled {
+  border-color: #a78bfa;
+  background: #f5f3ff;
+  color: #7c3aed;
+}
+
+/* ── Primary Button ── */
+.po-btn-primary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 20px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #ffffff;
+  background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px rgba(124, 58, 237, 0.3);
+  margin-top: 4px;
+}
+
+.po-btn-primary:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(124, 58, 237, 0.4);
+}
+
+.po-btn-primary:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.po-btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ── Button Spinner ── */
+.po-btn-spinner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.po-spinner-ring {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: po-spin 0.8s linear infinite;
+}
+
+@keyframes po-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ── Resend ── */
+.po-resend {
+  text-align: center;
+  padding: 4px 0;
+}
+
+.po-resend-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #7c3aed;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 4px 8px;
+  border-radius: 8px;
+}
+
+.po-resend-btn:hover {
+  background: #f5f3ff;
+}
+
+.po-resend-timer {
+  font-size: 0.85rem;
+  color: #94a3b8;
+}
+
+.po-resend-timer strong {
+  color: #7c3aed;
+  font-weight: 600;
+}
+
+/* ── Change Phone ── */
+.po-change-phone {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: #94a3b8;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 4px;
+  margin: 0 auto;
+}
+
+.po-change-phone:hover {
+  color: #7c3aed;
+}
+
+/* ── Success State ── */
+.po-success {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 0;
+  animation: po-success-pop 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes po-success-pop {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.po-success-ring {
+  width: 72px;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+  box-shadow: 0 4px 16px rgba(5, 150, 105, 0.2);
+}
+
+.po-success-icon {
+  color: #059669;
+}
+
+.po-success-text {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0;
+}
+
+/* ============================================
+   Responsive
+   ============================================ */
+
+@media (max-width: 480px) {
+  .po-card {
+    padding: 22px 20px;
+    border-radius: 16px;
+  }
+
+  .po-otp-input {
+    width: 40px;
+    height: 48px;
+    font-size: 1.1rem;
+  }
+
+  .po-title {
+    font-size: 1.1rem;
+  }
+
+  .po-info-banner {
+    padding: 12px;
+  }
+
+  .po-info-text {
+    font-size: 0.78rem;
+  }
+}

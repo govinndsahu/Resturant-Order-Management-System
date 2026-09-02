@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",
+    "@msg91comm/sendotp-sdk": "^1.0.1",
     "@tailwindcss/vite": "^4.1.4",
     "axios": "^1.8.4",
     "date-fns": "^4.4.0",

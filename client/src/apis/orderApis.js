@@ -12,6 +12,7 @@ export const createOrderApi = async (orderData, backendUrl) => {
     headers: {
       "Content-Type": "application/json",
     },
+    withCredentials: true,
   });
   return { data };
 };
