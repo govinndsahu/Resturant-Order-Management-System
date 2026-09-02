@@ -24,6 +24,7 @@ export const setSession = async (req, res, next) => {
       session = await Session.create({
         expiresAt: Date.now() + SESSION_TTL,
         tableNumber,
+        phone: parseInt(req.body.phoneNumber) || null,
       });
 
       res.cookie("sessionId", session._id.toString(), {

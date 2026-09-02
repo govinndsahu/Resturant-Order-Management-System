@@ -1,5 +1,7 @@
 import Configuration from "../models/configurationModel.js";
+import Session from "../models/sessionModel.js";
 import { getDistanceInMeters } from "../utils/utils.js";
+import z from "zod/v4";
 
 export const validateRestaurantLocation = async (req, res, next) => {
   const { lat, lng } = req.body;
@@ -41,6 +43,50 @@ export const validateRestaurantLocation = async (req, res, next) => {
   }
 
   req.guestLocation = { lat, lng, distance: Math.round(distance) };
+  req.config = config;
 
   next();
+};
+
+export const validatePhoneNumber = async (req, res, next) => {
+  try {
+    const config = await Configuration.findOne();
+
+    if (
+      !config ||
+      !config.customerPhoneValidation ||
+      !config.customerPhoneValidation?.doValidate
+    ) {
+      return next();
+    }
+
+    if (!req.body.phoneNumber) {
+      return res.status(400).json({
+        success: false,
+        code: "PHONE_NUMBER_MISSING",
+        message: "Phone number is required.",
+      });
+    }
+
+    const { data: phoneNumber, success } = z
+      .string()
+      .min(10)
+      .safeParse(req.body.phoneNumber);
+
+    if (!success) {
+      return res.status(400).json({
+        success: false,
+        error: "PHONE_NUMBER_NOT_FOUND.",
+      });
+    }
+
+    if (req.session.phone === null) {
+      req.session.phone = parseInt(phoneNumber.slice(1, -1));
+      await req.session.save();
+    }
+
+    next();
+  } catch (error) {
+    next(error);
+  }
 };

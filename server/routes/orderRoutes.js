@@ -10,7 +10,7 @@ import {
   markOrderAsDone,
 } from "../controllers/orderController.js";
 import { isLogedIn, isStaff } from "../middlewares/validateMiddleware.js";
-import { validateRestaurantLocation } from "../middlewares/validateConfigMiddleware.js";
+import { validatePhoneNumber, validateRestaurantLocation } from "../middlewares/validateConfigMiddleware.js";
 import {
   checkCount,
   increaseCount,
@@ -24,6 +24,7 @@ router.post(
   "/create",
   setSession,
   validateRestaurantLocation,
+  validatePhoneNumber,
   resetCount,
   checkCount,
   increaseCount,
