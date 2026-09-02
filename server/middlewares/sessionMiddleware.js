@@ -10,7 +10,7 @@ export const setSession = async (req, res, next) => {
     let session = null;
 
     if (sessionId) {
-      session = await Session.findOne({ _id: sessionId, tableNumber });
+      session = await Session.findOne({ _id: sessionId });
 
       // expired -> treat as invalid, clean up
       if (session && session.expiresAt < Date.now()) {

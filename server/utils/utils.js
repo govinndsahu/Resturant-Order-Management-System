@@ -93,6 +93,30 @@ export const getDistanceInMeters = (lat1, lng1, lat2, lng2) => {
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 };
 
+export const veriryOtp = async ({ authkey, accessToken }) => {
+  const url = new URL(
+    "https://control.msg91.com/api/v5/widget/verifyAccessToken",
+  );
+  let headers = {
+    "Content-Type": "application/json",
+    Accept: "application/json",
+  };
+
+  let body = {
+    authkey,
+    "access-token": accessToken,
+  };
+  return await fetch(url, {
+    method: "POST",
+    headers: headers,
+    body: JSON.stringify(body),
+  })
+    .then((response) => response.json())
+    .then((json) => json);
+};
+
+// =============================================== //
+
 export const handleChargeEvent = async ({ req, count }) => {
   if (req.planId === process.env.RAZORPAY_PLAN_STARTER) {
     count.count = 0;

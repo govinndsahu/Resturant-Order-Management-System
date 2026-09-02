@@ -22,6 +22,10 @@ const sessionSchema = new mongoose.Schema({
     type: Number,
     default: null,
   },
+  isVerified: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const Session = mongoose.model("Session", sessionSchema);

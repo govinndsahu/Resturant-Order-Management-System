@@ -1,6 +1,6 @@
 import Configuration from "../models/configurationModel.js";
 import Session from "../models/sessionModel.js";
-import { getDistanceInMeters } from "../utils/utils.js";
+import { getDistanceInMeters, veriryOtp } from "../utils/utils.js";
 import z from "zod/v4";
 
 export const validateRestaurantLocation = async (req, res, next) => {
@@ -83,6 +83,59 @@ export const validatePhoneNumber = async (req, res, next) => {
     if (req.session.phone === null) {
       req.session.phone = parseInt(phoneNumber.slice(1, -1));
       await req.session.save();
+    }
+
+    next();
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const validateOtp = async (req, res, next) => {
+  try {
+    const config = await Configuration.findOne();
+
+    if (
+      !config ||
+      !config.phoneOtpValidation ||
+      !config.phoneOtpValidation?.doValidate
+    ) {
+      return next();
+    }
+
+    if (req.session.isVerified === false) {
+      if (!req.body.accessToken.length) {
+        return res.status(400).json({
+          success: false,
+          error: "OTP_NOT_VERIFIED",
+        });
+      }
+
+      const verifyResponse = await veriryOtp({
+        accessToken: req.body.accessToken,
+        authkey: config.phoneOtpValidation?.data.authKey,
+      });
+
+      if (
+        verifyResponse.type !== "success" &&
+        verifyResponse.message !== "91" + req.session.phone.toString()
+      ) {
+        return res.status(400).json({
+          success: false,
+          error: "OTP_NOT_VERIFIED",
+        });
+      }
+
+      req.session.isVerified = true;
+      req.session.expiresAt = Date.now() + 1000 * 60 * 60 * 24 * 365;
+      await req.session.save();
+
+      res.cookie("sessionId", req.session._id.toString(), {
+        httpOnly: true,
+        secure: true,
+        signed: true,
+        maxAge: 1000 * 60 * 60 * 24 * 365,
+      });
     }
 
     next();
