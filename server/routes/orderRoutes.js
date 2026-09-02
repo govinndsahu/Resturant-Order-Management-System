@@ -21,12 +21,16 @@ import {
   resetCount,
 } from "../middlewares/countMiddleware.js";
 import { setSession } from "../middlewares/sessionMiddleware.js";
+import { orderLimiter } from "../utils/rateLimiter.js";
+import { throttle } from "../utils/throttle.js";
 
 const router = express.Router();
 
 router.post(
   "/create",
   setSession,
+  orderLimiter,
+  throttle(30),
   validateRestaurantLocation,
   validatePhoneNumber,
   validateOtp,
