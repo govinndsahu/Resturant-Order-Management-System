@@ -1,9 +1,11 @@
 import express from "express";
 import {
   disableLocationValidation,
+  disableNameValidation,
   disableOtpValidation,
   disablePhoneValidation,
   enableLocationValidation,
+  enableNameValidation,
   enableOtpValidation,
   enablePhoneValidation,
   getConfigurations,
@@ -11,6 +13,20 @@ import {
 import { isAdmin, isLogedIn } from "../middlewares/validateMiddleware.js";
 
 const router = express.Router();
+
+router.post(
+  "/enable/name/validation",
+  isLogedIn,
+  isAdmin,
+  enableNameValidation,
+);
+
+router.post(
+  "/disable/name/validation",
+  isLogedIn,
+  isAdmin,
+  disableNameValidation,
+);
 
 router.post(
   "/enable/location/validation",

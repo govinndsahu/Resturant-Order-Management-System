@@ -2,6 +2,58 @@ import Configuration from "../models/configurationModel.js";
 import { addCache, preventCaching, purgeCache } from "../utils/cdnUtils.js";
 import z from "zod/v4";
 
+export const enableNameValidation = async (req, res, next) => {
+  try {
+    const config = await Configuration.findOne();
+
+    config.customerNameValidation = {
+      doValidate: true,
+      data: null,
+    };
+    await config.save();
+
+    await purgeCache({
+      urls: ["/configuration/get"],
+      origin: "menu.dgdine.in",
+    });
+
+    return res.status(201).json({
+      success: true,
+      message: "Name validation enabled successfully",
+      config,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const disableNameValidation = async (req, res, next) => {
+  try {
+    const config = await Configuration.findOne();
+
+    config.customerNameValidation = {
+      doValidate: false,
+      data: null,
+    };
+    await config.save();
+
+    await purgeCache({
+      urls: ["/configuration/get"],
+      origin: "menu.dgdine.in",
+    });
+
+    return res.status(201).json({
+      success: true,
+      message: "Name validation disabled successfully",
+      config,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// ======================================== //
+
 export const enableLocationValidation = async (req, res, next) => {
   try {
     const { latitude, longitude, radius } = req.body;

@@ -2,6 +2,13 @@ import mongoose from "mongoose";
 
 const configurationSchema = new mongoose.Schema(
   {
+    customerNameValidation: {
+      type: Object,
+      default: {
+        doValidate: false,
+        data: null,
+      },
+    },
     locationValidation: {
       type: Object,
       default: {
