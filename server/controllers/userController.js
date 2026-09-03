@@ -43,6 +43,7 @@ export const registerUser = async (req, res, next) => {
 
     const session = new Session({
       userId: newUser._id,
+      expiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
     });
 
     await session.save();
@@ -98,6 +99,7 @@ export const loginUser = async (req, res, next) => {
 
     const session = new Session({
       userId: user._id,
+      expiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
     });
 
     await session.save();
