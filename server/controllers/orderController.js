@@ -12,7 +12,13 @@ export const createOrder = async (req, res, next) => {
 
     const { products, tableNumber, buyer, total } = data;
 
-    const order = new Order({ products, tableNumber, buyer, total });
+    const order = new Order({
+      products,
+      tableNumber,
+      buyer,
+      total,
+      phoneNumber: req.session.phone || null,
+    });
 
     await order.save();
 

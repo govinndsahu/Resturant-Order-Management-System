@@ -22,6 +22,10 @@ const orderSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    phoneNumber: {
+      type: Number,
+      default: null,
+    },
   },
   { timestamps: true },
 );
