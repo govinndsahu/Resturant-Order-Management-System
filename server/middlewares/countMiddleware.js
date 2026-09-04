@@ -70,8 +70,6 @@ export const checkSignature = async (req, res, next) => {
   try {
     const count = await Count.findOne();
 
-    const oldCount = count;
-
     const dgDineSignature = req.headers["dgdine-signature"];
 
     if (!dgDineSignature) {
@@ -102,8 +100,6 @@ export const checkSignature = async (req, res, next) => {
       willReset: count.willReset,
       resetDate: count.resetDate,
     };
-
-    
 
     next();
   } catch (error) {

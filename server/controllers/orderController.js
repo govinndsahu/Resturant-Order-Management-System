@@ -39,7 +39,10 @@ export const createOrder = async (req, res, next) => {
 
 export const getOrders = async (req, res, next) => {
   try {
-    const orders = await Order.find({ isDone: false }).sort({ createdAt: 1 });
+    const orders = await Order.find({ isDone: false, isArchived: false }).sort({
+      createdAt: 1,
+    });
+
     addCache({ res, days: 7, browserAge: 5 });
     return res.status(200).json({
       success: true,
@@ -138,7 +141,9 @@ export const markOrderAsDone = async (req, res, next) => {
 
 export const getOrdersAsHistory = async (req, res, next) => {
   try {
-    const orders = await Order.find({ isDone: true }).sort({ createdAt: 1 });
+    const orders = await Order.find({ isDone: true, isArchived: false }).sort({
+      createdAt: 1,
+    });
     addCache({ res, days: 7, browserAge: 5 });
     return res.status(200).json({
       success: true,

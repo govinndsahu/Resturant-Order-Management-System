@@ -23,6 +23,7 @@ import {
 import { setSession } from "../middlewares/sessionMiddleware.js";
 import { orderLimiter } from "../utils/rateLimiter.js";
 import { throttle } from "../utils/throttle.js";
+import { clearArchives } from "../middlewares/middlewares.js";
 
 const router = express.Router();
 
@@ -37,6 +38,7 @@ router.post(
   resetCount,
   checkCount,
   increaseCount,
+  clearArchives,
   createOrder,
 );
 
