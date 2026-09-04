@@ -170,3 +170,18 @@ export const deleteHistory = async (req, res, next) => {
     next(error);
   }
 };
+
+export const getArchivedOrders = async (req, res, next) => {
+  try {
+    const orders = await Order.find({ isArchived: true }).sort({
+      createdAt: 1,
+    });
+    addCache({ res, days: 7, browserAge: 5 });
+    return res.status(200).json({
+      success: true,
+      orders,
+    });
+  } catch (error) {
+    next(error);
+  }
+};

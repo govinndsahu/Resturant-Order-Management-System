@@ -5,6 +5,7 @@ import {
   deleteHistory,
   deleteOrder,
   doneAllOrders,
+  getArchivedOrders,
   getOrders,
   getOrdersAsHistory,
   markOrderAsDone,
@@ -55,5 +56,7 @@ router.post("/mark-all-as-done", isLogedIn, isStaff, doneAllOrders);
 router.get("/history", isLogedIn, isStaff, getOrdersAsHistory);
 
 router.delete("/history/delete/:id", isLogedIn, isStaff, deleteHistory);
+
+router.get("/get/archives", isLogedIn, isStaff, getArchivedOrders);
 
 export default router;

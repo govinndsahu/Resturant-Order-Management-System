@@ -30,6 +30,10 @@ const orderSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    orderedAt: {
+      type: Number,
+      default: Date.now(),
+    },
   },
   { timestamps: true },
 );

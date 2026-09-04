@@ -8,12 +8,17 @@ export const clearArchives = async (req, res, next) => {
 
     if (!firstOrder) return next();
 
-    const willBeArchived =
-      new Date(firstOrder.createdAt).getTime() + 1000 * 60 * 60 * 24 * 1;
+    const firstOrderDate = new Date(firstOrder.createdAt);
+    firstOrderDate.setHours(6, 0, 0, 0);
 
-    if (Date.now() > willBeArchived) {
+    const willBeArchivedMs = firstOrderDate.getTime() + 1 * 24 * 60 * 60 * 1000;
+
+    if (Date.now() > willBeArchivedMs) {
       await Order.deleteMany({ isArchived: true });
-      await Order.updateMany({ isArchived: false }, { isArchived: true });
+      await Order.updateMany(
+        { isArchived: false, orderedAt: { $lt: willBeArchivedMs } },
+        { isArchived: true },
+      );
     }
 
     next();
