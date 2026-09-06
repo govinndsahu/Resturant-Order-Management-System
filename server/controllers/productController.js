@@ -1,7 +1,7 @@
 import Product from "../models/productModel.js";
 import Category from "../models/categoryModel.js";
 
-import { compressToTargetSize } from "../utils/utils.js";
+import { compressToTargetSize, increaseCount } from "../utils/utils.js";
 import { addCache, preventCaching, purgeCache } from "../utils/cdnUtils.js";
 import mongoose from "mongoose";
 import { deleteFileFromR2, uploadFileToR2 } from "../utils/r2Utils.js";
@@ -14,7 +14,7 @@ export const createProduct = async (req, res, next) => {
 
     if (product) {
       return res.status(400).json({
-        error: "Product already exists with the same name and category",
+        error: "Product already exists",
       });
     }
 
@@ -112,23 +112,27 @@ export const uploadProductImage = async (req, res, next) => {
 
     await product.save();
 
-    await purgeCache({
-      urls: ["/products"],
-      origin: "menu.dgdine.in",
-    });
+    if (isUpdating === "false") {
+      await increaseCount(req);
+    }
 
     if (isUpdating === "true") {
       await deleteFileFromR2({ key: oldImageKey });
     }
 
+    await purgeCache({
+      urls: ["/products"],
+      origin: "menu.dgdine.in",
+    });
+
     return res
       .status(200)
       .json({ success: true, message: "Product image uploaded successfully" });
   } catch (error) {
-    next(error);
     if (isUpdating === "false") {
       await Product.findByIdAndDelete(id);
     }
+    next(error);
     return res
       .status(500)
       .json({ success: false, error: "Failed to upload product image" });

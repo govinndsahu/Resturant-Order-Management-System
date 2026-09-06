@@ -33,17 +33,6 @@ export const checkItemCount = async (req, res, next) => {
   }
 };
 
-export const increaseCount = async (req, res, next) => {
-  try {
-    const count = req.count;
-    count.count += 1;
-    await count.save();
-    next();
-  } catch (error) {
-    next(error);
-  }
-};
-
 export const increaseItemCount = async (req, res, next) => {
   try {
     const count = req.count;

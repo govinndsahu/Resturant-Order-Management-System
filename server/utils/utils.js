@@ -13,6 +13,12 @@ const whitelist = [
   "https://menu.dgdine.in",
 ];
 
+export const increaseCount = async (req) => {
+  const count = req.count;
+  count.count += 1;
+  await count.save();
+};
+
 export const handleCors = () => {
   return cors({
     origin: function (origin, callback) {
