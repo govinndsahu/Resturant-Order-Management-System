@@ -20,19 +20,14 @@ const router = express.Router();
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
-router.post(
-  "/create",
-  isLogedIn,
-  isAdmin,
-  checkItemCount,
-  increaseItemCount,
-  createProduct,
-);
+router.post("/create", isLogedIn, isAdmin, createProduct);
 
 router.post(
   "/upload-image/:id",
   isLogedIn,
   isAdmin,
+  checkItemCount,
+  increaseItemCount,
   upload.single("image"),
   uploadProductImage,
 );

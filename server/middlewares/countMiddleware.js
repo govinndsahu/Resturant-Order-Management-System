@@ -17,9 +17,9 @@ export const checkCount = async (req, res, next) => {
 
 export const checkItemCount = async (req, res, next) => {
   try {
-    const count = await Count.findOne();
+    let count = await Count.findOne();
     if (!count) {
-      return res.status(404).json({ message: "Count not found" });
+      count = await Count.insertOne();
     }
     if (count.itemCount >= count.maxItemCount)
       return res

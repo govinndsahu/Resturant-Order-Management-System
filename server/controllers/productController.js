@@ -13,7 +13,9 @@ export const createProduct = async (req, res, next) => {
     const product = await Product.findOne({ name, category });
 
     if (product) {
-      return res.status(400).json({ error: "Product already exists" });
+      return res.status(400).json({
+        error: "Product already exists with the same name and category",
+      });
     }
 
     if (price_type === "both") {
