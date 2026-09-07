@@ -1,5 +1,6 @@
 import cors from "cors";
 import sharp from "sharp";
+import Count from "../models/countModel.js";
 
 sharp.cache(false);
 sharp.concurrency(1);
@@ -13,9 +14,19 @@ const whitelist = [
   "https://menu.dgdine.in",
 ];
 
-export const increaseCount = async (req) => {
-  const count = req.count;
+export const increaseCount = async (count) => {
   count.count += 1;
+  await count.save();
+};
+
+export const increaseItemCount = async (count) => {
+  count.itemCount += 1;
+  await count.save();
+};
+
+export const decreaseItemCount = async () => {
+  const count = await Count.findOne();
+  count.itemCount -= 1;
   await count.save();
 };
 

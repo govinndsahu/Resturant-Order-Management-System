@@ -11,8 +11,6 @@ import {
 import { isAdmin, isLogedIn } from "../middlewares/validateMiddleware.js";
 import {
   checkItemCount,
-  decreaseItemCount,
-  increaseItemCount,
 } from "../middlewares/countMiddleware.js";
 
 const router = express.Router();
@@ -20,14 +18,12 @@ const router = express.Router();
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
-router.post("/create", isLogedIn, isAdmin, createProduct);
+router.post("/create", isLogedIn, isAdmin, checkItemCount, createProduct);
 
 router.post(
   "/upload-image/:id",
   isLogedIn,
   isAdmin,
-  checkItemCount,
-  increaseItemCount,
   upload.single("image"),
   uploadProductImage,
 );
@@ -38,7 +34,6 @@ router.delete(
   "/delete/:id",
   isLogedIn,
   isAdmin,
-  decreaseItemCount,
   deleteProduct,
 );
 

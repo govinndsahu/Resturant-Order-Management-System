@@ -43,7 +43,7 @@ export const getOrders = async (req, res, next) => {
       createdAt: 1,
     });
 
-    addCache({ res, days: 7, browserAge: 5 });
+    addCache({ res, days: 7, browserCache: false });
     return res.status(200).json({
       success: true,
       orders,

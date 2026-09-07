@@ -1,10 +1,16 @@
 import Product from "../models/productModel.js";
 import Category from "../models/categoryModel.js";
 
-import { compressToTargetSize, increaseCount } from "../utils/utils.js";
+import {
+  compressToTargetSize,
+  decreaseItemCount,
+  increaseCount,
+  increaseItemCount,
+} from "../utils/utils.js";
 import { addCache, preventCaching, purgeCache } from "../utils/cdnUtils.js";
 import mongoose from "mongoose";
 import { deleteFileFromR2, uploadFileToR2 } from "../utils/r2Utils.js";
+import Count from "../models/countModel.js";
 
 // create a product
 export const createProduct = async (req, res, next) => {
@@ -113,7 +119,9 @@ export const uploadProductImage = async (req, res, next) => {
     await product.save();
 
     if (isUpdating === "false") {
-      await increaseCount(req);
+      const count = await Count.findOne();
+      await increaseCount(count);
+      await increaseItemCount(count);
     }
 
     if (isUpdating === "true") {
@@ -201,6 +209,8 @@ export const deleteProduct = async (req, res, next) => {
 
       const imageKey = product.image.split("/").pop();
       await deleteFileFromR2({ key: imageKey });
+
+      await decreaseItemCount();
 
       return res
         .status(200)

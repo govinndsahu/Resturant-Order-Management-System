@@ -33,28 +33,6 @@ export const checkItemCount = async (req, res, next) => {
   }
 };
 
-export const increaseItemCount = async (req, res, next) => {
-  try {
-    const count = req.count;
-    count.itemCount += 1;
-    await count.save();
-    next();
-  } catch (error) {
-    next(error);
-  }
-};
-
-export const decreaseItemCount = async (req, res, next) => {
-  try {
-    const count = await Count.findOne();
-    count.itemCount -= 1;
-    await count.save();
-    next();
-  } catch (error) {
-    next(error);
-  }
-};
-
 export const checkSignature = async (req, res, next) => {
   try {
     const count = await Count.findOne();
