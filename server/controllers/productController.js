@@ -4,7 +4,6 @@ import Category from "../models/categoryModel.js";
 import {
   compressToTargetSize,
   decreaseItemCount,
-  increaseCount,
   increaseItemCount,
 } from "../utils/utils.js";
 import { addCache, preventCaching, purgeCache } from "../utils/cdnUtils.js";
@@ -120,7 +119,6 @@ export const uploadProductImage = async (req, res, next) => {
 
     if (isUpdating === "false") {
       const count = await Count.findOne();
-      await increaseCount(count);
       await increaseItemCount(count);
     }
 
@@ -207,7 +205,7 @@ export const deleteProduct = async (req, res, next) => {
         origin: "menu.dgdine.in",
       });
 
-      const imageKey = product.image.split("/").pop();
+      const imageKey = product?.image.split("/").pop();
       await deleteFileFromR2({ key: imageKey });
 
       await decreaseItemCount();

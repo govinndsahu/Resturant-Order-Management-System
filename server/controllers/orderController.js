@@ -1,5 +1,6 @@
 import Order from "../models/orderModel.js";
 import { addCache, purgeCache } from "../utils/cdnUtils.js";
+import { increaseCount } from "../utils/utils.js";
 import { createOrderSchema } from "../validator/orderSchema.js";
 
 export const createOrder = async (req, res, next) => {
@@ -22,6 +23,8 @@ export const createOrder = async (req, res, next) => {
 
     await order.save();
 
+    await increaseCount(req.count);
+
     await purgeCache({
       urls: ["/orders", "/orders/history"],
       origin: "menu.dgdine.in",
@@ -32,7 +35,6 @@ export const createOrder = async (req, res, next) => {
       message: "Order created successfully",
     });
   } catch (error) {
-    console.log(error);
     next(error);
   }
 };
@@ -49,7 +51,6 @@ export const getOrders = async (req, res, next) => {
       orders,
     });
   } catch (error) {
-    console.log(error);
     next(error);
   }
 };
@@ -67,7 +68,6 @@ export const deleteOrder = async (req, res, next) => {
       message: "Order deleted successfully",
     });
   } catch (error) {
-    console.log(error);
     next(error);
   }
 };
@@ -101,7 +101,6 @@ export const clearOrders = async (req, res, next) => {
       message: "Orders cleared successfully",
     });
   } catch (error) {
-    console.log(error);
     next(error);
   }
 };
