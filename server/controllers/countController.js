@@ -1,3 +1,5 @@
+import Count from "../models/countModel.js";
+
 import {
   handleCancelEvent,
   handleChargeEvent,
@@ -26,10 +28,10 @@ export const updateCount = async (req, res, next) => {
   try {
     const { event, payload } = req.body;
 
-    const count = req.count;
+    let count = req.count;
 
     if (!count) {
-      return res.status(404).json({ message: "Count not found" });
+      count = await Count.insertOne();
     }
 
     if (!payload.currentEnd) {
