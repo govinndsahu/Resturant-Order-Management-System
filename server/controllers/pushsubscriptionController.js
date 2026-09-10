@@ -3,8 +3,6 @@ import webpush from "web-push";
 
 export const savePushSubscription = async (req, res) => {
   try {
-    console.log("Hello World!");
-
     const subscription = req.body.subscription ?? req.body;
 
     if (!subscription) {
@@ -69,14 +67,14 @@ export const sendPushNotification = async (req, res, next) => {
     const payload = JSON.stringify({
       title: "New Order",
       body: "You have a new order.",
-      url: "/",
+      url: `${process.env.CLIENT_URL}/${process.env.MENU_ID}/dashboard/orders`,
     });
 
     const subscriptions = await PushSubscription.find()
       .lean()
       .select("endpoint keys -_id expirationTime");
 
-    await Promise.allSettled(
+    const results = await Promise.allSettled(
       subscriptions.map((sub) => webpush.sendNotification(sub, payload)),
     );
 
