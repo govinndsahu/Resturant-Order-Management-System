@@ -1,13 +1,10 @@
 import "../../css/histories.css";
 import { useEffect, useState } from "react";
-import axios from "axios";
 
 import FiltereInput from "../../components/FiltereInput";
-import CalendarRangePicker from "../../components/CalendarRangePicker";
 import { useConfig } from "../../contexts/ConfigContext";
 import {
   deleteHistoryApi,
-  deleteOrderApi,
   deleteOrdersApi,
   getHistoryOrdersApi,
 } from "../../apis/orderApis";
@@ -24,31 +21,13 @@ const Histories = () => {
   const [loader, setLoader] = useState(false);
 
   const filteredHistories = () => {
-    const startDate = localStorage.getItem("startDate");
-    const endDate = localStorage.getItem("endDate");
-
-    return histories
-      ?.filter(
-        (order) =>
-          order.buyer.toLowerCase().includes(name.toLowerCase()) &&
-          (tableNumber === ""
-            ? String(order.tableNumber).includes(tableNumber)
-            : String(order.tableNumber) === String(tableNumber)),
-      )
-      .filter((order) => {
-        const orderDate = new Date(order.createdAt);
-
-        // If no range is set, show all orders
-        if (!startDate || !endDate) return true;
-
-        const start = new Date(startDate);
-        start.setHours(0, 0, 0, 0); // force to 00:00:00.000
-
-        const end = new Date(endDate);
-        end.setHours(23, 59, 59, 999);
-
-        return orderDate >= start && orderDate <= end;
-      });
+    return histories?.filter(
+      (order) =>
+        order.buyer.toLowerCase().includes(name.toLowerCase()) &&
+        (tableNumber === ""
+          ? String(order.tableNumber).includes(tableNumber)
+          : String(order.tableNumber) === String(tableNumber)),
+    );
   };
 
   const fetchHistories = async () => {
@@ -253,12 +232,6 @@ const Histories = () => {
         {/* ===== Filters ===== */}
         <div className="hist-filters-card">
           <div className="hist-filters-row">
-            <div className="hist-filter-item hist-filter-date">
-              <CalendarRangePicker
-                filteredData={filteredHistories}
-                refreshData={fetchHistories}
-              />
-            </div>
             <div className="hist-filter-item hist-filter-inputs">
               <FiltereInput
                 name={name}
@@ -370,7 +343,9 @@ const Histories = () => {
                                 {getInitials(history.buyer)}
                               </div>
                               <span className="hist-customer-name">
-                                {history.buyer}
+                                {history.buyer}{" "}
+                                {history.phoneNumber &&
+                                  `(${history.phoneNumber})`}
                               </span>
                             </div>
                           </td>
@@ -515,6 +490,7 @@ const Histories = () => {
                         </div>
                         <span className="hist-customer-name">
                           {history.buyer}
+                          {history.phoneNumber && ` (${history.phoneNumber})`}
                         </span>
                       </div>
 

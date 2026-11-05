@@ -17,8 +17,6 @@ import { globalError, handleAppListen, handleCors } from "./utils/utils.js";
 
 const app = express();
 
-const port = process.env.PORT;
-
 pushNotificationSetup();
 
 app.use(handleCors());

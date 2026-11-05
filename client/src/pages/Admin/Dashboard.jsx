@@ -5,9 +5,11 @@ import { useEffect, useState } from "react";
 import { dashboardPages } from "../../constants";
 import NotificationButton from "../../components/NotificationButton";
 import InstallButton from "../../components/InstallButton";
-import { getAppRoute } from "../../utils/util";
+import { exportOrdersToExcel, getAppRoute } from "../../utils/util";
 import { useConfig } from "../../contexts/ConfigContext";
 import { getUserApi } from "../../apis/userApis";
+import { getArchivedOrdersApi } from "../../apis/apis";
+import NoDataPopup from "../../components/NoDataPopup";
 
 const Dashboard = ({ appName }) => {
   const navigate = useNavigate();
@@ -17,6 +19,7 @@ const Dashboard = ({ appName }) => {
   const route = (path = "") => getAppRoute(appName, path);
 
   const [greeting, setGreeting] = useState("Good day");
+  const [showPopup, setShowPopup] = useState(false);
 
   const getUser = async (userId) => {
     try {
@@ -46,7 +49,6 @@ const Dashboard = ({ appName }) => {
     Products: "ri-restaurant-line",
     Orders: "ri-file-list-3-line",
     "Orders Histories": "ri-history-line",
-    "Orders Analytics": "ri-bar-chart-line",
     Users: "ri-team-line",
     "Menu Configuration": "ri-settings-3-line",
   };
@@ -56,7 +58,6 @@ const Dashboard = ({ appName }) => {
     Products: { bg: "#f0fdf4", icon: "#22c55e", border: "#dcfce7" },
     Orders: { bg: "#fef3c7", icon: "#f59e0b", border: "#fde68a" },
     "Orders Histories": { bg: "#f5f3ff", icon: "#8b5cf6", border: "#ddd6fe" },
-    "Orders Analytics": { bg: "#f0f9ff", icon: "#0ea5e9", border: "#bae6fd" },
     Users: { bg: "#fdf2f8", icon: "#ec4899", border: "#fbcfe8" },
     "Menu Configuration": { bg: "#f3f4f6", icon: "#6b7280", border: "#d1d5db" },
   };
@@ -130,6 +131,30 @@ const Dashboard = ({ appName }) => {
           </div>
         </div>
       </div>
+
+      {/* Export Banner */}
+      <div className="admin-export-banner">
+        <button
+          className="admin-export-btn"
+          onClick={async () => {
+            const { data } = await getArchivedOrdersApi(backendUrl);
+
+            if (!data?.orders || data?.orders.length === 0) {
+              setShowPopup(true);
+              return;
+            }
+
+            exportOrdersToExcel(
+              data?.orders,
+              `orders_${data.orders[0]?.createdAt?.slice(0, 10)}`,
+            );
+          }}>
+          <i className="ri-file-excel-2-line"></i>
+          Export Orders to Excel
+        </button>
+      </div>
+
+      <NoDataPopup isOpen={showPopup} onClose={() => setShowPopup(false)} />
 
       {/* Main Navigation Grid */}
       <div className="admin-section">

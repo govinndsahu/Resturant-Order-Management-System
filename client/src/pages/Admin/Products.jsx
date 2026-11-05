@@ -11,10 +11,12 @@ import {
   uploadImageApi,
 } from "../../apis/productsApi";
 import { useConfig } from "../../contexts/ConfigContext";
-import UploadStatus from "../../components/Uploadstatus";
+import AlreadyExistPopup from "../../components/AlreadyExistPopup";
+import SaveItemStatus from "../../components/SaveItemStatus";
+import OrderLimitPopup from "../../components/OrderLimitPopup";
 
 const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png"];
-const MAX_IMAGE_SIZE_MB = 5;
+const MAX_IMAGE_SIZE_MB = 2;
 const MAX_IMAGE_SIZE_BYTES = MAX_IMAGE_SIZE_MB * 1024 * 1024;
 
 const Products = () => {
@@ -38,6 +40,9 @@ const Products = () => {
   const [updateMode, setUpdateMode] = useState(false);
   const [loader, setLoader] = useState(false);
   const [showStatus, setShowStatus] = useState(false);
+  const [showUpdateStatus, setUpdateShowStatus] = useState(false);
+  const [alreadyExistPopupOpen, setAlreadyExistPopupOpen] = useState(false);
+  const [limitPopupOpen, setLimitPopupOpen] = useState(false);
 
   // Validation errors state
   const [errors, setErrors] = useState({});
@@ -258,7 +263,15 @@ const Products = () => {
         uploadImage(data.id, image);
       }
     } catch (error) {
-      console.error(error);
+      const errorMessage = error?.response?.data?.error;
+      if (errorMessage === "Product already exists") {
+        setAlreadyExistPopupOpen(true);
+      }
+      if (errorMessage === "Iteam count has reached the maximum limit") {
+        setLimitPopupOpen(true);
+      }
+      setLoader(false);
+      setShowStatus(false);
     }
   };
 
@@ -276,6 +289,7 @@ const Products = () => {
       );
 
       if (data?.success) {
+        await fetchProducts();
         setProductName("");
         setCategory("");
         setPriceType("single");
@@ -286,14 +300,16 @@ const Products = () => {
         setImagePreview(null);
         setSerialNumber("");
         setErrors({});
-        fetchProducts();
         formRef.current.reset();
       }
     } catch (error) {
-      console.log(error);
+      setLoader(false);
+      setShowStatus(false);
+      setUpdateShowStatus(false);
     } finally {
       setLoader(false);
       setShowStatus(false);
+      setUpdateShowStatus(false);
     }
   };
 
@@ -321,7 +337,7 @@ const Products = () => {
       }
 
       setLoader(true);
-      setShowStatus(true);
+      setUpdateShowStatus(true);
 
       const { data } = await updateProductApi(
         id,
@@ -335,6 +351,7 @@ const Products = () => {
           await uploadImage(id, image, true);
         }
 
+        await fetchProducts();
         setProductName("");
         setCategory("");
         setPriceType("single");
@@ -345,14 +362,16 @@ const Products = () => {
         setSerialNumber("");
         setImagePreview(null);
         setErrors({});
-        fetchProducts();
         setUpdateMode(false);
         formRef.current.reset();
-        setLoader(false);
+        if (!image) {
+          setLoader(false);
+          setUpdateShowStatus(false);
+        }
       }
     } catch (error) {
-      console.log(error);
       setLoader(false);
+      setUpdateShowStatus(false);
     }
   };
 
@@ -361,11 +380,10 @@ const Products = () => {
       setLoader(true);
       const { data } = await deleteProductApi(id, backendUrl, menu?._id);
       if (data?.success) {
-        fetchProducts();
+        await fetchProducts();
         setLoader(false);
       }
     } catch (error) {
-      console.log(error);
       setLoader(false);
     }
   };
@@ -825,7 +843,19 @@ const Products = () => {
           </div>
         </div>
       </div>
-      <UploadStatus show={showStatus} />
+      <SaveItemStatus show={showStatus} />
+      <SaveItemStatus show={showUpdateStatus} mode="update" />
+      <AlreadyExistPopup
+        isOpen={alreadyExistPopupOpen}
+        onClose={() => setAlreadyExistPopupOpen(false)}
+        message="This item already exists with the same name and category."
+      />
+      <OrderLimitPopup
+        isOpen={limitPopupOpen}
+        onClose={() => setLimitPopupOpen(false)}
+        target="Item"
+        message="Your menu has hit the maximum item limit for this billing cycle."
+      />
     </>
   );
 };

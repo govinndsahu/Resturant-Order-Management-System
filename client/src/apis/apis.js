@@ -11,3 +11,10 @@ export const getAppDataApi = async (appId) => {
   );
   return { data };
 };
+
+export const getArchivedOrdersApi = async (backendUrl) => {
+  const { data } = await axios.get(`${backendUrl}orders/get/archives`, {
+    withCredentials: true,
+  });
+  return { data };
+};

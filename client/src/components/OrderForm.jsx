@@ -18,6 +18,7 @@ const OrderForm = ({
   setDisplayForm,
   appName,
   accessToken,
+  setIsOrderLimitPopupOpen,
 }) => {
   const { backendUrl, configurations } = useConfig();
 
@@ -164,6 +165,11 @@ const OrderForm = ({
         errMessage === "OTP_NOT_VERIFIED"
       ) {
         setIsOpen(true);
+        setLoader(false);
+      }
+
+      if (errMessage === "Count has reached the maximum limit") {
+        setIsOrderLimitPopupOpen(true);
         setLoader(false);
       }
     }

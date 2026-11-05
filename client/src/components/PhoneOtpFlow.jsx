@@ -88,10 +88,11 @@ const PhoneOtpFlow = ({
       await new Promise((resolve) => setTimeout(resolve, 800));
       setLoading(false);
       setStep("success");
+      setIsOpen(false);
       setTimeout(() => {
         onVerify(phone);
         onClose();
-      }, 1000);
+      }, 100);
       return;
     }
 
@@ -159,8 +160,10 @@ const PhoneOtpFlow = ({
         setLoading(false);
         setStep("success");
         setAccesstoken(verifyResponse.message);
+        setIsOpen(false);
         setTimeout(() => {
-          setIsOpen(false);
+          onVerify(phone);
+          onClose();
         }, 100);
       } else {
         setLoading(false);

@@ -4,6 +4,7 @@ import { useCart } from "../contexts/Cart";
 import { getProductsApi } from "../apis/productsApi";
 import { addToCart, getCart } from "../hooks/useIndexedDB";
 import { useConfig } from "../contexts/ConfigContext";
+import ProductShimmer from "./ProductShimmer";
 
 const ProductsContainer = ({
   showDetails,
@@ -21,16 +22,21 @@ const ProductsContainer = ({
   const [cart, setCart] = useCart();
   const [addedIds, setAddedIds] = useState(new Set());
 
+  const [showShimmer, setShowShimmer] = useState(true);
+
   const fetchProducts = async () => {
     try {
       const { data } = await getProductsApi(backendUrl);
 
       if (data?.success) {
         setProducts(data?.products);
+        setShowShimmer(false);
       } else {
         console.log("Server Problem");
       }
+      setShowShimmer(false);
     } catch (error) {
+      setShowShimmer(false);
       console.error("Error fetching products:", error);
     }
   };
@@ -94,6 +100,8 @@ const ProductsContainer = ({
   const filteredProducts = products?.filter((p) =>
     category === "" ? true : p.category?.name === category,
   );
+
+  if (showShimmer) return <ProductShimmer count={6} />;
 
   if (products?.length === 0) {
     return (

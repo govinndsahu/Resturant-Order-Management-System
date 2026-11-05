@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { getAppDataApi } from "../apis/apis";
 import { getConfigurationApi } from "../apis/configurationApis";
+import ErrorFallback from "../components/ErrorFallback";
 
 const ConfigContext = createContext(null);
 
@@ -72,7 +73,14 @@ export function ConfigProvider({ appId, children }) {
   }, [appId]);
 
   if (loading) return <span className="app-loader"></span>;
-  if (error) return <div>Failed to load config.</div>;
+
+  if (error)
+    return (
+      <ErrorFallback
+        type="not-found"
+        onGoHome={() => window.location.reload()}
+      />
+    );
 
   return (
     <ConfigContext.Provider value={config}>{children}</ConfigContext.Provider>

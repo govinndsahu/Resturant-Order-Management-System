@@ -12,6 +12,7 @@ import {
   removeFromCart,
   getCart,
 } from "../hooks/useIndexedDB";
+import Popups from "../components/Popups";
 
 const CartPage = ({ appName }) => {
   const [cart, setCart] = useCart();
@@ -209,17 +210,7 @@ const CartPage = ({ appName }) => {
         </div>
       </div>
 
-      {/* Footer */}
-      <div className="cart-footer">
-        <ProceedContainer setDisplayForm={setDisplayForm} />
-      </div>
-
-      {/* Order Form Modal */}
-      <OrderForm
-        dispalyForm={displayForm}
-        setDisplayForm={setDisplayForm}
-        appName={appName}
-      />
+      <Popups appName={appName} />
     </div>
   );
 };

@@ -1,9 +1,5 @@
-import express from "express";
-import z from "zod/v4";
 import Category from "../models/categoryModel.js";
 import { addCache, preventCaching, purgeCache } from "../utils/cdnUtils.js";
-
-const router = express.Router();
 
 export const createCategory = async (req, res, next) => {
   const { name, sn } = req.body;

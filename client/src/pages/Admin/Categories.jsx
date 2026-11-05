@@ -9,6 +9,7 @@ import {
 } from "../../apis/categoryApis";
 
 import { useConfig } from "../../contexts/ConfigContext";
+import AlreadyExistPopup from "../../components/AlreadyExistPopup";
 
 const Categories = () => {
   const createForm = useRef();
@@ -26,11 +27,11 @@ const Categories = () => {
   const [categoryId, setCategoryId] = useState("");
 
   const [loading, setLoading] = useState(false);
+  const [alreadyExistPopupOpen, setAlreadyExistPopupOpen] = useState(false);
 
   const fetchCategories = async () => {
     try {
       const { data } = await getCategoriesApi(backendUrl);
-      console.log(data);
 
       if (data?.success) {
         setCategories(data.categories);
@@ -58,13 +59,18 @@ const Categories = () => {
       );
 
       if (data?.success) {
-        setCreateName("");
-        setSerialNumber("");
-        fetchCategories();
+        setTimeout(async () => {
+          await fetchCategories();
+          setCreateName("");
+          setSerialNumber("");
+          setLoading(false);
+        }, 2000);
       }
     } catch (error) {
-      console.log(error);
-    } finally {
+      const errorMessage = error?.response?.data?.error;
+      if (errorMessage === "Category already exists") {
+        setAlreadyExistPopupOpen(true);
+      }
       setLoading(false);
     }
   };
@@ -75,15 +81,18 @@ const Categories = () => {
 
       const { data } = await deleteCategoryApi(id, backendUrl, menu?._id);
 
-      
       if (data?.success) {
-        console.log(data);
-        fetchCategories();
+        setTimeout(async () => {
+          await fetchCategories();
+          setLoading(false);
+        }, 2000);
       }
     } catch (error) {
-      console.log(error);
-    } finally {
       setLoading(false);
+      const errorMessage = error?.response?.data?.error;
+      if (errorMessage === "Category not found") {
+        window.location.reload();
+      }
     }
   };
 
@@ -102,15 +111,14 @@ const Categories = () => {
       );
 
       if (data?.success) {
+        await fetchCategories();
         setUpdateName("");
         setSerialNumber("");
         setCategoryId("");
         setSwitchForm(true);
-        fetchCategories();
+        setLoading(false);
       }
     } catch (error) {
-      console.log(error);
-    } finally {
       setLoading(false);
     }
   };
@@ -328,6 +336,16 @@ const Categories = () => {
           )}
         </div>
       </div>
+      <AlreadyExistPopup
+        isOpen={alreadyExistPopupOpen}
+        onClose={() => setAlreadyExistPopupOpen(false)}
+        message="This category already exists."
+      />
+      {loading && (
+        <div className="cat-loading-overlay">
+          <span className="app-loader"></span>
+        </div>
+      )}
     </div>
   );
 };

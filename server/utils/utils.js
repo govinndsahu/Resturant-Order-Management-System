@@ -1,9 +1,5 @@
 import cors from "cors";
-import sharp from "sharp";
 import Count from "../models/countModel.js";
-
-sharp.cache(false);
-sharp.concurrency(1);
 
 const whitelist = [
   process.env.CLIENT_URL,
@@ -70,6 +66,11 @@ export const compressToTargetSize = async (
   targetKB = 50,
   format = "webp",
 ) => {
+  const sharp = (await import("sharp")).default;
+
+  sharp.cache(false);
+  sharp.concurrency(1);
+
   const targetBytes = targetKB * 1024;
 
   const attempts = [

@@ -1,6 +1,5 @@
 import "../../css/orders.css";
 import { useEffect, useState } from "react";
-import axios from "axios";
 
 import FiltereInput from "../../components/FiltereInput";
 import {
@@ -10,7 +9,6 @@ import {
   getOrdersApi,
   markOrderAsDoneApi,
 } from "../../apis/orderApis";
-import CalendarRangePicker from "../../components/CalendarRangePicker";
 import { useConfig } from "../../contexts/ConfigContext";
 
 const Orders = () => {
@@ -68,26 +66,13 @@ const Orders = () => {
   };
 
   const filteredOrders = () => {
-    const startDate = localStorage.getItem("startDate");
-    const endDate = localStorage.getItem("endDate");
-
-    return orders
-      ?.filter(
-        (order) =>
-          order.buyer.toLowerCase().includes(name.toLowerCase()) &&
-          (tableNumber === ""
-            ? String(order.tableNumber).includes(tableNumber)
-            : String(order.tableNumber) === String(tableNumber)),
-      )
-      .filter((order) => {
-        if (!startDate || !endDate) return true;
-        const orderDate = new Date(order.createdAt);
-        const start = new Date(startDate);
-        start.setHours(0, 0, 0, 0);
-        const end = new Date(endDate);
-        end.setHours(23, 59, 59, 999);
-        return orderDate >= start && orderDate <= end;
-      });
+    return orders?.filter(
+      (order) =>
+        order.buyer.toLowerCase().includes(name.toLowerCase()) &&
+        (tableNumber === ""
+          ? String(order.tableNumber).includes(tableNumber)
+          : String(order.tableNumber) === String(tableNumber)),
+    );
   };
 
   const deleteOrders = async () => {
@@ -154,10 +139,6 @@ const Orders = () => {
       <div className="orders-container">
         {/* Filters Bar */}
         <div className="orders-filters">
-          <CalendarRangePicker
-            filteredData={filteredOrders}
-            refreshData={fetchOrders}
-          />
           <FiltereInput
             name={name}
             setName={setName}
@@ -228,7 +209,10 @@ const Orders = () => {
                     {order.buyer?.charAt(0).toUpperCase() || "?"}
                   </div>
                   <div className="customer-info">
-                    <span className="customer-name">{order.buyer}</span>
+                    <span className="customer-name">
+                      {order.buyer}{" "}
+                      {order.phoneNumber && `(${order.phoneNumber})`}
+                    </span>
                     <span className="customer-items">
                       {order.products?.length || 0} items
                     </span>
@@ -313,7 +297,10 @@ const Orders = () => {
                         <div className="td-avatar">
                           {order.buyer?.charAt(0).toUpperCase() || "?"}
                         </div>
-                        <span className="td-name">{order.buyer}</span>
+                        <span className="td-name">
+                          {order.buyer}{" "}
+                          {order.phoneNumber && `(${order.phoneNumber})`}
+                        </span>
                       </div>
                     </td>
                     <td>

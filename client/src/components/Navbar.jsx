@@ -54,6 +54,7 @@ const Navbar = ({ name, appName }) => {
       }
     } catch (error) {
       navigate(route("loginpage"));
+      localStorage.removeItem("user");
     }
   };
 

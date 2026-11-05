@@ -1,5 +1,4 @@
 import Configuration from "../models/configurationModel.js";
-import Session from "../models/sessionModel.js";
 import { getDistanceInMeters, veriryOtp } from "../utils/utils.js";
 import z from "zod/v4";
 

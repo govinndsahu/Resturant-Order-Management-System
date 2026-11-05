@@ -839,10 +839,11 @@
     clip-path: polygon(50% 50%, 0 0, 100% 0, 100% 100%, 0 100%, 0 0);
   }
 }
-
+/* ============================================= */
+/* SaveItemStatus.css — fixed & centered overlay */
 /* ============================================= */
 
-/* ---------- Tokens — pulled from your dashboard's own palette ---------- */
+/* ---------- Tokens ---------- */
 .sis-overlay {
   --sis-indigo: #6366f1;
   --sis-purple: #9333ea;
@@ -895,11 +896,9 @@
 }
 
 /* ---------- Card ---------- */
+/* FIXED: removed position:fixed and transform so flexbox centers it */
 .sis-card {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  position: relative;
   width: min(340px, 100%);
   background: var(--sis-surface);
   border-radius: 20px;
@@ -928,6 +927,10 @@
   }
 }
 @keyframes sis-card-out {
+  from {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
   to {
     transform: translateY(6px) scale(0.97);
     opacity: 0;
@@ -938,7 +941,7 @@
   position: absolute;
   top: -60px;
   left: 50%;
-  translate: -50% 0;
+  transform: translateX(-50%);
   width: 220px;
   height: 140px;
   background: linear-gradient(135deg, var(--sis-indigo), var(--sis-purple));
@@ -969,7 +972,6 @@
 
 .sis-spinner__arc {
   fill: none;
-  stroke: url(#sis-arc-gradient);
   stroke: var(--sis-indigo);
   stroke-width: 4;
   stroke-linecap: round;
@@ -1142,24 +1144,6 @@
 
 .sis-step--done .sis-step__label {
   color: var(--sis-navy);
-}
-
-/* ---------- Motion-reduced fallback ---------- */
-@media (prefers-reduced-motion: reduce) {
-  .sis-overlay,
-  .sis-card,
-  .sis-spinner__arc,
-  .sis-step__dot,
-  .sis-step__marker,
-  .sis-step__check path {
-    animation: none !important;
-  }
-  .sis-spinner__arc {
-    stroke-dashoffset: 40;
-  }
-  .sis-step__check path {
-    stroke-dashoffset: 0;
-  }
 }
 
 /* ---------- Small screens ---------- */

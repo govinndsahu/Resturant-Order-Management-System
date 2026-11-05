@@ -1,8 +1,6 @@
-const cacheName = "menu-app-v2";
+const cacheName = "menu-app-v3";
 
 const staticAssets = [
-  "/",
-  "/index.html",
   "/manifest.webmanifest",
   "/DgDine-icon-192.png",
   "/DgDine-icon-512.png",
@@ -14,16 +12,30 @@ self.addEventListener("install", async () => {
   self.skipWaiting();
 });
 
-self.addEventListener("activate", () => {
-  self.clients.claim();
+self.addEventListener("activate", (e) => {
+  e.waitUntil(
+    (async () => {
+      // clean up old cache versions
+      const keys = await caches.keys();
+      await Promise.all(
+        keys.filter((k) => k !== cacheName).map((k) => caches.delete(k)),
+      );
+      self.clients.claim();
+    })(),
+  );
 });
 
 self.addEventListener("fetch", (e) => {
   const req = e.request;
   const url = new URL(req.url);
 
-  // ✅ Skip non-HTTP and non-GET requests (fixes chrome-extension error)
   if (!req.url.startsWith("http") || req.method !== "GET") {
+    return;
+  }
+
+  // Navigation requests (HTML/app shell) → always network-first
+  if (req.mode === "navigate") {
+    e.respondWith(networkFirst(req));
     return;
   }
 
@@ -34,6 +46,24 @@ self.addEventListener("fetch", (e) => {
   }
 });
 
+async function networkFirst(req) {
+  const cache = await caches.open(cacheName);
+  try {
+    const fresh = await fetch(req);
+    await cache.put(req, fresh.clone());
+    return fresh;
+  } catch {
+    const cached = await cache.match(req);
+    return (
+      cached ||
+      new Response("You are offline", {
+        status: 503,
+        headers: { "Content-Type": "text/plain" },
+      })
+    );
+  }
+}
+
 async function cacheFirst(req) {
   const cache = await caches.open(cacheName);
   const cached = await cache.match(req);
@@ -42,7 +72,6 @@ async function cacheFirst(req) {
   try {
     return await fetch(req);
   } catch {
-    // ✅ Never return undefined
     return new Response("You are offline", {
       status: 503,
       headers: { "Content-Type": "text/plain" },
@@ -58,7 +87,6 @@ async function networkAndCache(req) {
     return fresh;
   } catch {
     const cached = await cache.match(req);
-    // ✅ Never return undefined
     return (
       cached ||
       new Response("Network error and no cache available", {
@@ -69,27 +97,34 @@ async function networkAndCache(req) {
   }
 }
 
-// ✅ Optional: Listen for push events (requires backend implementation)
+self.addEventListener("push", (event) => {
+  let data = {};
+  try {
+    data = event.data ? event.data.json() : {};
+  } catch {
+    data = { title: "New Order", body: event.data?.text() || "" };
+  }
 
-// Show notification when push is received
-self.addEventListener("push", (e) => {
-  const data = e.data?.json() ?? {
-    title: "Menu App",
-    body: "You have a new notification!",
+  const title = data.title || "Notification";
+  const options = {
+    body: data.body || "",
+    icon: "/DgDine-icon-192.png",
+    badge: "/DgDine-icon-192.png",
+    data: { url: data.url || "/" },
   };
 
-  e.waitUntil(
-    self.registration.showNotification(data.title, {
-      body: data.body,
-      icon: "/squarelogo.png",
-      badge: "/squarelogo.png",
-      data: { url: data.url || "/" }, // URL to open on click
-    }),
-  );
+  event.waitUntil(self.registration.showNotification(title, options));
 });
 
-// Handle notification click
-self.addEventListener("notificationclick", (e) => {
-  e.notification.close();
-  e.waitUntil(clients.openWindow(e.notification.data.url));
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+  const url = event.notification.data?.url || "/";
+  event.waitUntil(
+    clients.matchAll({ type: "window" }).then((clientList) => {
+      for (const client of clientList) {
+        if (client.url === url && "focus" in client) return client.focus();
+      }
+      if (clients.openWindow) return clients.openWindow(url);
+    }),
+  );
 });

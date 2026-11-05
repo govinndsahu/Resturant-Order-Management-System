@@ -1,3 +1,6 @@
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
+
 export const openInstallPrompt = () => {
   const handleBeforeInstallPrompt = (event) => {
     event.preventDefault();
@@ -52,7 +55,12 @@ export const getAppId = () => {
 
 export const getAppName = () => getAppId();
 
-export const adminStylesLoaderFunction = (location, appName, user, menu = null) => {
+export const adminStylesLoaderFunction = (
+  location,
+  appName,
+  user,
+  menu = null,
+) => {
   const isAdminRoute = location.pathname.startsWith(
     getAppRoute(appName, "dashboard"),
   );
@@ -63,9 +71,7 @@ export const adminStylesLoaderFunction = (location, appName, user, menu = null) 
   const existingFavicon = document.head.querySelector(
     'link[data-admin-favicon="true"]',
   );
-  const faviconHref = menu?.menuLogoImg
-    ? `${menu.menuLogoImg}`
-    : "";
+  const faviconHref = menu?.menuLogoImg ? `${menu.menuLogoImg}` : "";
 
   if (isAdminRoute && isAdminUser && !existingLink) {
     const link = document.createElement("link");
@@ -122,10 +128,57 @@ export const registerServiceWorker = () => {
     });
   };
 
-  if (document.readyState === "complete" || document.readyState === "interactive") {
+  if (
+    document.readyState === "complete" ||
+    document.readyState === "interactive"
+  ) {
     register();
     return;
   }
 
   window.addEventListener("load", register, { once: true });
+};
+
+export const exportOrdersToExcel = (orders, fileName = "orders") => {
+  const getItemDisplay = (item) => {
+    const size =
+      item.price_type === "single" ? "" : item.half_price ? "Half" : "Full";
+    return `${size ? size + " " : ""}${item.name} × ${item.quantity || 1}`;
+  };
+
+  const rows = orders.map((order) => ({
+    OrderID: order._id,
+    Table: order.tableNumber,
+    Buyer: order.buyer || "N/A",
+    Phone: order.phoneNumber || "N/A",
+    items: order.products.map(getItemDisplay).join(", "),
+    OrderTotal: order.total,
+    Time: new Date(order.createdAt).toLocaleString(),
+  }));
+
+  const worksheet = XLSX.utils.json_to_sheet(rows);
+
+  // Optional: set column widths for readability
+  worksheet["!cols"] = [
+    { wch: 26 }, // OrderID
+    { wch: 8 }, // Table
+    { wch: 20 }, // Buyer
+    { wch: 15 }, // Phone
+    { wch: 100 }, // items
+    { wch: 12 }, // OrderTotal
+    { wch: 20 }, // Time
+  ];
+
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, "Orders");
+
+  const excelBuffer = XLSX.write(workbook, {
+    bookType: "xlsx",
+    type: "array",
+  });
+
+  const blob = new Blob([excelBuffer], {
+    type: "application/octet-stream",
+  });
+  saveAs(blob, `${fileName}.xlsx`);
 };
