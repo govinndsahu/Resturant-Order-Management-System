@@ -1,0 +1,131 @@
+/* ============================================= */
+/* ProductShimmer.css — skeleton loading cards   */
+/* ============================================= */
+
+.shimmer-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+  padding: 16px;
+}
+
+@media (min-width: 640px) {
+  .shimmer-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    padding: 24px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .shimmer-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    padding: 32px;
+  }
+}
+
+/* ---------- Card ---------- */
+.shimmer-card {
+  background: #ffffff62;
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(30, 41, 59, 0.06);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.shimmer-card__image {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background: #f0f0f568;
+}
+
+.shimmer-card__body {
+  padding: 12px 14px 14px;
+}
+
+.shimmer-card__title {
+  width: 75%;
+  height: 16px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  background: #f0f0f568;
+}
+
+.shimmer-card__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.shimmer-card__price {
+  width: 40px;
+  height: 14px;
+  border-radius: 5px;
+  background: #f0f0f568;
+}
+
+.shimmer-card__btn {
+  width: 64px;
+  height: 28px;
+  border-radius: 8px;
+  background: #f0f0f568;
+}
+
+/* ---------- Shimmer animation ---------- */
+.shimmer {
+  position: relative;
+  overflow: hidden;
+  background: #f0f0f568;
+}
+
+.shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.55) 50%,
+    transparent 100%
+  );
+  transform: translateX(-100%);
+  animation: shimmer-sweep 1.6s ease-in-out infinite;
+}
+
+@keyframes shimmer-sweep {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Stagger the shimmer wave across cards */
+.shimmer-card:nth-child(1) .shimmer::after {
+  animation-delay: 0ms;
+}
+.shimmer-card:nth-child(2) .shimmer::after {
+  animation-delay: 120ms;
+}
+.shimmer-card:nth-child(3) .shimmer::after {
+  animation-delay: 240ms;
+}
+.shimmer-card:nth-child(4) .shimmer::after {
+  animation-delay: 360ms;
+}
+.shimmer-card:nth-child(5) .shimmer::after {
+  animation-delay: 480ms;
+}
+.shimmer-card:nth-child(6) .shimmer::after {
+  animation-delay: 600ms;
+}
+.shimmer-card:nth-child(7) .shimmer::after {
+  animation-delay: 720ms;
+}
+.shimmer-card:nth-child(8) .shimmer::after {
+  animation-delay: 840ms;
+}
