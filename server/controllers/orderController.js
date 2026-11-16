@@ -1,6 +1,6 @@
 import Order from "../models/orderModel.js";
 import { addCache, purgeCache } from "../utils/cdnUtils.js";
-import { increaseCount } from "../utils/utils.js";
+import { increaseCount, sendPushNotification } from "../utils/utils.js";
 import { createOrderSchema } from "../validator/orderSchema.js";
 
 export const createOrder = async (req, res, next) => {
@@ -24,6 +24,12 @@ export const createOrder = async (req, res, next) => {
     await order.save();
 
     await increaseCount(req.count);
+
+    await sendPushNotification({
+      title: "New Order",
+      body: "You have a new order.",
+      url: `${process.env.CLIENT_URL}/${process.env.MENU_ID}/dashboard/orders`,
+    });
 
     await purgeCache({
       urls: ["/orders", "/orders/history"],

@@ -1,5 +1,6 @@
 import cors from "cors";
 import Count from "../models/countModel.js";
+import PushSubscription from "../models/pushsubscriptionModel.js";
 
 const whitelist = [
   process.env.CLIENT_URL,
@@ -203,4 +204,26 @@ export const handleCompletedEvent = async ({ payload, count }) => {
   count.maxItemCount = 10;
   count.resetDate = payload.currentEnd;
   await count.save();
+};
+
+export const sendPushNotification = async ({
+  title,
+  body,
+  url,
+  image = null,
+}) => {
+  const payload = JSON.stringify({
+    title,
+    body,
+    url,
+    image,
+  });
+
+  const subscriptions = await PushSubscription.find()
+    .select("endpoint keys -_id")
+    .lean();
+
+  await Promise.allSettled(
+    subscriptions.map((sub) => webpush.sendNotification(sub, payload)),
+  );
 };
