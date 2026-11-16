@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 
 import { useCart } from "../contexts/Cart";
 import { createOrderApi } from "../apis/orderApis";
-import { sendNotificationApi } from "../apis/pushSubscriptionApis";
 
 import { clearCart } from "../hooks/useIndexedDB";
 import { getAppRoute } from "../utils/util";
@@ -150,8 +149,6 @@ const OrderForm = ({
         await clearCart();
         toast.success("Order placed successfully! 🎉");
         navigate(route());
-
-        await sendNotificationApi(backendUrl);
       }
     } catch (error) {
       setLoader(false);
