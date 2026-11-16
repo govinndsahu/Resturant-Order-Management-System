@@ -44,7 +44,7 @@ export async function subscribeToPush(backendUrl) {
     }
 
     // Step 1: Get the active service worker
-    const registration = await navigator.serviceWorker.ready;
+    let registration = await navigator.serviceWorker.ready;
 
     if (!registration) {
       console.log("No SW found, registering...");

@@ -99,5 +99,3 @@ export const getCategories = async (req, res, next) => {
       .json({ success: false, error: "Internal server error" });
   }
 };
-
-export default router;
