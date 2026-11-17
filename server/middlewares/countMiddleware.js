@@ -24,7 +24,7 @@ export const checkItemCount = async (req, res, next) => {
     if (count.itemCount >= count.maxItemCount)
       return res
         .status(400)
-        .json({ error: "Iteam count has reached the maximum limit" });
+        .json({ error: "Item count has reached the maximum limit" });
 
     req.count = count;
     next();
@@ -79,7 +79,7 @@ export const resetCount = async (req, res, next) => {
     let count = await Count.findOne();
 
     if (!count) {
-      const newCount = await Count.insertOne({ count: 0 });
+      const newCount = await Count.create();
       count = newCount;
     }
 
@@ -93,7 +93,7 @@ export const resetCount = async (req, res, next) => {
     if (currentDate >= count.resetDate) {
       count.count = 0;
       count.maxCount = 100;
-      count.maxItemCount = 10;
+      count.maxItemCount = 50;
       count.resetDate = currentDate + 30 * 24 * 60 * 60 * 1000;
       await count.save();
     }
