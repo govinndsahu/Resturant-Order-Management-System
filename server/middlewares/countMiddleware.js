@@ -79,7 +79,15 @@ export const resetCount = async (req, res, next) => {
     let count = await Count.findOne();
 
     if (!count) {
-      const newCount = await Count.create();
+      const newCount = await Count.insertOne({
+        count: 0,
+        maxCount: 100,
+        itemCount: 0,
+        maxItemCount: 50,
+        willReset: true,
+        resetDate: Date.now() + 30 * 24 * 60 * 60 * 1000,
+        time: Date.now(),
+      });
       count = newCount;
     }
 
